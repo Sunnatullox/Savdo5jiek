@@ -41,7 +41,7 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ['./docs/*docs.js'],
+  apis: ['./src/v1/docs/*.docs.ts'], // Correct path to the docs folder
 };
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
