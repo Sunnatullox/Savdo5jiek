@@ -135,12 +135,10 @@ function UzTshContractHtml(admin, user, products, isDelivery, data) {
 </head>
 
 <body>
-	<div>
-		<div style="clear:both">
-			<p>
-				&#xa0;
-			</p>
-		</div>
+	<div style="float: right;">
+		<img width="50" height="50" src="${data.qrcode}" alt"qr_code" >
+	</div>
+	<div style="margin-top: 20px;">
 		<p class="NoSpacing" style="text-align:center; font-size:8pt">
 			<strong><span style="font-family:Cambria; ">Yuridik shaxslar bilan onlayn mahsulot sotish haqida ommaviy
 					oferta shartnomasi </span></strong>

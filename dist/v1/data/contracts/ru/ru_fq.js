@@ -135,6 +135,10 @@ function RuFqContractHtml(admin, user, products, isDelivery, data) {
 </head>
 
 <body>
+<div style="float: right;">
+		<img width="50" height="50" src="${data.qrcode}" alt"qr_code" >
+	</div>
+	<div style="margin-top: 20px;">
 	<p class="NoSpacing" style="text-align:center; font-size:8pt">
 		<a id="_Hlk172403850"><strong><span style="font-family:Cambria; ">Договор публичной оферты с физическими лицами
 					по реализации продукции через Интернет</span></strong></a>
@@ -912,6 +916,7 @@ function RuFqContractHtml(admin, user, products, isDelivery, data) {
 		<p>
 			&#xa0;
 		</p>
+	</div>
 	</div>
 </body>
 

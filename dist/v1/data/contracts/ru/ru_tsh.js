@@ -135,6 +135,10 @@ function RuTshContractHtml(admin, user, products, isDelivery, data) {
 </head>
 
 <body>
+<div style="float: right;">
+		<img width="50" height="50" src="${data.qrcode}" alt"qr_code" >
+	</div>
+	<div style="margin-top: 20px;">
 	<p class="NoSpacing" style="text-align:center; font-size:8pt">
 		<strong><span style="font-family:Cambria; ">Договор публичной оферты с юридическими лицами по реализации
 				продукции через Интернет</span></strong>
@@ -295,7 +299,8 @@ function RuTshContractHtml(admin, user, products, isDelivery, data) {
 					<span style="font-family: Cambria; font-weight: normal; color: #000000">(кто ты)</span>
 				</h1>
 			</td>
-			${isDelivery ? (`<td style="
+			${isDelivery
+            ? `<td style="
             width: 45.35pt;
             border-right: 0.75pt solid #000000;
             border-left: 0.75pt solid #000000;
@@ -313,7 +318,8 @@ function RuTshContractHtml(admin, user, products, isDelivery, data) {
 					<span style="font-family: Cambria; font-weight: normal; color: #000000">Со службой доставки</span>
 				</h1>
 			</td>
-			`) : ""}
+			`
+            : ""}
 			<td style="
             width: 51.65pt;
             border-right: 0.75pt solid #000000;
@@ -412,12 +418,11 @@ function RuTshContractHtml(admin, user, products, isDelivery, data) {
 				vertical-align: top;
 			  ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
-						<span style="font-family: Cambria;">${(0, numberToWords_1.formatNumber)(product.discount !== 0
-                ? product.discount
-                : product.price) || "_?_"}</span>
+						<span style="font-family: Cambria;">${(0, numberToWords_1.formatNumber)(product.discount !== 0 ? product.discount : product.price) || "_?_"}</span>
 					</p>
 				</td>
-				${isDelivery ? (`<td style="
+				${isDelivery
+                ? `<td style="
 			width: 45.35pt;
 			border: 0.75pt solid #000000;
 			padding-right: 5.03pt;
@@ -428,7 +433,8 @@ function RuTshContractHtml(admin, user, products, isDelivery, data) {
 					<span style="font-family: Cambria;">За доставку вышлют дополнительный счет</span>
 				</p>
 			</td>
-			`) : ""}
+			`
+                : ""}
 				<td style="
 				width: 51.65pt;
 				border: 0.75pt solid #000000;
@@ -438,9 +444,7 @@ function RuTshContractHtml(admin, user, products, isDelivery, data) {
 			  ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
 						<span style="font-family: Cambria;">${product.qty *
-                (product.discount !== 0
-                    ? product.discount
-                    : product.price) || 0}</span>
+                (product.discount !== 0 ? product.discount : product.price) || 0}</span>
 					</p>
 				</td>
 				<td style="
@@ -524,7 +528,8 @@ function RuTshContractHtml(admin, user, products, isDelivery, data) {
 					<span style="font-family: Cambria">&#xa0;</span>
 				</p>
 			</td>
-			${isDelivery ? (`
+			${isDelivery
+            ? `
 			<td style="
             width: 45.35pt;
             border-top: 0.75pt solid #000000;
@@ -538,7 +543,8 @@ function RuTshContractHtml(admin, user, products, isDelivery, data) {
 					<span style="font-family: Cambria">&#xa0;</span>
 				</p>
 			</td>
-			`) : ""}
+			`
+            : ""}
 			<td style="
             width: 51.65pt;
             border-top: 0.75pt solid #000000;
@@ -893,9 +899,9 @@ function RuTshContractHtml(admin, user, products, isDelivery, data) {
 			<p><strong style="font-family:Cambria;">МФО:</strong> ${user.legal_info.mfo || "_?_"}</p>
 			<p class="noSpacing"><strong style="font-family:Cambria;">Руководитель:</strong>_________ ${user.first_name
             .charAt(0)
-            .toUpperCase()}.${user.middle_name.charAt(0).toUpperCase()}.${user.sur_name.charAt(0).toUpperCase() +
-            user.sur_name.slice(1).toLowerCase()}</p>
+            .toUpperCase()}.${user.middle_name.charAt(0).toUpperCase()}.${user.sur_name.charAt(0).toUpperCase() + user.sur_name.slice(1).toLowerCase()}</p>
 		</div>
+	</div>
 	</div>
 </body>
 

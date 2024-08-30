@@ -137,21 +137,25 @@ export default async function RuTshContractHtml(
 </head>
 
 <body>
+<div style="float: right;">
+		<img width="50" height="50" src="${data.qrcode}" alt"qr_code" >
+	</div>
+	<div style="margin-top: 20px;">
 	<p class="NoSpacing" style="text-align:center; font-size:8pt">
 		<strong><span style="font-family:Cambria; ">Договор публичной оферты с юридическими лицами по реализации
 				продукции через Интернет</span></strong>
 	</p>
 	<p class="NoSpacing" style="text-align:center; font-size:8pt">
 		<strong><span style="font-family:Cambria; ">№</span></strong><strong><span
-				style="font-family:Cambria;"> ${
-          data.contractId || "_?_"
-        }</span></strong>
+				style="font-family:Cambria;"> ${data.contractId || "_?_"}</span></strong>
 	</p>
 	<p class="NoSpacing" style="text-align:center; font-size:8pt">
 		<strong><span style="font-family:Cambria; ">&#xa0;</span></strong>
 	</p>
 	<div class="container">
-		<p class="column" style="font-family:Cambria;; padding-left: 10px;">${data.contractDate || "_?_"} год</p>
+		<p class="column" style="font-family:Cambria;; padding-left: 10px;">${
+      data.contractDate || "_?_"
+    } год</p>
 		<p class="column" style="font-family:Cambria; width: auto; padding-right: 10px;">Кызылтепинский район</p>
 	</div>
 	<p class="NoSpacing" style="text-align:center">
@@ -304,8 +308,8 @@ export default async function RuTshContractHtml(
 				</h1>
 			</td>
 			${
-			isDelivery ? (
-			`<td style="
+        isDelivery
+          ? `<td style="
             width: 45.35pt;
             border-right: 0.75pt solid #000000;
             border-left: 0.75pt solid #000000;
@@ -324,7 +328,8 @@ export default async function RuTshContractHtml(
 				</h1>
 			</td>
 			`
-			): ""}
+          : ""
+      }
 			<td style="
             width: 51.65pt;
             border-right: 0.75pt solid #000000;
@@ -390,9 +395,29 @@ export default async function RuTshContractHtml(
 				vertical-align: top;
 			  ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
-						<span style="font-family: Cambria;">${
-              product.name_ru
-            }</span>
+						<span style="font-family: Cambria;">${product.name_ru}</span>
+					</p>
+				</td>
+				<td style="
+				width: 45.35pt;
+				border: 0.75pt solid #000000;
+				padding-right: 5.03pt;
+				padding-left: 5.03pt;
+				vertical-align: top;
+			  ">
+					<p style="text-align: center; line-height: 108%; font-size: 8pt">
+						<span style="font-family: Cambria;">${product.unit_ru || "_?_"}</span>
+					</p>
+				</td>
+				<td style="
+				width: 45.35pt;
+				border: 0.75pt solid #000000;
+				padding-right: 5.03pt;
+				padding-left: 5.03pt;
+				vertical-align: top;
+			  ">
+					<p style="text-align: center; line-height: 108%; font-size: 8pt">
+						<span style="font-family: Cambria;">${product.qty || 0}</span>
 					</p>
 				</td>
 				<td style="
@@ -404,43 +429,15 @@ export default async function RuTshContractHtml(
 			  ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
 						<span style="font-family: Cambria;">${
-              product.unit_ru || "_?_"
-            }</span>
-					</p>
-				</td>
-				<td style="
-				width: 45.35pt;
-				border: 0.75pt solid #000000;
-				padding-right: 5.03pt;
-				padding-left: 5.03pt;
-				vertical-align: top;
-			  ">
-					<p style="text-align: center; line-height: 108%; font-size: 8pt">
-						<span style="font-family: Cambria;">${
-              product.qty || 0
-            }</span>
-					</p>
-				</td>
-				<td style="
-				width: 45.35pt;
-				border: 0.75pt solid #000000;
-				padding-right: 5.03pt;
-				padding-left: 5.03pt;
-				vertical-align: top;
-			  ">
-					<p style="text-align: center; line-height: 108%; font-size: 8pt">
-						<span style="font-family: Cambria;">${
-					formatNumber(
-						product.discount !== 0
-							? product.discount
-							: product.price
-						) || "_?_"
+              formatNumber(
+                product.discount !== 0 ? product.discount : product.price
+              ) || "_?_"
             }</span>
 					</p>
 				</td>
 				${
-          isDelivery ? (
-          `<td style="
+          isDelivery
+            ? `<td style="
 			width: 45.35pt;
 			border: 0.75pt solid #000000;
 			padding-right: 5.03pt;
@@ -452,7 +449,7 @@ export default async function RuTshContractHtml(
 				</p>
 			</td>
 			`
-          ) : ""
+            : ""
         }
 				<td style="
 				width: 51.65pt;
@@ -463,10 +460,8 @@ export default async function RuTshContractHtml(
 			  ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
 						<span style="font-family: Cambria;">${
-					product.qty *
-					(product.discount !== 0
-						? product.discount
-						: product.price) || 0
+              product.qty *
+                (product.discount !== 0 ? product.discount : product.price) || 0
             }</span>
 					</p>
 				</td>
@@ -480,9 +475,7 @@ export default async function RuTshContractHtml(
 				vertical-align: top;
 			  ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
-						<span style="font-family: Cambria;">До ${
-              data.deliveryDate || "_?_"
-            }</span>
+						<span style="font-family: Cambria;">До ${data.deliveryDate || "_?_"}</span>
 					</p>
 				</td>
 			</tr>			
@@ -554,8 +547,8 @@ export default async function RuTshContractHtml(
 				</p>
 			</td>
 			${
-			isDelivery ? (
-			`
+        isDelivery
+          ? `
 			<td style="
             width: 45.35pt;
             border-top: 0.75pt solid #000000;
@@ -570,7 +563,8 @@ export default async function RuTshContractHtml(
 				</p>
 			</td>
 			`
-			) : ""}
+          : ""
+      }
 			<td style="
             width: 51.65pt;
             border-top: 0.75pt solid #000000;
@@ -603,9 +597,7 @@ export default async function RuTshContractHtml(
 	<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
 			<span style="font-family:Cambria">Общая стоимость товара (без НДС):</span>
 			<strong>
-			<span style="font-family:Cambria;">${
-        data.writtenTotalPriceRu || "_?_"
-      }</span>
+			<span style="font-family:Cambria;">${data.writtenTotalPriceRu || "_?_"}</span>
 			</strong>
 		</p>
 	<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
@@ -968,10 +960,10 @@ export default async function RuTshContractHtml(
 			<p class="noSpacing"><strong style="font-family:Cambria;">Руководитель:</strong>_________ ${user.first_name
         .charAt(0)
         .toUpperCase()}.${user.middle_name.charAt(0).toUpperCase()}.${
-    user.sur_name.charAt(0).toUpperCase() +
-    user.sur_name.slice(1).toLowerCase()
+    user.sur_name.charAt(0).toUpperCase() + user.sur_name.slice(1).toLowerCase()
   }</p>
 		</div>
+	</div>
 	</div>
 </body>
 

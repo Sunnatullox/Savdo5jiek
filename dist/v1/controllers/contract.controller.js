@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getContractsByTaxAgent = exports.getContractById = exports.newNotificationsContractisAdmin = exports.deleteContractByAdmin = exports.updateContratcByAdminStatus = exports.getContractByAdmin = exports.getContractsByAdmin = exports.getContractsByIdUser = exports.createContractByUser = void 0;
+exports.uploadContractDeliveryDoc = exports.getContractsByTaxAgent = exports.getContractById = exports.newNotificationsContractisAdmin = exports.deleteContractByAdmin = exports.updateContratcByAdminStatus = exports.getContractByAdmin = exports.getContractsByAdmin = exports.getContractsByIdUser = exports.createContractByUser = void 0;
 const fs_1 = __importDefault(require("fs"));
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const ErrorHandler_1 = __importDefault(require("../middleware/ErrorHandler"));
@@ -25,6 +25,7 @@ const uz_tsh_1 = __importDefault(require("../data/contracts/uz/uz_tsh"));
 const numberToWords_1 = require("../utils/numberToWords");
 const ru_fq_1 = __importDefault(require("../data/contracts/ru/ru_fq"));
 const ru_tsh_1 = __importDefault(require("../data/contracts/ru/ru_tsh"));
+const fileUpload_1 = require("../utils/fileUpload");
 exports.createContractByUser = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (!req.user) {
@@ -101,6 +102,10 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
         const contractEndDateMonth = String(contractEndDate.getMonth() + 1).padStart(2, "0");
         const contractEndDateYear = contractEndDate.getFullYear();
         const formattedContractEndDate = `${contractEndDateDay}.${contractEndDateMonth}.${contractEndDateYear}`;
+        const fileNameUz = `document-${Date.now()}-uz.pdf`;
+        const fileNameRu = `document-${Date.now()}-ru.pdf`;
+        const qrCodeFileUz = (0, fileUpload_1.qrCodeGenerator)(`${req.protocol}://${req.get("host")}/public/contracts/uz/${fileNameUz}`);
+        const qrCodeFileRu = (0, fileUpload_1.qrCodeGenerator)(`${req.protocol}://${req.get("host")}/public/contracts/ru/${fileNameRu}`);
         const contractFile = {
             contractFileUz: !findUser.is_LLC
                 ? `${req.protocol}://${req.get("host")}/public` +
@@ -112,7 +117,8 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
                         deliveryDate: formattedDeliveryDate,
                         writtenTotalPriceUz,
                         contractEndDate: formattedContractEndDate,
-                    }), "uz"))
+                        qrcode: qrCodeFileUz
+                    }), "uz", fileNameUz))
                 : `${req.protocol}://${req.get("host")}/public` +
                     (yield (0, fileReplace_1.htmlToPDFAndSave)(yield (0, uz_tsh_1.default)(findAdmin, findUser, productsWithQty, isDelivery, {
                         contractId: contract_id,
@@ -122,7 +128,8 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
                         deliveryDate: formattedDeliveryDate,
                         writtenTotalPriceUz,
                         contractEndDate: formattedContractEndDate,
-                    }), "uz")),
+                        qrcode: qrCodeFileUz
+                    }), "uz", fileNameUz)),
             contractFileRu: !findUser.is_LLC
                 ? `${req.protocol}://${req.get("host")}/public` +
                     (yield (0, fileReplace_1.htmlToPDFAndSave)(yield (0, ru_fq_1.default)(findAdmin, findUser, productsWithQty, isDelivery, {
@@ -133,7 +140,8 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
                         deliveryDate: formattedDeliveryDate,
                         writtenTotalPriceRu,
                         contractEndDate: formattedContractEndDate,
-                    }), "ru"))
+                        qrcode: qrCodeFileRu
+                    }), "ru", fileNameRu))
                 : `${req.protocol}://${req.get("host")}/public` +
                     (yield (0, fileReplace_1.htmlToPDFAndSave)(yield (0, ru_tsh_1.default)(findAdmin, findUser, productsWithQty, isDelivery, {
                         contractId: contract_id,
@@ -143,7 +151,8 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
                         deliveryDate: formattedDeliveryDate,
                         writtenTotalPriceRu,
                         contractEndDate: formattedContractEndDate,
-                    }), "ru")),
+                        qrcode: qrCodeFileRu
+                    }), "ru", fileNameRu)),
         };
         const newContract = yield (0, contract_service_1.createContractService)({
             contract_id,
@@ -339,5 +348,27 @@ exports.getContractsByTaxAgent = (0, express_async_handler_1.default)((req, res,
     }
     catch (error) {
         return next(new ErrorHandler_1.default(`Error getting contract: ${error.message}`, 500));
+    }
+}));
+exports.uploadContractDeliveryDoc = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const contract_delivery_doc = req.files;
+        if (contract_delivery_doc.length === 0) {
+            return next(new ErrorHandler_1.default("Contract delivery document is required", 400));
+        }
+        const contract_delivery_doc_path = contract_delivery_doc.map((file) => {
+            return `${req.protocol}://${req.get("host")}/public/contracts/contract_delivery_doc/${file.filename}`;
+        });
+        const contract = yield (0, contract_service_1.updateContractService)(id, {
+            deliveryFile: contract_delivery_doc_path,
+        });
+        res.status(200).json({
+            success: true,
+            message: "Contract delivery document uploaded successfully",
+            contract,
+        });
+    }
+    catch (error) {
     }
 }));

@@ -1,5 +1,5 @@
 import { AdminInfo, Administration, User } from "@prisma/client";
-import { Product } from "puppeteer";
+
 import { formatNumber } from "../../../utils/numberToWords";
 
 export default async function UzFqContractHtml(
@@ -7,7 +7,7 @@ export default async function UzFqContractHtml(
   user: User,
   products: any,
   isDelivery: boolean,
-  data: any
+  data: any,
 ) {
 	// console.log(admin, user, products, isDelivery, data)
   return `
@@ -132,12 +132,10 @@ export default async function UzFqContractHtml(
 </head>
 
 <body>
-	<div>
-		<div style="clear:both">
-			<p>
-				&#xa0;
-			</p>
-		</div>
+<div style="float: right;">
+		<img width="50" height="50" src="${data.qrcode}" alt"qr_code" >
+	</div>
+	<div style="margin-top: 20px;">
 		<p class="NoSpacing" style="text-align:center; font-size:8pt">
 			<a id="_Hlk172403850"><strong><span style="font-family:Cambria; ">Jismoniy shaxslar bilan onlayn mahsulot
 						sotish haqida ommaviy oferta shartnomasi </span></strong></a>

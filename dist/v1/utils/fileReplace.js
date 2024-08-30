@@ -16,7 +16,7 @@ exports.htmlToPDFAndSave = htmlToPDFAndSave;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const puppeteer_1 = __importDefault(require("puppeteer"));
-function htmlToPDFAndSave(htmlContent, filePath) {
+function htmlToPDFAndSave(htmlContent, filePath, fileName) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const browser = yield puppeteer_1.default.launch();
@@ -27,7 +27,7 @@ function htmlToPDFAndSave(htmlContent, filePath) {
             const pdfBuffer = yield page.pdf({ format: 'A4' });
             yield browser.close();
             // Faylni saqlash uchun yo'l va fayl nomini aniqlash
-            const outputPath = path_1.default.join(__dirname, '../../../public', 'contracts', filePath, `document-${Date.now()}.pdf`);
+            const outputPath = path_1.default.join(__dirname, '../../../public', 'contracts', filePath, `${fileName}`);
             // Papkani mavjudligini tekshirish va kerak bo'lsa yaratish
             const outputDir = path_1.default.dirname(outputPath);
             if (!fs_1.default.existsSync(outputDir)) {

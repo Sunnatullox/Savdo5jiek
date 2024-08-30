@@ -1,5 +1,5 @@
 import { AdminInfo, Administration, User } from "@prisma/client";
-import { Product } from "puppeteer";
+
 import { formatNumber } from "../../../utils/numberToWords";
 
 export default async function RuFqContractHtml(
@@ -131,6 +131,10 @@ export default async function RuFqContractHtml(
 </head>
 
 <body>
+<div style="float: right;">
+		<img width="50" height="50" src="${data.qrcode}" alt"qr_code" >
+	</div>
+	<div style="margin-top: 20px;">
 	<p class="NoSpacing" style="text-align:center; font-size:8pt">
 		<a id="_Hlk172403850"><strong><span style="font-family:Cambria; ">Договор публичной оферты с физическими лицами
 					по реализации продукции через Интернет</span></strong></a>
@@ -968,6 +972,7 @@ export default async function RuFqContractHtml(
 		<p>
 			&#xa0;
 		</p>
+	</div>
 	</div>
 </body>
 

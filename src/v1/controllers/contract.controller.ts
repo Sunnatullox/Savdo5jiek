@@ -30,6 +30,7 @@ import {
   User,
 } from "@prisma/client";
 import { IProduct } from "../types/product.type";
+import { qrCodeGenerator } from "../utils/fileUpload";
 
 export const createContractByUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -147,6 +148,12 @@ export const createContractByUser = asyncHandler(
 
       const formattedContractEndDate = `${contractEndDateDay}.${contractEndDateMonth}.${contractEndDateYear}`;
 
+      const fileNameUz = `document-${Date.now()}-uz.pdf`;
+      const fileNameRu = `document-${Date.now()}-ru.pdf`;
+      const qrCodeFileUz = qrCodeGenerator(`${req.protocol}://${req.get("host")}/public/contracts/uz/${fileNameUz}`);
+      const qrCodeFileRu = qrCodeGenerator(`${req.protocol}://${req.get("host")}/public/contracts/ru/${fileNameRu}`);
+
+
       const contractFile = {
         contractFileUz: !findUser.is_LLC
           ? `${req.protocol}://${req.get("host")}/public` +
@@ -164,9 +171,11 @@ export const createContractByUser = asyncHandler(
                   deliveryDate: formattedDeliveryDate,
                   writtenTotalPriceUz,
                   contractEndDate: formattedContractEndDate,
+                  qrcode: qrCodeFileUz
                 }
               ),
-              "uz"
+              "uz",
+              fileNameUz
             ))
           : `${req.protocol}://${req.get("host")}/public` +
             (await htmlToPDFAndSave(
@@ -183,9 +192,11 @@ export const createContractByUser = asyncHandler(
                   deliveryDate: formattedDeliveryDate,
                   writtenTotalPriceUz,
                   contractEndDate: formattedContractEndDate,
+                  qrcode:qrCodeFileUz
                 }
               ),
-              "uz"
+              "uz",
+              fileNameUz
             )),
         contractFileRu: !findUser.is_LLC
           ? `${req.protocol}://${req.get("host")}/public` +
@@ -203,9 +214,11 @@ export const createContractByUser = asyncHandler(
                   deliveryDate: formattedDeliveryDate,
                   writtenTotalPriceRu,
                   contractEndDate: formattedContractEndDate,
+                  qrcode:qrCodeFileRu
                 }
               ),
-              "ru"
+              "ru",
+              fileNameRu
             ))
           : `${req.protocol}://${req.get("host")}/public` +
             (await htmlToPDFAndSave(
@@ -222,9 +235,11 @@ export const createContractByUser = asyncHandler(
                   deliveryDate: formattedDeliveryDate,
                   writtenTotalPriceRu,
                   contractEndDate: formattedContractEndDate,
+                  qrcode:qrCodeFileRu
                 }
               ),
-              "ru"
+              "ru",
+              fileNameRu
             )),
       };
 
@@ -485,3 +500,34 @@ export const getContractsByTaxAgent = asyncHandler(
     }
   }
 );
+
+export const uploadContractDeliveryDoc = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const  contract_delivery_doc  = req.files as Express.Multer.File[]
+
+      if(contract_delivery_doc.length === 0) {
+        return next(new ErrorHandler("Contract delivery document is required", 400));
+      }
+      const contract_delivery_doc_path = contract_delivery_doc.map((file) => {
+        return `${req.protocol}://${req.get("host")}/public/contracts/contract_delivery_doc/${
+          file.filename
+        }`;
+      });
+      
+      const contract = await updateContractService(id, {
+        deliveryFile: contract_delivery_doc_path as any,
+      });
+
+      res.status(200).json({
+        success: true,
+        message: "Contract delivery document uploaded successfully",
+        contract,
+      });
+
+    } catch (error: any) {
+      
+    }
+  }
+)

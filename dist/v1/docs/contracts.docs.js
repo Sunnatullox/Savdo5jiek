@@ -176,6 +176,40 @@
  */
 /**
  * @swagger
+ * /api/v1/contract/upload-contract-delivery-doc/{id}:
+ *  post:
+ *    tags: [Contracts]
+ *    summary: Upload contract delivery doc
+ *    description: Upload contract delivery doc
+ *    parameters:
+ *      - name: id
+ *        in: path
+ *        required: true
+ *        type: string
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        multipart/form-data:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              contract_delivery_doc:
+ *                type: array
+ *                items:
+ *                  type: string
+ *                  format: binary
+ *    responses:
+ *      200:
+ *        description: Contract delivery doc uploaded successfully
+ *      401:
+ *        description: Unauthorized
+ *      404:
+ *        description: Not found
+ *      500:
+ *        description: Internal server error
+ */
+/**
+ * @swagger
  * /api/v1/contract/delete-contract-by-admin/{id}:
  *  delete:
  *    tags: [Contracts]

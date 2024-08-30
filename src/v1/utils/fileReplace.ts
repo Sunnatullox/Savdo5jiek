@@ -1,11 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-import Docxtemplater from 'docxtemplater';
-import PizZip from 'pizzip';
 import puppeteer from 'puppeteer';
 
 
-export async function htmlToPDFAndSave(htmlContent: string, filePath: string) {
+export async function htmlToPDFAndSave(htmlContent: string, filePath: string, fileName: string) {
     try {
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
@@ -19,7 +17,7 @@ export async function htmlToPDFAndSave(htmlContent: string, filePath: string) {
         await browser.close();
     
         // Faylni saqlash uchun yo'l va fayl nomini aniqlash
-        const outputPath = path.join(__dirname, '../../../public', 'contracts', filePath, `document-${Date.now()}.pdf`);
+        const outputPath = path.join(__dirname, '../../../public', 'contracts', filePath, `${fileName}`);
     
         // Papkani mavjudligini tekshirish va kerak bo'lsa yaratish
         const outputDir = path.dirname(outputPath);
