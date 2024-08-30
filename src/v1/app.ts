@@ -41,7 +41,7 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ['./src/v1/docs/.docs.ts'],
+  apis: process.env.NODE_ENV === "prodiction"? ['./docs/*.docs.js']: ['./docs/*.docs.ts'],
 };
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
