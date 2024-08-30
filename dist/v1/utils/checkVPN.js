@@ -14,8 +14,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
 const ErrorHandler_1 = __importDefault(require("../middleware/ErrorHandler"));
+const request_ip_1 = require("request-ip");
 const checkVPN = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const ip = req.ip; // Foydalanuvchining IP manzilini olish
+    const ip = (0, request_ip_1.getClientIp)(req); // Foydalanuvchining IP manzilini olish
     try {
         // IP manzilini tekshirish uchun tashqi API dan foydalanish
         const response = yield axios_1.default.get(`https://ipinfo.io/${ip}/json`);

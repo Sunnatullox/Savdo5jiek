@@ -12,7 +12,7 @@ import morgan from "morgan";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import useragent from "express-useragent";
-import requestIp from "request-ip";
+import requestIp, { getClientIp } from "request-ip";
 import checkVPN from "./utils/checkVPN";
 import "./utils/scheduler";
 
@@ -94,7 +94,9 @@ app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/analytics", analyticsRoutes);
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Welcome to Express & TypeScript Server")
+  const ip = getClientIp(req)
+ 
+  res.send(`Welcome to Express & TypeScript Server ${ip}`)
 });
 
 app.all("*", (req: Request, res: Response, next: NextFunction) => {

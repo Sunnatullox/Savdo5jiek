@@ -1,9 +1,10 @@
 import axios from 'axios';
 import ErrorHandler from '../middleware/ErrorHandler';
 import { NextFunction, Request, Response } from 'express';
+import { getClientIp } from 'request-ip';
 
 const checkVPN = async (req: Request, res: Response, next: NextFunction) => {
-  const ip = req.ip; // Foydalanuvchining IP manzilini olish
+  const ip = getClientIp(req); // Foydalanuvchining IP manzilini olish
 
   try {
     // IP manzilini tekshirish uchun tashqi API dan foydalanish
