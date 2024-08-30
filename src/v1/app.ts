@@ -34,38 +34,6 @@ const swaggerOptions = {
       version: "1.0.0",
       description: "API Docs",
     },
-    tags:[
-      {
-        name:"Auth"
-      },
-      {
-        name:"Adminstrator"
-      },
-      {
-        name:"Analytics"
-      },
-      {
-        name:"Categories"
-      },
-      {
-        name:"Contacts"
-      },
-      {
-        name:"Contracts"
-      },
-      {
-        name:"Messages"
-      },
-      {
-        name:"Payments"
-      },
-      {
-        name:"Product"
-      },
-      {
-        name:"User"
-      }
-    ],
     servers: [
       {
         url: process.env.SERVER_URL || "http://localhost:5500",
@@ -73,7 +41,7 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: [path.join(__dirname, "./docs/*.docs.ts")],
+  apis: [path.join(__dirname, "../docs/*.docs.ts")],
 };
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);

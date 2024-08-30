@@ -61,38 +61,6 @@ const swaggerOptions = {
             version: "1.0.0",
             description: "API Docs",
         },
-        tags: [
-            {
-                name: "Auth"
-            },
-            {
-                name: "Adminstrator"
-            },
-            {
-                name: "Analytics"
-            },
-            {
-                name: "Categories"
-            },
-            {
-                name: "Contacts"
-            },
-            {
-                name: "Contracts"
-            },
-            {
-                name: "Messages"
-            },
-            {
-                name: "Payments"
-            },
-            {
-                name: "Product"
-            },
-            {
-                name: "User"
-            }
-        ],
         servers: [
             {
                 url: process.env.SERVER_URL || "http://localhost:5500",
@@ -100,7 +68,7 @@ const swaggerOptions = {
             },
         ],
     },
-    apis: [path_1.default.join(__dirname, "./docs/*.docs.ts")],
+    apis: [path_1.default.join(__dirname, "../docs/*.docs.ts")],
 };
 const swaggerDocs = (0, swagger_jsdoc_1.default)(swaggerOptions);
 app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocs));
