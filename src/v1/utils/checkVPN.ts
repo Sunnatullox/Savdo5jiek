@@ -11,14 +11,14 @@ const checkVPN = async (req: Request, res: Response, next: NextFunction) => {
     const response = await axios.get(`https://ipinfo.io/${ip}/json`);
     const { country, org } = response.data;
 
-    if (org && !(org.includes("VPN") || org.includes("Proxy"))) {
-      return res.status(403).json({ error: "VPN is not allowed" });
+    if (org && !(org.includes("VPN") && org.includes("Proxy"))) {
+      return res.status(403).json({ error: "VPN is not allowed", org });
     }
 
     const countr = ["UZ", "RU", "KZ", "TJ", "KG"];
 
     if (country && !countr.includes(country.toUpperCase())) {
-      return res.status(403).json({ error: "Country is not allowed" });
+      return res.status(403).json({ error: "Country is not allowed", country });
     }
 
     next();

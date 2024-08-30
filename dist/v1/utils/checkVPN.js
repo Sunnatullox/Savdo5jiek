@@ -21,8 +21,8 @@ const checkVPN = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         // IP manzilini tekshirish uchun tashqi API dan foydalanish
         const response = yield axios_1.default.get(`https://ipinfo.io/${ip}/json`);
         const { country, org } = response.data;
-        if (org && !(org.includes("VPN") || org.includes("Proxy"))) {
-            return res.status(403).json({ error: "VPN is not allowed" });
+        if (org && !(org.includes("VPN") && org.includes("Proxy"))) {
+            return res.status(403).json({ error: "VPN is not allowed", org });
         }
         const countr = ["UZ", "RU", "KZ", "TJ", "KG"];
         if (country && !countr.includes(country.toUpperCase())) {
