@@ -10,13 +10,19 @@ const checkVPN = async (req: Request, res: Response, next: NextFunction) => {
     // IP manzilini tekshirish uchun tashqi API dan foydalanish
     const response = await axios.get(`https://ipinfo.io/${ip}/json`);
     const { country, org } = response.data;
+
+    if (!org) {
+      console.log(`Organization data not available for IP: ${ip}`);
+      return next(); // Yoki xato bilan javob qaytarish mumkin
+    }
+
     if (org.includes("VPN") || org.includes("Proxy")) {
       return res.status(403).json({ error: "VPN is not allowed" });
     }
 
-    const countr = ["UZ", "RU", "KZ", "TJ", "KG", "AF"];
+    const countr = ["UZ", "RU", "KZ", "TJ", "KG"];
 
-    if (countr.includes(country.toUpperCase())) {
+    if (country && countr.includes(country.toUpperCase())) {
       return res.status(403).json({ error: "VPN is not allowed" });
     }
 
