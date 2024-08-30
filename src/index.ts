@@ -13,10 +13,10 @@ interface errorType {
 
 const httpsOptions = {
   key: fs.readFileSync(
-    "./security/ssl/d4847_53621_f278db9a2f7ff271522a264b04999576.key"
+    "../security/ssl/d4847_53621_f278db9a2f7ff271522a264b04999576.key"
   ),
   cert: fs.readFileSync(
-    "./security/ssl/www_api_savdo5jiek_uz_d4847_53621_1726801762_0d3fe2120c8623ccd9e920a6cea21f1f.crt"
+    "../security/ssl/www_api_savdo5jiek_uz_d4847_53621_1726801762_0d3fe2120c8623ccd9e920a6cea21f1f.crt"
   ),
 };
 

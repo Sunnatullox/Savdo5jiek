@@ -11,8 +11,8 @@ const db_1 = __importDefault(require("./v1/config/db"));
 //For env File
 dotenv_1.default.config();
 const httpsOptions = {
-    key: fs_1.default.readFileSync("./security/ssl/d4847_53621_f278db9a2f7ff271522a264b04999576.key"),
-    cert: fs_1.default.readFileSync("./security/ssl/www_api_savdo5jiek_uz_d4847_53621_1726801762_0d3fe2120c8623ccd9e920a6cea21f1f.crt"),
+    key: fs_1.default.readFileSync("../security/ssl/d4847_53621_f278db9a2f7ff271522a264b04999576.key"),
+    cert: fs_1.default.readFileSync("../security/ssl/www_api_savdo5jiek_uz_d4847_53621_1726801762_0d3fe2120c8623ccd9e920a6cea21f1f.crt"),
 };
 // Handling uncaught Exception
 process.on("uncaughtException", (err) => {
