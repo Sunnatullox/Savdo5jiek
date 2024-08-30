@@ -1,11 +1,12 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "start": "npm run build && node dist/index.js",
     "dev": "nodemon src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "prisma:generate": "prisma generate --schema=./prisma/schema.prisma"
   },
   "keywords": [],
   "author": "",
