@@ -68,7 +68,7 @@ const swaggerOptions = {
             },
         ],
     },
-    apis: process.env.NODE_ENV === "prodiction" ? ['./docs/*.docs.js'] : ['./docs/*.docs.ts'],
+    apis: ['./docs/*docs.js'],
 };
 const swaggerDocs = (0, swagger_jsdoc_1.default)(swaggerOptions);
 app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocs));
