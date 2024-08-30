@@ -21,11 +21,17 @@ const checkVPN = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         // IP manzilini tekshirish uchun tashqi API dan foydalanish
         const response = yield axios_1.default.get(`https://ipinfo.io/${ip}/json`);
         const { country, org } = response.data;
-        if (org && !(org.includes("VPN") && org.includes("Proxy"))) {
-            return res.status(403).json({ error: "VPN is not allowed", org });
+        if (!org || !country) {
+            console.log(`Organization data not available for IP: ${ip}`);
+            return next();
+        }
+        // Debug maqsadida org qiymatini konsolga chiqarish
+        console.log(`Organization for IP ${ip}: ${org}`);
+        if (org.includes("VPN") || org.includes("Proxy")) {
+            return res.status(403).json({ error: "VPN is not allowed" });
         }
         const countr = ["UZ", "RU", "KZ", "TJ", "KG"];
-        if (country && !countr.includes(country.toUpperCase())) {
+        if (!countr.includes(country.toUpperCase())) {
             return res.status(403).json({ error: "Country is not allowed" });
         }
         next();
