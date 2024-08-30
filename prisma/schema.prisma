@@ -1,0 +1,234 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(uuid()) @map("_id")
+  middle_name  String
+  valid        Boolean
+  birth_date   String
+  address      String?
+  phone_number String?
+  passport_no  String
+  sur_name     String
+  pin_jshshir  String     @unique
+  birth_place  String
+  user_id      String
+  user_type    String
+  first_name   String
+  full_name    String
+  legal_info   LegalInfo?
+  Contract     Contract[]
+  Message      Message[]
+  Payment      Payment[]
+  Device       Device[]
+  is_LLC       Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model LegalInfo {
+  id                 String   @id @default(uuid()) @map("_id")
+  name               String?
+  le_name            String?
+  inn                String?
+  phone_number       String?
+  tin                String?
+  oked               String?
+  mfo                String?
+  x_r                String?
+  bank               String?
+  address            String?
+  organizationLeader String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  User               User     @relation(fields: [userId], references: [id])
+  userId             String
+
+  @@unique([userId])
+}
+
+model Product {
+  id             String    @id @default(uuid()) @map("_id")
+  name_uz        String
+  name_ru        String
+  name_en        String
+  description_uz String
+  description_ru String
+  description_en String
+  price          Float
+  delivery_price Float
+  discount       Float     @default(0)
+  image          String[]
+  stock          Int
+  quantity       Int
+  status         Boolean?  @default(true)
+  unit_uz        String
+  unit_ru        String
+  unit_en        String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  category       Categorie @relation(fields: [categoryId], references: [id])
+  categoryId     String
+}
+
+model Categorie {
+  id           String    @id @default(uuid()) @map("_id")
+  name_uz      String
+  name_slug_uz String
+  name_ru      String
+  name_slug_ru String
+  name_en      String
+  name_slug_en String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  Product      Product[]
+}
+
+model Contract {
+  id              String    @id @default(uuid()) @map("_id") // Unikal identifikator, UUID formatida
+  contract_id     String    @unique // Shartnoma identifikatori, unikal bo'lishi kerak
+  totalPrice      Float // Shartnomaning umumiy narxi
+  products        Json // Shartnoma bo'yicha mahsulotlar ro'yxati, JSON formatida
+  status          status    @default(pending) // Shartnomaning holati, "pending" (kutish), "approved" (tasdiqlangan), "rejected" (rad etilgan)
+  paidPercent     Float     @default(0) // To'langan foiz miqdori
+  paidAmount      Float     @default(0) // To'langan summa
+  isDelivery      Boolean   @default(false) // Yetkazib berish kerakmi yoki yo'qmi
+  shippingAddress String? // Yetkazib berish manzili, ixtiyoriy
+  paymentEndDate  DateTime // To'lovning oxirgi sanasi
+  contractEndDate String // Shartnomaning tugash sanasi
+  deliveryDate    String // Yetkazib berish sanasi
+  deliveryFile    Json? // Yetkazib berish fayli, ixtiyoriy
+  contractFile    Json? // Shartnoma fayli, ixtiyoriy
+  User            User      @relation(fields: [userId], references: [id]) // Shartnoma bilan bog'liq foydalanuvchi
+  userId          String // Foydalanuvchi identifikatori
+  Payment         Payment[] // Shartnoma bo'yicha to'lovlar ro'yxati
+  isRead          Boolean   @default(false) // Shartnoma oqilganmi yoki yo'qmi
+  is_LLC          Boolean   @default(false) // Shartnoma LLC bo'lsa true, aks holda false
+
+  createdAt DateTime  @default(now()) // Yaratilgan sana
+  updatedAt DateTime  @updatedAt // Yangilangan sana
+  Message   Message[]
+
+  @@index([userId]) // Foydalanuvchi identifikatori bo'yicha indeks
+}
+
+model Payment {
+  id           String   @id @default(uuid()) @map("_id")
+  contract     Contract @relation(fields: [contractId], references: [id])
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String
+  contractId   String
+  amount       Float
+  receiptImage String
+  paidDate     DateTime
+  isRead       Boolean  @default(false)
+  status       status   @default(pending)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Administration {
+  id              String     @id @default(uuid()) @map("_id")
+  name            String
+  email           String     @unique
+  password        String
+  role            Role       @default(TAX_AGENT)
+  isTwoFactorAuth Boolean?   @default(false)
+  twoFactorSecret String?
+  AdminInfo       AdminInfo?
+  Device          Device[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model AdminInfo {
+  id                 String          @id @default(uuid()) @map("_id")
+  company_name       String
+  first_name         String
+  middle_name        String
+  sur_name           String
+  address            String
+  tel                String
+  inn                String
+  oked               String
+  x_r                String
+  bank               String
+  mfo                String
+  organizationLeader String
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  Administration     Administration? @relation(fields: [administrationId], references: [id])
+  administrationId   String?
+
+  @@unique([administrationId])
+}
+
+model OTP {
+  id        String   @id @default(uuid())
+  email     String
+  code      String
+  type      String
+  user      Json
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expiresAt DateTime
+
+  @@index([expiresAt])
+}
+
+model ContactUs {
+  id        String   @id @default(uuid()) @map("_id")
+  name      String
+  email     String
+  phone     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id          String   @id @default(uuid()) @map("_id")
+  message     String
+  isReadAdmin Boolean  @default(false)
+  isReadUser  Boolean  @default(false)
+  isAdmin     Boolean  @default(false)
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  contract    Contract @relation(fields: [contractId], references: [id])
+  contractId  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Device {
+  id               String          @id @default(uuid()) @map("_id")
+  ip               String
+  browser          String
+  os               String
+  device           String
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  User             User?           @relation(fields: [userId], references: [id])
+  userId           String?
+  Administration   Administration? @relation(fields: [administrationId], references: [id])
+  administrationId String?
+}
+
+enum Role {
+  ADMIN
+  TAX_AGENT
+}
+
+enum status {
+  pending
+  approved
+  rejected
+}
