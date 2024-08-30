@@ -68,7 +68,7 @@ const swaggerOptions = {
             },
         ],
     },
-    apis: ["./src/v1/docs/*.docs.ts"],
+    apis: [path_1.default.join(__dirname, "./docs/*.docs.ts")],
 };
 const swaggerDocs = (0, swagger_jsdoc_1.default)(swaggerOptions);
 app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocs));

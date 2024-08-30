@@ -889,7 +889,7 @@ function RuFqContractHtml(admin, user, products, isDelivery, data) {
 			<p><strong style="font-family:Cambria;">Р/с:</strong>${admin.AdminInfo.x_r || "_?_"}</p>
 			<p><strong style="font-family:Cambria;">Банк:</strong> ${admin.AdminInfo.bank || "_?_"}</p>
 			<p><strong style="font-family:Cambria;">МФО:</strong> ${admin.AdminInfo.mfo || "_?_"}</p>
-			<p class="noSpacing"><strong style=	"font-family:Cambria;">Руководитель:</strong>_________ ${admin.AdminInfo.organizationLeader || "_?_"}</p>
+			<p class="noSpacing"><strong style=	"font-family:Cambria;">Руководитель:</strong> ${admin.AdminInfo.organizationLeader || "_?_"}</p>
 		</div>
 		<div class="column">
 			<h2>ЗАКАЗЧИК</h2>
@@ -900,7 +900,7 @@ function RuFqContractHtml(admin, user, products, isDelivery, data) {
 			<p><strong style="font-family:Cambria;">ИНН:</strong> ${user.pin_jshshir || "_?_"}</p>
 
 			<p><strong style="font-family:Cambria;">Адрес:</strong> ${user.address || "_?_"}</p>
-			<p class="noSpacing_indent"><strong style="font-family:Cambria;">Гражданин:</strong>_________ ${user.first_name
+			<p class="noSpacing_indent"><strong style="font-family:Cambria;">Гражданин:</strong> ${user.first_name
             .charAt(0)
             .toUpperCase()}.${user.middle_name.charAt(0).toUpperCase()}.${user.sur_name.charAt(0).toUpperCase() +
             user.sur_name.slice(1).toLowerCase()}</p>

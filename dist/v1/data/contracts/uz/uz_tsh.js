@@ -974,7 +974,7 @@ function UzTshContractHtml(admin, user, products, isDelivery, data) {
 				<p><strong style="font-family:Cambria;">X/r:</strong> ${admin.AdminInfo.x_r || "_?_"}</p>
 				<p><strong style="font-family:Cambria;">Bank:</strong> ${admin.AdminInfo.bank || "_?_"}</p>
 				<p><strong style="font-family:Cambria;">MFO:</strong> ${admin.AdminInfo.mfo || "_?_"}</p>
-				<p class="noSpacing"><strong style="font-family:Cambria;">Rahbar:</strong>__________ ${admin.AdminInfo.organizationLeader || "_?_"}</p>
+				<p class="noSpacing"><strong style="font-family:Cambria;">Rahbar:</strong> ${admin.AdminInfo.organizationLeader || "_?_"}</p>
 			</div>
 			<div class="column">
 				<h2>BUYURTMACHI</h2>
@@ -986,7 +986,7 @@ function UzTshContractHtml(admin, user, products, isDelivery, data) {
 				<p><strong style="font-family:Cambria;">X/r:</strong> ${user.legal_info.x_r || "_?_"}</p>
 				<p><strong style="font-family:Cambria;">Bank:</strong> ${user.legal_info.bank || "_?_"}</p>
 				<p><strong style="font-family:Cambria;">MFO:</strong> ${user.legal_info.mfo || "_?_"}</p>
-				<p class="noSpacing"><strong style="font-family:Cambria;">Rahbar:</strong>_________ ${user.first_name
+				<p class="noSpacing"><strong style="font-family:Cambria;">Rahbar:</strong> ${user.first_name
             .charAt(0)
             .toUpperCase()}.${user.middle_name.charAt(0).toUpperCase()}.${user.sur_name.charAt(0).toUpperCase() +
             user.sur_name.slice(1).toLowerCase()}</p>

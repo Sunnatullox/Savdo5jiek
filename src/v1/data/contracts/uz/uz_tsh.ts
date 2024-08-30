@@ -1021,7 +1021,7 @@ export default async function UzTshContractHtml(
 				<p><strong style="font-family:Cambria;">MFO:</strong> ${
           admin.AdminInfo.mfo || "_?_"
         }</p>
-				<p class="noSpacing"><strong style="font-family:Cambria;">Rahbar:</strong>__________ ${
+				<p class="noSpacing"><strong style="font-family:Cambria;">Rahbar:</strong> ${
           admin.AdminInfo.organizationLeader || "_?_"
         }</p>
 			</div>
@@ -1051,7 +1051,7 @@ export default async function UzTshContractHtml(
 				<p><strong style="font-family:Cambria;">MFO:</strong> ${
           user.legal_info.mfo || "_?_"
         }</p>
-				<p class="noSpacing"><strong style="font-family:Cambria;">Rahbar:</strong>_________ ${user.first_name
+				<p class="noSpacing"><strong style="font-family:Cambria;">Rahbar:</strong> ${user.first_name
           .charAt(0)
           .toUpperCase()}.${user.middle_name.charAt(0).toUpperCase()}.${
     user.sur_name.charAt(0).toUpperCase() +

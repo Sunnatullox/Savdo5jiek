@@ -927,7 +927,7 @@ export default async function RuTshContractHtml(
 			<p><strong style="font-family:Cambria;">МФО:</strong> ${
         admin.AdminInfo.mfo || "_?_"
       }</p>
-			<p class="noSpacing"><strong style=	"font-family:Cambria;">Руководитель:</strong>_________ ${
+			<p class="noSpacing"><strong style=	"font-family:Cambria;">Руководитель:</strong> ${
         admin.AdminInfo.organizationLeader || "_?_"
       }</p>
 		</div>
@@ -957,7 +957,7 @@ export default async function RuTshContractHtml(
 			<p><strong style="font-family:Cambria;">МФО:</strong> ${
         user.legal_info.mfo || "_?_"
       }</p>
-			<p class="noSpacing"><strong style="font-family:Cambria;">Руководитель:</strong>_________ ${user.first_name
+			<p class="noSpacing"><strong style="font-family:Cambria;">Руководитель:</strong> ${user.first_name
         .charAt(0)
         .toUpperCase()}.${user.middle_name.charAt(0).toUpperCase()}.${
     user.sur_name.charAt(0).toUpperCase() + user.sur_name.slice(1).toLowerCase()
