@@ -78,26 +78,16 @@ exports.login = (0, express_async_handler_1.default)((req, res, next) => __await
         }
         const findDevice = yield db_1.default.device.findFirst({
             where: {
-                ip: ip,
-                browser: ua.browser,
-                os: ua.os,
-                device: ua.device,
+                ip: ip || "",
+                browser: ua.browser || "",
+                os: ua.os || "",
+                device: ua.platform || "",
                 userId: findUser === null || findUser === void 0 ? void 0 : findUser.id,
             },
         });
-        if (!findDevice) {
-            yield db_1.default.device.create({
-                data: {
-                    ip: ip,
-                    browser: ua.browser,
-                    os: ua.os,
-                    device: ua.device,
-                    userId: findUser === null || findUser === void 0 ? void 0 : findUser.id,
-                },
-            });
-        }
+        let user;
         if (!findUser) {
-            const user = yield db_1.default.user.create({
+            user = yield db_1.default.user.create({
                 data: {
                     pin_jshshir: data.pin,
                     user_id: data.user_id,
@@ -118,7 +108,6 @@ exports.login = (0, express_async_handler_1.default)((req, res, next) => __await
                     Device: true,
                 },
             });
-            yield (0, createToken_1.sendToken)(user, 200, res);
         }
         else if (findUser) {
             if (findUser.legal_info && basicLegalInfo) {
@@ -135,7 +124,7 @@ exports.login = (0, express_async_handler_1.default)((req, res, next) => __await
                         }
                         : findUser.legal_info,
                 });
-                const updateUser = yield db_1.default.user.findUnique({
+                user = yield db_1.default.user.findUnique({
                     where: {
                         id: findUser.id,
                     },
@@ -144,15 +133,9 @@ exports.login = (0, express_async_handler_1.default)((req, res, next) => __await
                         Device: true,
                     },
                 });
-                if (updateUser) {
-                    yield (0, createToken_1.sendToken)(updateUser, 200, res);
-                }
-                else {
-                    next(new ErrorHandler_1.default("User not found after update", 404));
-                }
             }
             else if (findUser.legal_info && !basicLegalInfo) {
-                const user = yield db_1.default.user.update({
+                user = yield db_1.default.user.update({
                     where: {
                         pin_jshshir: data.pin,
                     },
@@ -164,13 +147,24 @@ exports.login = (0, express_async_handler_1.default)((req, res, next) => __await
                         is_LLC: false,
                     },
                 });
-                if (user) {
-                    yield (0, createToken_1.sendToken)(user, 200, res);
-                }
-                else {
-                    next(new ErrorHandler_1.default("User not found after update", 404));
-                }
             }
+        }
+        if (user) {
+            if (!findDevice) {
+                yield db_1.default.device.create({
+                    data: {
+                        ip: ip || "",
+                        browser: ua.browser || "",
+                        os: ua.os || "",
+                        device: ua.platform || "",
+                        userId: user === null || user === void 0 ? void 0 : user.id,
+                    },
+                });
+            }
+            yield (0, createToken_1.sendToken)(user, 200, res);
+        }
+        else {
+            next(new ErrorHandler_1.default("User not found after update", 404));
         }
     }
     catch (error) {

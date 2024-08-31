@@ -4,8 +4,7 @@ import ErrorHandler from "../middleware/ErrorHandler";
 import axios from "axios";
 import prisma from "../config/db";
 import { sendToken } from "../utils/createToken";
-import { LegalInfo, User } from "@prisma/client";
-import { IUser } from "../types/user.type";
+import { IDevice, ILegalInfo, IUser } from "../types/user.type";
 import requestIp from "request-ip";
 import useragent from "express-useragent";
 import {
@@ -22,7 +21,6 @@ export const login = asyncHandler(
     const scope = process.env.ONE_ID_SCOPE;
     const ip = requestIp.getClientIp(req); // Foydalanuvchining IP manzilini olish
     const ua = useragent.parse(req.headers["user-agent"] as string); // Foydalanuvchining qurilma ma'lumotlarini olish
-
     try {
       const getAccessToken = await axios.post(
         "https://sso.egov.uz/sso/oauth/Authorization.do",
@@ -87,28 +85,17 @@ export const login = asyncHandler(
 
       const findDevice = await prisma.device.findFirst({
         where: {
-          ip: ip,
-          browser: ua.browser,
-          os: ua.os,
-          device: ua.device,
+          ip: ip || "",
+          browser: ua.browser || "",
+          os: ua.os || "",
+          device: ua.platform || "",
           userId: findUser?.id as string,
         },
       });
-
-      if (!findDevice) {
-        await prisma.device.create({
-          data: {
-            ip: ip,
-            browser: ua.browser,
-            os: ua.os,
-            device: ua.device,
-            userId: findUser?.id as string,
-          },
-        });
-      }
+       let user : IUser | any;
 
       if (!findUser) {
-        const user = await prisma.user.create({
+      user = await prisma.user.create({
           data: {
             pin_jshshir: data.pin,
             user_id: data.user_id,
@@ -129,8 +116,6 @@ export const login = asyncHandler(
             Device: true,
           },
         });
-
-        await sendToken(user as IUser, 200, res);
       } else if (findUser) {
         if (findUser.legal_info && basicLegalInfo) {
           await prisma.legalInfo.update({
@@ -146,7 +131,7 @@ export const login = asyncHandler(
                 }
               : findUser.legal_info,
           });
-          const updateUser = await prisma.user.findUnique({
+          user = await prisma.user.findUnique({
             where: {
               id: findUser.id,
             },
@@ -155,14 +140,8 @@ export const login = asyncHandler(
               Device: true,
             },
           });
-
-          if (updateUser) {
-            await sendToken(updateUser as IUser, 200, res);
-          } else {
-            next(new ErrorHandler("User not found after update", 404));
-          }
         } else if (findUser.legal_info && !basicLegalInfo) {
-          const user = await prisma.user.update({
+          user = await prisma.user.update({
             where: {
               pin_jshshir: data.pin,
             },
@@ -174,13 +153,24 @@ export const login = asyncHandler(
               is_LLC: false,
             },
           });
-
-          if (user) {
-            await sendToken(user as IUser, 200, res);
-          } else {
-            next(new ErrorHandler("User not found after update", 404));
-          }
         }
+      }
+
+      if (user) {
+        if (!findDevice) {
+          await prisma.device.create({
+            data: {
+              ip: ip || "",
+              browser: ua.browser || "",
+              os: ua.os || "",
+              device: ua.platform || "",
+              userId: user?.id as string,
+            },
+          });
+        }
+        await sendToken(user as IUser, 200, res);
+      } else {
+        next(new ErrorHandler("User not found after update", 404));
       }
     } catch (error: any) {
       console.log("Login error", error);
@@ -242,7 +232,7 @@ export const updateUserData = asyncHandler(
         mfo = "",
       } = req.body;
       if (req.user) {
-        const userWithLegal = req.user as User & { legal_info: LegalInfo };
+        const userWithLegal = req.user as IUser & { legal_info: ILegalInfo };
         if (userWithLegal.legal_info) {
           if (
             address === "" ||

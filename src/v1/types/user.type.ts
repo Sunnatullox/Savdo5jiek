@@ -22,10 +22,10 @@ export interface IUser {
   is_LLC: boolean;
   createdAt: Date;
   updatedAt: Date;
-  Contract: IContract[];
-  Message: IMessage[];
-  Payment: IPayment[];
-  Device: IDevice[];
+  Contract?: IContract[];
+  Message?: IMessage[];
+  Payment?: IPayment[];
+  Device?: IDevice[];
 }
 
 export interface ILegalInfo {
@@ -41,10 +41,10 @@ export interface ILegalInfo {
   bank?: string;
   address?: string;
   organizationLeader?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  User: IUser;
-  userId: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  User?: IUser;
+  userId?: string;
 }
 
 export interface IOTP {
