@@ -54,6 +54,7 @@ exports.login = (0, express_async_handler_1.default)((req, res, next) => __await
         if (data.error) {
             return next(new ErrorHandler_1.default(data.error.message, 400));
         }
+        console.log(data);
         const findUser = yield db_1.default.user.findUnique({
             where: {
                 pin_jshshir: data.pin,

@@ -55,7 +55,7 @@ export const login = asyncHandler(
       if (data.error) {
         return next(new ErrorHandler(data.error.message, 400));
       }
-
+      console.log(data)
       const findUser = await prisma.user.findUnique({
         where: {
           pin_jshshir: data.pin,
