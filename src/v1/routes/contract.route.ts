@@ -8,8 +8,6 @@ import {
 import { Role } from "../types/adminstrator.type";
 import { docUpload } from "../utils/fileUpload";
 
-
-
 const router = Router();
 
 router.post(
@@ -19,9 +17,9 @@ router.post(
 );
 
 router.get(
-  "/get-contracts-by-user",
+  "/get-contracts-list-by-user",
   isAuthenticatedUser,
-  contractController.getContractsByIdUser
+  contractController.getContractsListByUser
 );
 
 router.get(
@@ -48,7 +46,7 @@ router.put(
   "/update-contract-status-by-admin/:id",
   isAuthenticatedAdminstrator,
   isAdministrator(Role.ADMIN),
-  contractController.updateContratcByAdminStatus
+  contractController.updateContractByAdminStatus
 );
 
 router.post(

@@ -1,10 +1,10 @@
-import { AdminInfo, Administration, User } from "@prisma/client";
-
+import { AdminInfo, Administrator } from "../../../types/adminstrator.type";
+import { ILegalInfo, IUser } from "../../../types/user.type";
 import { formatNumber } from "../../../utils/numberToWords";
 
 export default async function RuFqContractHtml(
-  admin: Administration & { AdminInfo: AdminInfo },
-  user: User,
+  admin: Administrator & { AdminInfo: AdminInfo },
+  user: IUser & { legal_info: ILegalInfo },
   products: any,
   isDelivery: boolean,
   data: any
@@ -436,9 +436,9 @@ export default async function RuFqContractHtml(
 			  ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
 						<span style="font-family: Cambria;">${
-					formatNumber(
-						product.discount !== 0
-							? product.discount
+              formatNumber(
+                product.discount !== 0
+                  ? product.discount
 							: product.price
 						) || "_?_"
             }</span>

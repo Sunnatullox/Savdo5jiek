@@ -7,7 +7,7 @@ import {
   get12MonthProductSalesAnalyticsService,
   getLowStockProductsService,
   getUserAnalyticsService,
-} from "../services/analitc.service";
+} from "../services/analytic.service";
 
 export const get12MonthContractAnalytics = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -18,7 +18,7 @@ export const get12MonthContractAnalytics = asyncHandler(
         analytics,
       });
     } catch (error: any) {
-      next(new ErrorHandler(`Please try again later ${error.message}`, 500));
+      next(new ErrorHandler(`Please try again later: ${error.message}`, 500));
     }
   }
 );
@@ -32,7 +32,7 @@ export const get12MonthProductSalesAnalytics = asyncHandler(
         analytics,
       });
     } catch (error: any) {
-      next(new ErrorHandler(`Please try again later ${error.message}`, 500));
+      next(new ErrorHandler(`Please try again later: ${error.message}`, 500));
     }
   }
 );
@@ -46,7 +46,7 @@ export const getUserAnalytics = asyncHandler(
         analytics,
       });
     } catch (error: any) {
-      next(new ErrorHandler(`Please try again later ${error.message}`, 500));
+      next(new ErrorHandler(`Please try again later: ${error.message}`, 500));
     }
   }
 );
@@ -60,7 +60,7 @@ export const getLowStockProducts = asyncHandler(
         products,
       });
     } catch (error: any) {
-      next(new ErrorHandler(`Please try again later ${error.message}`, 500));
+      next(new ErrorHandler(`Please try again later: ${error.message}`, 500));
     }
   }
 );

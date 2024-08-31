@@ -38,37 +38,19 @@ export const createPaymentUser = asyncHandler(
         return next(new ErrorHandler("All fields are required", 400));
       }
 
-      console.log(file);
-
-      const imagePath = `${req.protocol}://${req.get("host")}/public/payments/${
-        file.filename
-      }`;
+      const imagePath = `${req.protocol}://${req.get("host")}/public/payments/${file.filename}`;
 
       const findContract = await getContractByIdService(id, user.id);
-
       if (!findContract) {
-        return next(
-          new ErrorHandler(
-            "Sorry, there is an error in contractId, or the contract doesn't belong to you",
-            404
-          )
-        );
+        return next(new ErrorHandler("Invalid contract ID or the contract doesn't belong to you", 404));
       }
 
       const payment = await createPayment({
         amount,
         paidDate,
         receiptImage: imagePath,
-        user: {
-          connect: {
-            id: user.id,
-          },
-        },
-        contract: {
-          connect: {
-            id: id,
-          },
-        },
+        user: { connect: { id: user.id } },
+        contract: { connect: { id } },
       });
 
       res.status(201).json({
@@ -108,7 +90,7 @@ export const getPaymentById = asyncHandler(
         payment,
       });
     } catch (error: any) {
-      next(new ErrorHandler(`Get Payments Error: ${error.message}`, 500));
+      next(new ErrorHandler(`Get Payment Error: ${error.message}`, 500));
     }
   }
 );
@@ -126,10 +108,8 @@ export const getPaymentsByContractId = asyncHandler(
       if (!id) {
         return next(new ErrorHandler("Contract id is required", 400));
       }
-      const payments = (await getPaymentsByUserIdService(
-        id,
-        user.id
-      )) as Payment[];
+
+      const payments = await getPaymentsByUserIdService(id, user.id) as Payment[];
 
       res.status(200).json({
         success: true,
@@ -198,23 +178,23 @@ export const updatePaymentByUser = asyncHandler(
       if (!amount || !paidDate) {
         return next(new ErrorHandler("All fields are required", 400));
       }
-      const findPayment = await getPaymentByIdService(id, user.id);
 
-      if(!findPayment){
+      const findPayment = await getPaymentByIdService(id, user.id);
+      if (!findPayment) {
         return next(new ErrorHandler("Payment not found", 404));
       }
 
-      if(findPayment.status === "approved"){
+      if (findPayment.status === "approved") {
         return next(new ErrorHandler("Payment cannot be updated, it is approved", 400));
       }
 
-      if(file){
-        const imagePath = `${req.protocol}://${req.get("host")}/public/payments/${
-          file.filename
-        }`;
-        await updatePayment(id, { receiptImage: imagePath }, user.id);
+      let updateData: any = { amount, paidDate };
 
-        if(findPayment.receiptImage){
+      if (file) {
+        const imagePath = `${req.protocol}://${req.get("host")}/public/payments/${file.filename}`;
+        updateData.receiptImage = imagePath;
+
+        if (findPayment.receiptImage) {
           const filename = findPayment.receiptImage.split('/public/payments/')[1];
           const filePath = path.join(__dirname, '../../../public/payments', filename);
           fs.unlink(filePath, (err) => {
@@ -225,12 +205,10 @@ export const updatePaymentByUser = asyncHandler(
         }
       }
 
-      const payment = await updatePayment(id, { amount, paidDate }, user.id);
+      const payment = await updatePayment(id, updateData, user.id);
 
       if (!payment) {
-        return next(
-          new ErrorHandler("Sorry Payment not updated, please try again", 404)
-        );
+        return next(new ErrorHandler("Sorry, payment not updated, please try again", 404));
       }
 
       res.status(200).json({
@@ -256,9 +234,7 @@ export const updatePaymentByAdmin = asyncHandler(
 
       const payment = await updatePayment(id, { amount, paidDate });
       if (!payment) {
-        return next(
-          new ErrorHandler("Sorry Payment not updated, please try again", 404)
-        );
+        return next(new ErrorHandler("Sorry, payment not updated, please try again", 404));
       }
 
       res.status(200).json({
@@ -283,20 +259,21 @@ export const updatePaymentStatus = asyncHandler(
       }
 
       const payment = await getPaymentByIdService(id);
-
       if (!payment) {
         return next(new ErrorHandler("Payment not found", 404));
       }
 
       const contract = await getContractByIdService(payment.contractId);
-
       if (!contract) {
         return next(new ErrorHandler("Contract not found", 404));
       }
 
+      let updatedPaidAmount = contract.paidAmount;
+      let paidPercent = (updatedPaidAmount / contract.totalPrice) * 100;
+
       if (status === "approved") {
-        const updatedPaidAmount = contract.paidAmount + payment.amount;
-        const paidPercent = (updatedPaidAmount / contract.totalPrice) * 100;
+        updatedPaidAmount += payment.amount;
+        paidPercent = (updatedPaidAmount / contract.totalPrice) * 100;
 
         await updateContractService(payment.contractId, {
           paidAmount: updatedPaidAmount,
@@ -311,16 +288,17 @@ export const updatePaymentStatus = asyncHandler(
               : contract.products;
           for (const product of productsInContract) {
             const existingProduct = await getProductByIdService(product.id);
-            if (existingProduct && existingProduct.quantity >= product.qty) {
+            if (existingProduct && existingProduct.stock >= product.qty) {
               await updateProductService(product.id, {
-                quantity: existingProduct.quantity - product.qty,
+                stock: existingProduct.stock - product.qty,
               });
             }
           }
         }
       } else if (status === "rejected") {
-        const updatedPaidAmount = contract.paidAmount - payment.amount;
-        const paidPercent = (updatedPaidAmount / contract.totalPrice) * 100;
+        updatedPaidAmount -= payment.amount;
+        paidPercent = (updatedPaidAmount / contract.totalPrice) * 100;
+
         await updateContractService(payment.contractId, {
           paidAmount: updatedPaidAmount,
           paidPercent,
@@ -333,19 +311,18 @@ export const updatePaymentStatus = asyncHandler(
             : contract.products;
         for (const product of productsInContract) {
           const existingProduct = await getProductByIdService(product.id);
-          if (existingProduct && existingProduct.quantity >= product.qty) {
+          if (existingProduct) {
             await updateProductService(product.id, {
-              quantity: existingProduct.quantity + product.qty,
+              stock: existingProduct.stock + product.qty,
             });
           }
         }
       }
 
       const updatedPayment = await updatePayment(id, { status });
-
       if (!updatedPayment) {
         return next(
-          new ErrorHandler("Sorry Payment not updated, please try again", 404)
+          new ErrorHandler("Sorry, payment not updated, please try again", 404)
         );
       }
 
@@ -371,59 +348,19 @@ export const deletePaymentByUser = asyncHandler(
       }
 
       const payment = await getPaymentByIdService(id, user.id);
-
       if (!payment) {
         return next(new ErrorHandler("Payment not found", 404));
       }
 
-      if(payment.status === "approved"){
+      if (payment.status === "approved") {
         return next(new ErrorHandler("Payment cannot be deleted, it is approved", 400));
       }
 
       if (payment.receiptImage) {
         const filename = payment.receiptImage.split('/public/payments/')[1];
         const filePath = path.join(__dirname, '../../../public/payments', filename);
-        fs.unlink(filePath, (err) => {
-          if (err) {
-            console.error("Failed to delete image file:", err);
-          }
-        });
-      }
-
-      await deletePayment(id);
-
-      res.status(200).json({
-        success: true,
-        message: "Payment deleted successfully",
-      });
-    } catch (error: any) {
-      
-    }
-  }
-)
-
-export const deletePaymentByAdmin = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
-
-      const payment = await getPaymentByIdService(id);
-
-      if (!payment) {
-        return next(new ErrorHandler("Payment not found", 404));
-      }
-
-      if(payment.status === "approved"){
-        return next(new ErrorHandler("Payment cannot be deleted, it is approved", 400));
-      }
-
-      if(payment.receiptImage) {
-        const filename = payment.receiptImage.split('/public/payments/')[1];
-        const filePath = path.join(__dirname, '../../../public/payments', filename);
-        fs.unlink(filePath, (err) => {
-          if (err) {
-            console.error("Failed to delete image file:", err);
-          }
+        fs.promises.unlink(filePath).catch(err => {
+          console.error("Failed to delete image file:", err);
         });
       }
 
@@ -437,7 +374,45 @@ export const deletePaymentByAdmin = asyncHandler(
       next(new ErrorHandler(`Delete Payment Error: ${error.message}`, 500));
     }
   }
-)
+);
+
+export const deletePaymentByAdmin = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        return next(new ErrorHandler("Payment id is required", 400));
+      }
+
+      const payment = await getPaymentByIdService(id);
+      if (!payment) {
+        return next(new ErrorHandler("Payment not found", 404));
+      }
+
+      if (payment.status === "approved") {
+        return next(new ErrorHandler("Payment cannot be deleted, it is approved", 400));
+      }
+
+      if (payment.receiptImage) {
+        const filename = payment.receiptImage.split('/public/payments/')[1];
+        const filePath = path.join(__dirname, '../../../public/payments', filename);
+        await fs.promises.unlink(filePath).catch(err => {
+          console.error("Failed to delete image file:", err);
+        });
+      }
+
+      await deletePayment(id);
+
+      res.status(200).json({
+        success: true,
+        message: "Payment deleted successfully",
+      });
+    } catch (error: any) {
+      next(new ErrorHandler(`Delete Payment Error: ${error.message}`, 500));
+    }
+  }
+);
 
 export const getNotificationPaymentByAdmin = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {

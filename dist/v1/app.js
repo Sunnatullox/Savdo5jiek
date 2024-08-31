@@ -52,6 +52,8 @@ const user_route_1 = __importDefault(require("./routes/user.route"));
 const contract_route_1 = __importDefault(require("./routes/contract.route"));
 const payment_route_1 = __importDefault(require("./routes/payment.route"));
 const analytic_route_1 = __importDefault(require("./routes/analytic.route"));
+const messages_route_1 = __importDefault(require("./routes/messages.route"));
+const contact_route_1 = __importDefault(require("./routes/contact.route"));
 // swagger api docs config
 const swaggerOptions = {
     swaggerDefinition: {
@@ -102,6 +104,7 @@ app.use((0, cookie_parser_1.default)(process.env.COOKIE_SECRET));
 app.use(express_1.default.json({ limit: "10mb" }));
 app.use(express_1.default.urlencoded({ extended: true, limit: "10mb" }));
 app.use((0, morgan_1.default)(process.env.NODE_ENV === "production" ? "combined" : "dev"));
+// static files
 app.use("/public", express_1.default.static(path_1.default.join(__dirname, "../../public")));
 // routes
 app.use("/api/v1/adminstrator", adminstrator_route_1.default);
@@ -111,10 +114,13 @@ app.use("/api/v1/user", user_route_1.default);
 app.use("/api/v1/contract", contract_route_1.default);
 app.use("/api/v1/payment", payment_route_1.default);
 app.use("/api/v1/analytics", analytic_route_1.default);
+app.use("/api/v1/messages", messages_route_1.default);
+app.use("/api/v1/contacts", contact_route_1.default);
 app.get("/", (req, res) => {
     const ip = (0, request_ip_1.getClientIp)(req);
     res.send(`Welcome to Express & TypeScript Server ${ip}`);
 });
+// 404 error handling
 app.all("*", (req, res, next) => {
     const error = new ErrorHandler_1.default(`Route ${req.originalUrl} not found!`, 404);
     res.status(error.statusCode).json({

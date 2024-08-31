@@ -12,7 +12,7 @@ router.post(
   "/create-categorie",
   isAuthenticatedAdminstrator,
   isAdministrator(Role.ADMIN),
-  categoryController.createCategorieAdmin
+  categoryController.createCategoryAdmin
 );
 
 router.get("/get-categories", categoryController.getCategories);

@@ -60,7 +60,7 @@ function getContractsByIdService(id, is_LLC) {
 }
 function getContractByIdService(id, userId) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield db_1.default.contract.findUnique({
+        const contract = yield db_1.default.contract.findUnique({
             where: userId ? { id, userId } : { id },
             include: {
                 User: {
@@ -71,6 +71,13 @@ function getContractByIdService(id, userId) {
                 Payment: true,
             },
         });
+        if (!userId) {
+            yield db_1.default.contract.update({
+                where: { id },
+                data: { isRead: true }
+            });
+        }
+        return contract;
     });
 }
 function updateContractService(id, data) {

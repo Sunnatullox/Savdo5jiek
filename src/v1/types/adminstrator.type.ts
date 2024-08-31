@@ -1,3 +1,5 @@
+import { IDevice } from "./user.type";
+
 export enum Role {
     ADMIN = "ADMIN",
     TAX_AGENT = "TAX_AGENT"
@@ -13,6 +15,8 @@ export interface Administrator {
     updatedAt: Date;
     twoFactorSecret?: string;
     AdminInfo?: AdminInfo;
+    Device?: IDevice[];
+    isTwoFactorAuth?: boolean;
 }
 
 export interface AdminInfo {

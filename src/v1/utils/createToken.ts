@@ -5,7 +5,7 @@ import { NextFunction, Request, Response } from "express";
 import {
   signAccessToken,
   signRefreshToken,
-} from "../services/administration.service";
+} from "../services/adminstration.service";
 import ErrorHandler from "../middleware/ErrorHandler";
 import prisma from "../config/db";
 import { IUser } from "../types/user.type";

@@ -50,10 +50,6 @@
  *                type: string
  *                description: The category of the product
  *                example: 1
- *              stock:
- *                type: number
- *                description: The stock of the product
- *                example: 10
  *              unit_uz:
  *                type: string
  *                description: The unit of the product in uzbek
@@ -70,9 +66,9 @@
  *                type: number
  *                description: The delivery price of the product
  *                example: 100000
- *              quantity:
+ *              stock:
  *                type: number
- *                description: The quantity of the product
+ *                description: The stock of the product
  *                example: 500
  *              images:
  *                type: array
@@ -208,10 +204,6 @@
  *                type: string
  *                description: The category of the product
  *                example: 1
- *              stock:
- *                type: number
- *                description: The stock of the product
- *                example: 10
  *              unit_uz:
  *                type: string
  *                description: The unit of the product in uzbek
@@ -228,9 +220,9 @@
  *                type: number
  *                description: The delivery price of the product
  *                example: 100000
- *              quantity:
+ *              stock:
  *                type: number
- *                description: The quantity of the product
+ *                description: The stock of the product
  *                example: 500
  *              images:
  *                type: array

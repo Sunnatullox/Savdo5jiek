@@ -69,11 +69,11 @@ const get12MonthProductSalesAnalyticsService = () => __awaiter(void 0, void 0, v
             : contract.products;
         products.forEach((product) => {
             const productId = product.id;
-            const quantity = product.quantity;
+            const stock = product.stock;
             if (!acc[productId]) {
                 acc[productId] = Array(12).fill(0);
             }
-            acc[productId][month] += quantity;
+            acc[productId][month] += stock;
         });
         return acc;
     }, {});
@@ -132,18 +132,18 @@ exports.getUserAnalyticsService = getUserAnalyticsService;
 const getLowStockProductsService = () => __awaiter(void 0, void 0, void 0, function* () {
     const products = yield db_1.default.product.findMany({
         where: {
-            quantity: {
+            stock: {
                 lt: 100, // Less than 100 units in stock
             },
         },
         orderBy: {
-            quantity: 'asc', // Order by ascending quantity
+            stock: 'asc', // Order by ascending stock
         },
     });
     const highlightedProducts = products.map((product) => {
         let color = 'yellow'; // Default to yellow
-        if (product.quantity < 50) {
-            color = 'red'; // Set to red if quantity is less than 50
+        if (product.stock < 50) {
+            color = 'red'; // Set to red if stock is less than 50
         }
         return Object.assign(Object.assign({}, product), { color });
     });

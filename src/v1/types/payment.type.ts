@@ -11,7 +11,7 @@ export interface IPayment {
     receiptImage: string;
     paidDate: Date;
     isRead: boolean;
-    status: IStatus;
+    status: string;
     createdAt: Date;
     updatedAt: Date;
 }

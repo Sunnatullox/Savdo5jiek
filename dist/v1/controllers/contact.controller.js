@@ -13,9 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteContactUsAdmin = exports.getSingleContactUsAdmin = exports.getContactUsListAdmin = exports.getContactUsIsNotReadAdmin = exports.createContact = void 0;
+const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const ErrorHandler_1 = __importDefault(require("../middleware/ErrorHandler"));
 const contact_servoce_1 = require("../services/contact.servoce");
-const createContact = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.createContact = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, email, phone, message } = req.body;
         if (!name || !email || !phone || !message) {
@@ -29,43 +30,38 @@ const createContact = (req, res, next) => __awaiter(void 0, void 0, void 0, func
         });
     }
     catch (error) {
-        next(new ErrorHandler_1.default(`Something went wrong ${error}`, 500));
+        next(new ErrorHandler_1.default(`Something went wrong: ${error.message}`, 500));
     }
-});
-exports.createContact = createContact;
-const getContactUsIsNotReadAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+}));
+exports.getContactUsIsNotReadAdmin = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const contactUs = yield (0, contact_servoce_1.getContactUsList)({
-            where: {
-                isRead: false
-            }
+            where: { isRead: false },
         });
         res.status(200).json({
             success: true,
             message: "Contact Us list fetched successfully",
-            contactUs
+            contactUs,
         });
     }
     catch (error) {
-        next(new ErrorHandler_1.default(`Something went wrong ${error}`, 500));
+        next(new ErrorHandler_1.default(`Something went wrong: ${error.message}`, 500));
     }
-});
-exports.getContactUsIsNotReadAdmin = getContactUsIsNotReadAdmin;
-const getContactUsListAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+}));
+exports.getContactUsListAdmin = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const contactUs = yield (0, contact_servoce_1.getContactUsList)({ where: {} });
+        const contactUs = yield (0, contact_servoce_1.getContactUsList)({});
         res.status(200).json({
             success: true,
             message: "Contact Us list fetched successfully",
-            contactUs
+            contactUs,
         });
     }
     catch (error) {
-        next(new ErrorHandler_1.default(`Something went wrong ${error}`, 500));
+        next(new ErrorHandler_1.default(`Something went wrong: ${error.message}`, 500));
     }
-});
-exports.getContactUsListAdmin = getContactUsListAdmin;
-const getSingleContactUsAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+}));
+exports.getSingleContactUsAdmin = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         if (!id) {
@@ -79,15 +75,14 @@ const getSingleContactUsAdmin = (req, res, next) => __awaiter(void 0, void 0, vo
         res.status(200).json({
             success: true,
             message: "Contact Us fetched successfully",
-            contactUs
+            contactUs,
         });
     }
     catch (error) {
-        next(new ErrorHandler_1.default(`Something went wrong ${error}`, 500));
+        next(new ErrorHandler_1.default(`Something went wrong: ${error.message}`, 500));
     }
-});
-exports.getSingleContactUsAdmin = getSingleContactUsAdmin;
-const deleteContactUsAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+}));
+exports.deleteContactUsAdmin = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         if (!id) {
@@ -96,11 +91,10 @@ const deleteContactUsAdmin = (req, res, next) => __awaiter(void 0, void 0, void 
         yield (0, contact_servoce_1.deleteContactUs)(id);
         res.status(200).json({
             success: true,
-            message: "Contact Us deleted successfully"
+            message: "Contact Us deleted successfully",
         });
     }
     catch (error) {
-        next(new ErrorHandler_1.default(`Something went wrong ${error.message}`, 500));
+        next(new ErrorHandler_1.default(`Something went wrong: ${error.message}`, 500));
     }
-});
-exports.deleteContactUsAdmin = deleteContactUsAdmin;
+}));

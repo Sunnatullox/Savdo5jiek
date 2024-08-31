@@ -1,10 +1,10 @@
-import { AdminInfo, Administration, User } from "@prisma/client";
-
 import { formatNumber } from "../../../utils/numberToWords";
+import { AdminInfo, Administrator } from "../../../types/adminstrator.type";
+import { IUser } from "../../../types/user.type";
 
 export default async function UzFqContractHtml(
-  admin: Administration & {AdminInfo: AdminInfo},
-  user: User,
+  admin: Administrator & {AdminInfo: AdminInfo},
+  user: IUser,
   products: any,
   isDelivery: boolean,
   data: any,

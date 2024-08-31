@@ -11,13 +11,13 @@
  *        application/json:
  *          schema:
  *            type: object
- *          properties:
- *            contractId:
- *              type: string
- *              description: The ID of the contract
- *            message:
- *              type: string
- *              description: The message to send
+ *            properties:
+ *              contractId:
+ *                type: string
+ *                description: The ID of the contract
+ *              message:
+ *                type: string
+ *                description: The message to send
  *    responses:
  *      200:
  *        description: Message sent successfully

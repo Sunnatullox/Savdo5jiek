@@ -32,26 +32,17 @@ exports.createPaymentUser = (0, express_async_handler_1.default)((req, res, next
         if (!id || !amount || !file || !paidDate) {
             return next(new ErrorHandler_1.default("All fields are required", 400));
         }
-        console.log(file);
         const imagePath = `${req.protocol}://${req.get("host")}/public/payments/${file.filename}`;
         const findContract = yield (0, contract_service_1.getContractByIdService)(id, user.id);
         if (!findContract) {
-            return next(new ErrorHandler_1.default("Sorry, there is an error in contractId, or the contract doesn't belong to you", 404));
+            return next(new ErrorHandler_1.default("Invalid contract ID or the contract doesn't belong to you", 404));
         }
         const payment = yield (0, payment_service_1.createPayment)({
             amount,
             paidDate,
             receiptImage: imagePath,
-            user: {
-                connect: {
-                    id: user.id,
-                },
-            },
-            contract: {
-                connect: {
-                    id: id,
-                },
-            },
+            user: { connect: { id: user.id } },
+            contract: { connect: { id } },
         });
         res.status(201).json({
             success: true,
@@ -84,7 +75,7 @@ exports.getPaymentById = (0, express_async_handler_1.default)((req, res, next) =
         });
     }
     catch (error) {
-        next(new ErrorHandler_1.default(`Get Payments Error: ${error.message}`, 500));
+        next(new ErrorHandler_1.default(`Get Payment Error: ${error.message}`, 500));
     }
 }));
 exports.getPaymentsByContractId = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -97,7 +88,7 @@ exports.getPaymentsByContractId = (0, express_async_handler_1.default)((req, res
         if (!id) {
             return next(new ErrorHandler_1.default("Contract id is required", 400));
         }
-        const payments = (yield (0, payment_service_1.getPaymentsByUserIdService)(id, user.id));
+        const payments = yield (0, payment_service_1.getPaymentsByUserIdService)(id, user.id);
         res.status(200).json({
             success: true,
             message: "Payments fetched successfully",
@@ -161,9 +152,10 @@ exports.updatePaymentByUser = (0, express_async_handler_1.default)((req, res, ne
         if (findPayment.status === "approved") {
             return next(new ErrorHandler_1.default("Payment cannot be updated, it is approved", 400));
         }
+        let updateData = { amount, paidDate };
         if (file) {
             const imagePath = `${req.protocol}://${req.get("host")}/public/payments/${file.filename}`;
-            yield (0, payment_service_1.updatePayment)(id, { receiptImage: imagePath }, user.id);
+            updateData.receiptImage = imagePath;
             if (findPayment.receiptImage) {
                 const filename = findPayment.receiptImage.split('/public/payments/')[1];
                 const filePath = path_1.default.join(__dirname, '../../../public/payments', filename);
@@ -174,9 +166,9 @@ exports.updatePaymentByUser = (0, express_async_handler_1.default)((req, res, ne
                 });
             }
         }
-        const payment = yield (0, payment_service_1.updatePayment)(id, { amount, paidDate }, user.id);
+        const payment = yield (0, payment_service_1.updatePayment)(id, updateData, user.id);
         if (!payment) {
-            return next(new ErrorHandler_1.default("Sorry Payment not updated, please try again", 404));
+            return next(new ErrorHandler_1.default("Sorry, payment not updated, please try again", 404));
         }
         res.status(200).json({
             success: true,
@@ -197,7 +189,7 @@ exports.updatePaymentByAdmin = (0, express_async_handler_1.default)((req, res, n
         }
         const payment = yield (0, payment_service_1.updatePayment)(id, { amount, paidDate });
         if (!payment) {
-            return next(new ErrorHandler_1.default("Sorry Payment not updated, please try again", 404));
+            return next(new ErrorHandler_1.default("Sorry, payment not updated, please try again", 404));
         }
         res.status(200).json({
             success: true,
@@ -224,9 +216,11 @@ exports.updatePaymentStatus = (0, express_async_handler_1.default)((req, res, ne
         if (!contract) {
             return next(new ErrorHandler_1.default("Contract not found", 404));
         }
+        let updatedPaidAmount = contract.paidAmount;
+        let paidPercent = (updatedPaidAmount / contract.totalPrice) * 100;
         if (status === "approved") {
-            const updatedPaidAmount = contract.paidAmount + payment.amount;
-            const paidPercent = (updatedPaidAmount / contract.totalPrice) * 100;
+            updatedPaidAmount += payment.amount;
+            paidPercent = (updatedPaidAmount / contract.totalPrice) * 100;
             yield (0, contract_service_1.updateContractService)(payment.contractId, {
                 paidAmount: updatedPaidAmount,
                 paidPercent,
@@ -238,17 +232,17 @@ exports.updatePaymentStatus = (0, express_async_handler_1.default)((req, res, ne
                     : contract.products;
                 for (const product of productsInContract) {
                     const existingProduct = yield (0, product_service_1.getProductByIdService)(product.id);
-                    if (existingProduct && existingProduct.quantity >= product.qty) {
+                    if (existingProduct && existingProduct.stock >= product.qty) {
                         yield (0, product_service_1.updateProductService)(product.id, {
-                            quantity: existingProduct.quantity - product.qty,
+                            stock: existingProduct.stock - product.qty,
                         });
                     }
                 }
             }
         }
         else if (status === "rejected") {
-            const updatedPaidAmount = contract.paidAmount - payment.amount;
-            const paidPercent = (updatedPaidAmount / contract.totalPrice) * 100;
+            updatedPaidAmount -= payment.amount;
+            paidPercent = (updatedPaidAmount / contract.totalPrice) * 100;
             yield (0, contract_service_1.updateContractService)(payment.contractId, {
                 paidAmount: updatedPaidAmount,
                 paidPercent,
@@ -259,16 +253,16 @@ exports.updatePaymentStatus = (0, express_async_handler_1.default)((req, res, ne
                 : contract.products;
             for (const product of productsInContract) {
                 const existingProduct = yield (0, product_service_1.getProductByIdService)(product.id);
-                if (existingProduct && existingProduct.quantity >= product.qty) {
+                if (existingProduct) {
                     yield (0, product_service_1.updateProductService)(product.id, {
-                        quantity: existingProduct.quantity + product.qty,
+                        stock: existingProduct.stock + product.qty,
                     });
                 }
             }
         }
         const updatedPayment = yield (0, payment_service_1.updatePayment)(id, { status });
         if (!updatedPayment) {
-            return next(new ErrorHandler_1.default("Sorry Payment not updated, please try again", 404));
+            return next(new ErrorHandler_1.default("Sorry, payment not updated, please try again", 404));
         }
         res.status(200).json({
             success: true,
@@ -297,10 +291,8 @@ exports.deletePaymentByUser = (0, express_async_handler_1.default)((req, res, ne
         if (payment.receiptImage) {
             const filename = payment.receiptImage.split('/public/payments/')[1];
             const filePath = path_1.default.join(__dirname, '../../../public/payments', filename);
-            fs_1.default.unlink(filePath, (err) => {
-                if (err) {
-                    console.error("Failed to delete image file:", err);
-                }
+            fs_1.default.promises.unlink(filePath).catch(err => {
+                console.error("Failed to delete image file:", err);
             });
         }
         yield (0, payment_service_1.deletePayment)(id);
@@ -310,11 +302,15 @@ exports.deletePaymentByUser = (0, express_async_handler_1.default)((req, res, ne
         });
     }
     catch (error) {
+        next(new ErrorHandler_1.default(`Delete Payment Error: ${error.message}`, 500));
     }
 }));
 exports.deletePaymentByAdmin = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
+        if (!id) {
+            return next(new ErrorHandler_1.default("Payment id is required", 400));
+        }
         const payment = yield (0, payment_service_1.getPaymentByIdService)(id);
         if (!payment) {
             return next(new ErrorHandler_1.default("Payment not found", 404));
@@ -325,10 +321,8 @@ exports.deletePaymentByAdmin = (0, express_async_handler_1.default)((req, res, n
         if (payment.receiptImage) {
             const filename = payment.receiptImage.split('/public/payments/')[1];
             const filePath = path_1.default.join(__dirname, '../../../public/payments', filename);
-            fs_1.default.unlink(filePath, (err) => {
-                if (err) {
-                    console.error("Failed to delete image file:", err);
-                }
+            yield fs_1.default.promises.unlink(filePath).catch(err => {
+                console.error("Failed to delete image file:", err);
             });
         }
         yield (0, payment_service_1.deletePayment)(id);

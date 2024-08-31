@@ -13,7 +13,6 @@ export interface IProduct {
   discount: number;
   image: string[];
   stock: number;
-  quantity: number;
   status: boolean;
   unit_uz: string;
   unit_ru: string;

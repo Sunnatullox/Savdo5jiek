@@ -45,7 +45,7 @@
 
 /**
  * @swagger
- * /api/v1/user/get-user:
+ * /api/v1/user/get-me-user:
  *  get:
  *    summary: Get user
  *    tags: [User]

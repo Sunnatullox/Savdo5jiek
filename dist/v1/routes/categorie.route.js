@@ -28,7 +28,7 @@ const categoryController = __importStar(require("../controllers/categorie.contro
 const auth_1 = require("../middleware/auth");
 const adminstrator_type_1 = require("../types/adminstrator.type");
 const router = (0, express_1.Router)();
-router.post("/create-categorie", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), categoryController.createCategorieAdmin);
+router.post("/create-categorie", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), categoryController.createCategoryAdmin);
 router.get("/get-categories", categoryController.getCategories);
 router.get("/get-categorie/:id", categoryController.getCategory);
 router.put("/update-categorie/:id", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), categoryController.updateCategory);

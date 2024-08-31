@@ -2,7 +2,6 @@
 /**
  * @swagger
  * /api/v1/contract/create-contract-by-user:
-
  *  post:
  *    summary: Create contract by user
  *    tags: [Contracts]
@@ -16,25 +15,19 @@
  *            type: object
  *            properties:
  *              products:
-
  *                type: array
-
  *                items:
  *                  type: object
-
  *                  properties:
  *                    id:
  *                      type: string
  *                    qty:
  *                      type: number
  *              totalPrice:
-
  *                type: number
  *              isDelivery:
-
  *                type: boolean
  *    responses:
-
  *      201:
  *        description: Contract created successfully
  *      400:
@@ -43,9 +36,24 @@
  *        description: Unauthorized
  *      404:
  *        description: Not found
-
  *      500:
-
+ *        description: Internal server error
+ */
+/**
+ * @swagger
+ * /api/v1/contract/get-contracts-list-by-user:
+ *  get:
+ *    summary: Get all contracts list by user
+ *    tags: [Contracts]
+ *    description: Get all contracts list by user
+ *    responses:
+ *      200:
+ *        description: Contracts list retrieved successfully
+ *      401:
+ *        description: Unauthorized
+ *      404:
+ *        description: Not found
+ *      500:
  *        description: Internal server error
  */
 /**
@@ -58,23 +66,6 @@
  *    responses:
  *      200:
  *        description: Contracts retrieved successfully
- *      401:
- *        description: Unauthorized
- *      404:
- *        description: Not found
- *      500:
- *        description: Internal server error
- */
-/**
- * @swagger
- * /api/v1/contract/get-contracts-by-user:
- *  get:
- *    tags: [Contracts]
- *    summary: Get contract by user
- *    description: Get contract by user
- *    responses:
- *      200:
- *        description: Contract retrieved successfully
  *      401:
  *        description: Unauthorized
  *      404:

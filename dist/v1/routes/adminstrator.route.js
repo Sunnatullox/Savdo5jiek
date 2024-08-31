@@ -32,6 +32,6 @@ router.post("/adminstrator-otp", adminstratorController.adminstratorOTP);
 router.post("/adminstrator-otp-verify", adminstratorController.adminstratorOTPVerify);
 router.post("/adminstrator-login", adminstratorController.adminstratorLogin);
 router.post("/adminstrator-add-update-info", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), adminstratorController.adminstratorAddAndUpdateInfo);
-router.put("/adminstrator-two-factor-auth-update", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), adminstratorController.adminstratorTwoFactorAuthUpdate);
-router.get("/adminstrator-info", auth_1.isAuthenticatedAdminstrator, adminstratorController.getAdminstratorInfo);
+router.post("/adminstrator-two-factor-auth-update-and-create", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), adminstratorController.adminstratorTwoFactorAuthUpdateAndCreate);
+router.get("/get-me-adminstrator", auth_1.isAuthenticatedAdminstrator, adminstratorController.getAdminstratorInfo);
 exports.default = router;

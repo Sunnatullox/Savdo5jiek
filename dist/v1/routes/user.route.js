@@ -29,6 +29,6 @@ const auth_1 = require("../middleware/auth");
 const router = (0, express_1.Router)();
 router.post("/login", usercontroller.login);
 router.get("/logout", usercontroller.logout);
-router.get("/get-user", auth_1.isAuthenticatedUser, usercontroller.getUser);
+router.get("/get-me-user", auth_1.isAuthenticatedUser, usercontroller.getUser);
 router.patch("/update-user-data", auth_1.isAuthenticatedUser, usercontroller.updateUserData);
 exports.default = router;

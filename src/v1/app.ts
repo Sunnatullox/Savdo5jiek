@@ -24,6 +24,8 @@ import userRoutes from "./routes/user.route";
 import contractRoutes from "./routes/contract.route";
 import paymentRoutes from "./routes/payment.route";
 import analyticsRoutes from "./routes/analytic.route";
+import messagesRoutes from "./routes/messages.route";
+import contactsRoutes from "./routes/contact.route";
 
 // swagger api docs config
 const swaggerOptions = {
@@ -55,12 +57,10 @@ app.use(
     optionsSuccessStatus: 200,
   })
 );
-
 const rateLimiter = new RateLimiterMemory({
   points: 10, // 10 requests
   duration: 1, // per 1 second by IP
 });
-
 app.use((req: Request, res: Response, next: NextFunction) => {
   rateLimiter
     .consume(req.ip as string)
@@ -82,6 +82,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 
+// static files
 app.use("/public", express.static(path.join(__dirname, "../../public")));
 
 // routes
@@ -92,13 +93,16 @@ app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/contract", contractRoutes);
 app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/analytics", analyticsRoutes);
+app.use("/api/v1/messages", messagesRoutes);
+app.use("/api/v1/contacts", contactsRoutes);
+
 
 app.get("/", (req: Request, res: Response) => {
   const ip = getClientIp(req)
- 
   res.send(`Welcome to Express & TypeScript Server ${ip}`)
 });
 
+// 404 error handling
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   const error = new ErrorHandler(`Route ${req.originalUrl} not found!`, 404);
   res.status(error.statusCode).json({

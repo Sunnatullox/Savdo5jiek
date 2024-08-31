@@ -17,6 +17,11 @@ export const sendMessageUser = asyncHandler(
     try {
       const { contractId, message } = req.body;
       const { id } = req.user as IUser;
+
+      if (!contractId || !message) {
+        return next(new ErrorHandler("Contract ID and message are required", 400));
+      }
+
       const result = await sendMessageUserService(contractId, id, message);
       res.status(200).json({
         success: true,
@@ -24,12 +29,7 @@ export const sendMessageUser = asyncHandler(
         data: result,
       });
     } catch (error: any) {
-      next(
-        new ErrorHandler(
-          `Error sending message: ${error.message}`,
-          error.statusCode || 500
-        )
-      );
+      next(new ErrorHandler(`Error sending message: ${error.message}`, error.statusCode || 500));
     }
   }
 );
@@ -39,6 +39,11 @@ export const sendMessageAdmin = asyncHandler(
     try {
       const { contractId, message } = req.body;
       const { id } = req.adminstrator as Administrator;
+
+      if (!contractId || !message) {
+        return next(new ErrorHandler("Contract ID and message are required", 400));
+      }
+
       const result = await sendMessageAdminService(id, contractId, message);
       res.status(200).json({
         success: true,
@@ -46,12 +51,7 @@ export const sendMessageAdmin = asyncHandler(
         data: result,
       });
     } catch (error: any) {
-      next(
-        new ErrorHandler(
-          `Error sending message: ${error.message}`,
-          error.statusCode || 500
-        )
-      );
+      next(new ErrorHandler(`Error sending message: ${error.message}`, error.statusCode || 500));
     }
   }
 );
@@ -60,6 +60,11 @@ export const getMessagesAdminByContractId = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { contractId } = req.params;
+
+      if (!contractId) {
+        return next(new ErrorHandler("Contract ID is required", 400));
+      }
+
       const result = await getMessagesAdminByContractIdService(contractId);
       res.status(200).json({
         success: true,
@@ -67,12 +72,7 @@ export const getMessagesAdminByContractId = asyncHandler(
         data: result,
       });
     } catch (error: any) {
-      next(
-        new ErrorHandler(
-          `Error fetching messages: ${error.message}`,
-          error.statusCode || 500
-        )
-      );
+      next(new ErrorHandler(`Error fetching messages: ${error.message}`, error.statusCode || 500));
     }
   }
 );
@@ -82,6 +82,11 @@ export const getMessagesUserByContractId = asyncHandler(
     try {
       const { contractId } = req.params;
       const { id } = req.user as IUser;
+
+      if (!contractId) {
+        return next(new ErrorHandler("Contract ID is required", 400));
+      }
+
       const result = await getMessagesUserByContractIdService(contractId, id);
       res.status(200).json({
         success: true,
@@ -89,20 +94,16 @@ export const getMessagesUserByContractId = asyncHandler(
         data: result,
       });
     } catch (error: any) {
-      next(
-        new ErrorHandler(
-          `Error fetching messages: ${error.message}`,
-          error.statusCode || 500
-        )
-      );
+      next(new ErrorHandler(`Error fetching messages: ${error.message}`, error.statusCode || 500));
     }
   }
 );
 
-export const getNotficationUser = asyncHandler(
+export const getNotificationUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.user as IUser;
+
       const result = await getNotficationUserService(id);
       res.status(200).json({
         success: true,
@@ -110,17 +111,12 @@ export const getNotficationUser = asyncHandler(
         data: result,
       });
     } catch (error: any) {
-      next(
-        new ErrorHandler(
-          `Error fetching messages: ${error.message}`,
-          error.statusCode || 500
-        )
-      );
+      next(new ErrorHandler(`Error fetching notifications: ${error.message}`, error.statusCode || 500));
     }
   }
 );
 
-export const getNotficationAdmin = asyncHandler(
+export const getNotificationAdmin = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await getNotficationAdminService();
@@ -130,12 +126,7 @@ export const getNotficationAdmin = asyncHandler(
         data: result,
       });
     } catch (error: any) {
-      next(
-        new ErrorHandler(
-          `Error fetching messages: ${error.message}`,
-          error.statusCode || 500
-        )
-      );
+      next(new ErrorHandler(`Error fetching notifications: ${error.message}`, error.statusCode || 500));
     }
   }
 );

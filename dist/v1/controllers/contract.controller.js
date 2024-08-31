@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadContractDeliveryDoc = exports.getContractsByTaxAgent = exports.getContractById = exports.newNotificationsContractisAdmin = exports.deleteContractByAdmin = exports.updateContratcByAdminStatus = exports.getContractByAdmin = exports.getContractsByAdmin = exports.getContractsByIdUser = exports.createContractByUser = void 0;
+exports.uploadContractDeliveryDoc = exports.getContractsByTaxAgent = exports.getContractById = exports.newNotificationsContractisAdmin = exports.deleteContractByAdmin = exports.updateContractByAdminStatus = exports.getContractByAdmin = exports.getContractsByAdmin = exports.getContractsListByUser = exports.createContractByUser = void 0;
 const fs_1 = __importDefault(require("fs"));
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const ErrorHandler_1 = __importDefault(require("../middleware/ErrorHandler"));
@@ -32,87 +32,57 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
             return next(new ErrorHandler_1.default("Please login to create a contract", 401));
         }
         const { id } = req.user;
-        const { products, totalPrice, isDelivery, } = req.body;
-        if (products.length === 0 || !totalPrice) {
+        const { products, totalPrice, isDelivery } = req.body;
+        if (!products.length || !totalPrice) {
             return next(new ErrorHandler_1.default("All fields are required", 400));
         }
         const findsProducts = yield db_1.default.product.findMany({
-            where: {
-                id: { in: products.map((product) => product.id) },
-            },
-            include: {
-                category: true,
-            },
+            where: { id: { in: products.map((product) => product.id) } },
+            include: { category: true },
         });
-        const productsWithQty = [];
-        for (const product of products) {
+        const productsWithQty = products.map((product) => {
             const foundProduct = findsProducts.find((p) => p.id === product.id);
             if (foundProduct) {
-                productsWithQty.push(Object.assign(Object.assign({}, foundProduct), { qty: product.qty }));
+                return Object.assign(Object.assign({}, foundProduct), { qty: product.qty });
             }
-        }
+        }).filter(Boolean);
         if (findsProducts.length !== products.length) {
             return next(new ErrorHandler_1.default("Please select the correct products", 404));
         }
         const findAdmin = yield db_1.default.administration.findFirst({
-            where: {
-                role: "ADMIN",
-            },
-            include: {
-                AdminInfo: true,
-            },
+            where: { role: "ADMIN" },
+            include: { AdminInfo: true },
         });
         if (!findAdmin) {
             return next(new ErrorHandler_1.default("Admin not found", 404));
         }
         const findUser = yield db_1.default.user.findFirst({
-            where: {
-                id,
-            },
-            include: {
-                legal_info: true,
-            },
+            where: { id },
+            include: { legal_info: true },
         });
         if (!findUser) {
             return next(new ErrorHandler_1.default("User not found", 404));
         }
-        if (productsWithQty.length === 0) {
-            return next(new ErrorHandler_1.default("Please select the correct products", 404));
-        }
         const contract_id = (0, uniqid_1.default)("", "UZ");
-        // now date
         const now = new Date();
-        const day = String(now.getDate()).padStart(2, "0");
-        const month = String(now.getMonth() + 1).padStart(2, "0");
-        const year = now.getFullYear();
-        const formattedDate = `${day}.${month}.${year}`;
-        const productsCategoryUz = yield Promise.all(findsProducts.map((product) => __awaiter(void 0, void 0, void 0, function* () { return yield product.category.name_uz; })));
-        const productsCategoryRu = yield Promise.all(findsProducts.map((product) => __awaiter(void 0, void 0, void 0, function* () { return yield product.category.name_ru; })));
-        // delivery date
-        const deliveryDate = new Date(new Date().setMonth(now.getMonth() + 1));
-        const deliveryDay = String(deliveryDate.getDate()).padStart(2, "0");
-        const deliveryMonth = String(deliveryDate.getMonth() + 1).padStart(2, "0");
-        const deliveryYear = deliveryDate.getFullYear();
-        const formattedDeliveryDate = `${deliveryDay}.${deliveryMonth}.${deliveryYear}`;
+        const formattedDate = now.toLocaleDateString("en-GB").split('/').join('.');
+        const deliveryDate = new Date(now.setMonth(now.getMonth() + 1));
+        const formattedDeliveryDate = deliveryDate.toLocaleDateString("en-GB").split('/').join('.');
+        const contractEndDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
+        const formattedContractEndDate = contractEndDate.toLocaleDateString("en-GB").split('/').join('.');
         const writtenTotalPriceRu = (0, numberToWords_1.numberToWordsRu)(totalPrice);
         const writtenTotalPriceUz = (0, numberToWords_1.numberToWordsUz)(Number(totalPrice));
-        // contract end date
-        const contractEndDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
-        const contractEndDateDay = String(contractEndDate.getDate()).padStart(2, "0");
-        const contractEndDateMonth = String(contractEndDate.getMonth() + 1).padStart(2, "0");
-        const contractEndDateYear = contractEndDate.getFullYear();
-        const formattedContractEndDate = `${contractEndDateDay}.${contractEndDateMonth}.${contractEndDateYear}`;
         const fileNameUz = `document-${Date.now()}-uz.pdf`;
         const fileNameRu = `document-${Date.now()}-ru.pdf`;
-        const qrCodeFileUz = (0, fileUpload_1.qrCodeGenerator)(`${req.protocol}://${req.get("host")}/public/contracts/uz/${fileNameUz}`);
-        const qrCodeFileRu = (0, fileUpload_1.qrCodeGenerator)(`${req.protocol}://${req.get("host")}/public/contracts/ru/${fileNameRu}`);
+        const qrCodeFileUz = yield (0, fileUpload_1.qrCodeGenerator)(`${req.protocol}://${req.get("host")}/public/contracts/uz/${fileNameUz}`);
+        const qrCodeFileRu = yield (0, fileUpload_1.qrCodeGenerator)(`${req.protocol}://${req.get("host")}/public/contracts/ru/${fileNameRu}`);
         const contractFile = {
             contractFileUz: !findUser.is_LLC
                 ? `${req.protocol}://${req.get("host")}/public` +
                     (yield (0, fileReplace_1.htmlToPDFAndSave)(yield (0, uz_fq_1.default)(findAdmin, findUser, productsWithQty, isDelivery, {
                         contractId: contract_id,
                         contractDate: formattedDate,
-                        productsCategoryUz: productsCategoryUz.join(", "),
+                        productsCategoryUz: findsProducts.map(p => p.category.name_uz).join(", "),
                         totalPrice,
                         deliveryDate: formattedDeliveryDate,
                         writtenTotalPriceUz,
@@ -123,7 +93,7 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
                     (yield (0, fileReplace_1.htmlToPDFAndSave)(yield (0, uz_tsh_1.default)(findAdmin, findUser, productsWithQty, isDelivery, {
                         contractId: contract_id,
                         contractDate: formattedDate,
-                        productsCategoryUz: productsCategoryUz.join(", "),
+                        productsCategoryUz: findsProducts.map(p => p.category.name_uz).join(", "),
                         totalPrice,
                         deliveryDate: formattedDeliveryDate,
                         writtenTotalPriceUz,
@@ -135,7 +105,7 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
                     (yield (0, fileReplace_1.htmlToPDFAndSave)(yield (0, ru_fq_1.default)(findAdmin, findUser, productsWithQty, isDelivery, {
                         contractId: contract_id,
                         contractDate: formattedDate,
-                        productsCategoryRu: productsCategoryRu.join(", "),
+                        productsCategoryRu: findsProducts.map(p => p.category.name_ru).join(", "),
                         totalPrice,
                         deliveryDate: formattedDeliveryDate,
                         writtenTotalPriceRu,
@@ -146,7 +116,7 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
                     (yield (0, fileReplace_1.htmlToPDFAndSave)(yield (0, ru_tsh_1.default)(findAdmin, findUser, productsWithQty, isDelivery, {
                         contractId: contract_id,
                         contractDate: formattedDate,
-                        productsCategoryRu: productsCategoryRu.join(", "),
+                        productsCategoryRu: findsProducts.map(p => p.category.name_ru).join(", "),
                         totalPrice,
                         deliveryDate: formattedDeliveryDate,
                         writtenTotalPriceRu,
@@ -158,7 +128,7 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
             contract_id,
             User: { connect: { id } },
             products: productsWithQty,
-            totalPrice: totalPrice,
+            totalPrice,
             contractFile: contractFile,
             deliveryFile: "",
             shippingAddress: "",
@@ -179,21 +149,18 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
         return next(new ErrorHandler_1.default(`Error creating contract: ${error.message}`, 500));
     }
 }));
-exports.getContractsByIdUser = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getContractsListByUser = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (!req.user) {
-            return next(new ErrorHandler_1.default("Please login to get a contract", 401));
-        }
-        const { id } = req.user;
-        const contract = yield (0, contract_service_1.getContractsByIdService)(id, req.user.is_LLC);
+        const { id, is_LLC } = req.user;
+        const contract = yield (0, contract_service_1.getContractsByIdService)(id, is_LLC);
         res.status(200).json({
             success: true,
-            message: "Contract fetched successfully",
+            message: "Contract list fetched successfully",
             contract,
         });
     }
     catch (error) {
-        return next(new ErrorHandler_1.default(`Error getting contract: ${error.message}`, 500));
+        next(new ErrorHandler_1.default(`Something went wrong: ${error.message}`, 500));
     }
 }));
 exports.getContractsByAdmin = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -226,14 +193,14 @@ exports.getContractByAdmin = (0, express_async_handler_1.default)((req, res, nex
         return next(new ErrorHandler_1.default(`Error getting contract: ${error.message}`, 500));
     }
 }));
-exports.updateContratcByAdminStatus = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.updateContractByAdminStatus = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         const { status } = req.body;
         if (!status) {
             return next(new ErrorHandler_1.default("Status is required", 400));
         }
-        const findContract = (yield (0, contract_service_1.getContractByIdService)(id));
+        const findContract = yield (0, contract_service_1.getContractByIdService)(id);
         if (!findContract) {
             return next(new ErrorHandler_1.default("Contract not found", 404));
         }
@@ -247,13 +214,15 @@ exports.updateContratcByAdminStatus = (0, express_async_handler_1.default)((req,
             contract,
         });
     }
-    catch (error) { }
+    catch (error) {
+        next(new ErrorHandler_1.default(`Error updating contract status: ${error.message}`, 500));
+    }
 }));
 exports.deleteContractByAdmin = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d;
     try {
         const { id } = req.params;
-        const findContract = (yield (0, contract_service_1.getContractByIdService)(id));
+        const findContract = yield (0, contract_service_1.getContractByIdService)(id);
         if (!findContract) {
             return next(new ErrorHandler_1.default("Contract not found", 404));
         }
@@ -261,34 +230,25 @@ exports.deleteContractByAdmin = (0, express_async_handler_1.default)((req, res, 
         if (findContactPaymentStatusApproved) {
             return next(new ErrorHandler_1.default("Contract payment is approved", 400));
         }
-        const contract = (yield (0, contract_service_1.deleteContractService)(id));
+        const contract = yield (0, contract_service_1.deleteContractService)(id);
+        const deleteFile = (fileUrl) => __awaiter(void 0, void 0, void 0, function* () {
+            const url = new URL(fileUrl);
+            const filePath = `.${url.pathname}`;
+            if (fs_1.default.existsSync(filePath)) {
+                yield fs_1.default.promises.unlink(filePath);
+            }
+        });
         if ((_a = contract === null || contract === void 0 ? void 0 : contract.contractFile) === null || _a === void 0 ? void 0 : _a.contractFileUz) {
-            const url_uz = new URL((_b = contract === null || contract === void 0 ? void 0 : contract.contractFile) === null || _b === void 0 ? void 0 : _b.contractFileUz);
-            const filePath_uz = `.${url_uz.pathname}`;
-            if (fs_1.default.existsSync(filePath_uz)) {
-                fs_1.default.unlinkSync(filePath_uz);
-            }
+            yield deleteFile(contract.contractFile.contractFileUz);
         }
-        if ((_c = contract === null || contract === void 0 ? void 0 : contract.contractFile) === null || _c === void 0 ? void 0 : _c.contractFileRu) {
-            const url_ru = new URL((_d = contract === null || contract === void 0 ? void 0 : contract.contractFile) === null || _d === void 0 ? void 0 : _d.contractFileRu);
-            const filePath_ru = `.${url_ru.pathname}`;
-            if (fs_1.default.existsSync(filePath_ru)) {
-                fs_1.default.unlinkSync(filePath_ru);
-            }
+        if ((_b = contract === null || contract === void 0 ? void 0 : contract.contractFile) === null || _b === void 0 ? void 0 : _b.contractFileRu) {
+            yield deleteFile(contract.contractFile.contractFileRu);
         }
-        if ((_e = contract === null || contract === void 0 ? void 0 : contract.deliveryFile) === null || _e === void 0 ? void 0 : _e.deliveryFileUz) {
-            const url_delivery = new URL(contract.deliveryFile.deliveryFileUz);
-            const filePath_delivery = `.${url_delivery.pathname}`;
-            if (fs_1.default.existsSync(filePath_delivery)) {
-                fs_1.default.unlinkSync(filePath_delivery);
-            }
+        if ((_c = contract === null || contract === void 0 ? void 0 : contract.deliveryFile) === null || _c === void 0 ? void 0 : _c.deliveryFileUz) {
+            yield deleteFile(contract.deliveryFile.deliveryFileUz);
         }
-        if ((_f = contract === null || contract === void 0 ? void 0 : contract.deliveryFile) === null || _f === void 0 ? void 0 : _f.deliveryFileRu) {
-            const url_delivery = new URL(contract.deliveryFile.deliveryFileRu);
-            const filePath_delivery = `.${url_delivery.pathname}`;
-            if (fs_1.default.existsSync(filePath_delivery)) {
-                fs_1.default.unlinkSync(filePath_delivery);
-            }
+        if ((_d = contract === null || contract === void 0 ? void 0 : contract.deliveryFile) === null || _d === void 0 ? void 0 : _d.deliveryFileRu) {
+            yield deleteFile(contract.deliveryFile.deliveryFileRu);
         }
         res.status(200).json({
             success: true,
@@ -302,7 +262,7 @@ exports.deleteContractByAdmin = (0, express_async_handler_1.default)((req, res, 
 }));
 exports.newNotificationsContractisAdmin = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const contracts = (yield (0, contract_service_1.newNotifsContractisAdmin)());
+        const contracts = yield (0, contract_service_1.newNotifsContractisAdmin)();
         res.status(200).json({
             success: true,
             message: "Notifications fetched successfully",
@@ -314,17 +274,16 @@ exports.newNotificationsContractisAdmin = (0, express_async_handler_1.default)((
     }
 }));
 exports.getContractById = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     try {
         const { id } = req.params;
         if (!req.user) {
             return next(new ErrorHandler_1.default("Please login to get a contract", 401));
         }
-        const contract = (yield (0, contract_service_1.getContractByIdService)(id, (_a = req.user) === null || _a === void 0 ? void 0 : _a.id));
+        const contract = yield (0, contract_service_1.getContractByIdService)(id, req.user.id);
         if (!contract) {
             return next(new ErrorHandler_1.default("Contract not found", 404));
         }
-        if (contract.isRead === false) {
+        if (!contract.isRead) {
             yield (0, contract_service_1.updateContractService)(id, { isRead: true });
         }
         res.status(200).json({
@@ -333,7 +292,9 @@ exports.getContractById = (0, express_async_handler_1.default)((req, res, next) 
             contract,
         });
     }
-    catch (error) { }
+    catch (error) {
+        next(new ErrorHandler_1.default(`Error getting contract: ${error.message}`, 500));
+    }
 }));
 exports.getContractsByTaxAgent = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -347,14 +308,14 @@ exports.getContractsByTaxAgent = (0, express_async_handler_1.default)((req, res,
         });
     }
     catch (error) {
-        return next(new ErrorHandler_1.default(`Error getting contract: ${error.message}`, 500));
+        return next(new ErrorHandler_1.default(`Error getting contracts: ${error.message}`, 500));
     }
 }));
 exports.uploadContractDeliveryDoc = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         const contract_delivery_doc = req.files;
-        if (contract_delivery_doc.length === 0) {
+        if (!contract_delivery_doc.length) {
             return next(new ErrorHandler_1.default("Contract delivery document is required", 400));
         }
         const contract_delivery_doc_path = contract_delivery_doc.map((file) => {
@@ -370,5 +331,6 @@ exports.uploadContractDeliveryDoc = (0, express_async_handler_1.default)((req, r
         });
     }
     catch (error) {
+        next(new ErrorHandler_1.default(`Error uploading contract delivery document: ${error.message}`, 500));
     }
 }));

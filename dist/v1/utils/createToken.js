@@ -26,7 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateAccessTokenAdministrator = exports.updateAccessTokenUser = exports.sendToken = exports.sendTokenAdmin = exports.refreshTokenOptions = exports.accessTokenOptions = exports.refreshTokenExpire = exports.accessTokenExpire = exports.createActivationToken = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const administration_service_1 = require("../services/administration.service");
+const adminstration_service_1 = require("../services/adminstration.service");
 const ErrorHandler_1 = __importDefault(require("../middleware/ErrorHandler"));
 const db_1 = __importDefault(require("../config/db"));
 const createActivationToken = (user) => {
@@ -56,8 +56,8 @@ exports.refreshTokenOptions = {
     secure: process.env.NODE_ENV === "production",
 };
 const sendTokenAdmin = (user, statusCode, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const accessToken = yield (0, administration_service_1.signAccessToken)(user.id);
-    const refreshToken = yield (0, administration_service_1.signRefreshToken)(user.id);
+    const accessToken = yield (0, adminstration_service_1.signAccessToken)(user.id);
+    const refreshToken = yield (0, adminstration_service_1.signRefreshToken)(user.id);
     const { password: _, twoFactorSecret: __ } = user, userData = __rest(user, ["password", "twoFactorSecret"]);
     if (process.env.NODE_ENV === "production") {
         exports.accessTokenOptions.secure = true;
@@ -71,8 +71,8 @@ const sendTokenAdmin = (user, statusCode, res) => __awaiter(void 0, void 0, void
 });
 exports.sendTokenAdmin = sendTokenAdmin;
 const sendToken = (user, statusCode, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const accessToken = yield (0, administration_service_1.signAccessToken)(user.id);
-    const refreshToken = yield (0, administration_service_1.signRefreshToken)(user.id);
+    const accessToken = yield (0, adminstration_service_1.signAccessToken)(user.id);
+    const refreshToken = yield (0, adminstration_service_1.signRefreshToken)(user.id);
     const _a = user, { user_id: _ } = _a, userData = __rest(_a, ["user_id"]);
     if (process.env.NODE_ENV === "production") {
         exports.accessTokenOptions.secure = true;
@@ -103,8 +103,8 @@ exports.updateAccessTokenUser = (0, express_async_handler_1.default)((req, res, 
         if (!user) {
             return next(new ErrorHandler_1.default("Please login to access this resource", 401));
         }
-        const accessToken = yield (0, administration_service_1.signAccessToken)(user.id);
-        const refreshToken = yield (0, administration_service_1.signRefreshToken)(user.id);
+        const accessToken = yield (0, adminstration_service_1.signAccessToken)(user.id);
+        const refreshToken = yield (0, adminstration_service_1.signRefreshToken)(user.id);
         req.user = user;
         // Set cookies before calling next()
         res.cookie("access_token", accessToken, exports.accessTokenOptions);
@@ -134,8 +134,8 @@ exports.updateAccessTokenAdministrator = (0, express_async_handler_1.default)((r
         if (!adminstrator) {
             return next(new ErrorHandler_1.default("Administrator not found", 404));
         }
-        const accessToken = yield (0, administration_service_1.signAccessToken)(adminstrator.id);
-        const refreshToken = yield (0, administration_service_1.signRefreshToken)(adminstrator.id);
+        const accessToken = yield (0, adminstration_service_1.signAccessToken)(adminstrator.id);
+        const refreshToken = yield (0, adminstration_service_1.signRefreshToken)(adminstrator.id);
         req.adminstrator = adminstrator;
         // Set cookies before calling next()
         res.cookie("access_token", accessToken, exports.accessTokenOptions);

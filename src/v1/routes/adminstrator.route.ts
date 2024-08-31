@@ -22,14 +22,14 @@ router.post(
   adminstratorController.adminstratorAddAndUpdateInfo
 );
 
-router.put(
-  "/adminstrator-two-factor-auth-update",
+router.post(
+  "/adminstrator-two-factor-auth-update-and-create",
   isAuthenticatedAdminstrator,
   isAdministrator(Role.ADMIN),
-  adminstratorController.adminstratorTwoFactorAuthUpdate
+  adminstratorController.adminstratorTwoFactorAuthUpdateAndCreate
 );
 
-router.get("/adminstrator-info", isAuthenticatedAdminstrator, adminstratorController.getAdminstratorInfo);
+router.get("/get-me-adminstrator", isAuthenticatedAdminstrator, adminstratorController.getAdminstratorInfo);
 
 
 

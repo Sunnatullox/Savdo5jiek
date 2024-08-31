@@ -32,6 +32,6 @@ router.post("/send-message-user", auth_1.isAuthenticatedUser, messagesController
 router.post("/send-message-admin", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), messagesController.sendMessageAdmin);
 router.get("/get-messages-user/:contractId", auth_1.isAuthenticatedUser, messagesController.getMessagesUserByContractId);
 router.get("/get-messages-admin/:contractId", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), messagesController.getMessagesAdminByContractId);
-router.get("/get-notification-user", auth_1.isAuthenticatedUser, messagesController.getNotficationUser);
-router.get("/get-notification-admin", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), messagesController.getNotficationAdmin);
+router.get("/get-notification-user", auth_1.isAuthenticatedUser, messagesController.getNotificationUser);
+router.get("/get-notification-admin", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), messagesController.getNotificationAdmin);
 exports.default = router;

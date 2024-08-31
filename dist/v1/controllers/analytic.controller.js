@@ -15,52 +15,52 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getLowStockProducts = exports.getUserAnalytics = exports.get12MonthProductSalesAnalytics = exports.get12MonthContractAnalytics = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const ErrorHandler_1 = __importDefault(require("../middleware/ErrorHandler"));
-const analitc_service_1 = require("../services/analitc.service");
+const analytic_service_1 = require("../services/analytic.service");
 exports.get12MonthContractAnalytics = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const analytics = yield (0, analitc_service_1.get12MonthContractAnalyticsService)();
+        const analytics = yield (0, analytic_service_1.get12MonthContractAnalyticsService)();
         res.status(200).json({
             success: true,
             analytics,
         });
     }
     catch (error) {
-        next(new ErrorHandler_1.default(`Please try again later ${error.message}`, 500));
+        next(new ErrorHandler_1.default(`Please try again later: ${error.message}`, 500));
     }
 }));
 exports.get12MonthProductSalesAnalytics = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const analytics = yield (0, analitc_service_1.get12MonthProductSalesAnalyticsService)();
+        const analytics = yield (0, analytic_service_1.get12MonthProductSalesAnalyticsService)();
         res.status(200).json({
             success: true,
             analytics,
         });
     }
     catch (error) {
-        next(new ErrorHandler_1.default(`Please try again later ${error.message}`, 500));
+        next(new ErrorHandler_1.default(`Please try again later: ${error.message}`, 500));
     }
 }));
 exports.getUserAnalytics = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const analytics = yield (0, analitc_service_1.getUserAnalyticsService)();
+        const analytics = yield (0, analytic_service_1.getUserAnalyticsService)();
         res.status(200).json({
             success: true,
             analytics,
         });
     }
     catch (error) {
-        next(new ErrorHandler_1.default(`Please try again later ${error.message}`, 500));
+        next(new ErrorHandler_1.default(`Please try again later: ${error.message}`, 500));
     }
 }));
 exports.getLowStockProducts = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const products = yield (0, analitc_service_1.getLowStockProductsService)();
+        const products = yield (0, analytic_service_1.getLowStockProductsService)();
         res.status(200).json({
             success: true,
             products,
         });
     }
     catch (error) {
-        next(new ErrorHandler_1.default(`Please try again later ${error.message}`, 500));
+        next(new ErrorHandler_1.default(`Please try again later: ${error.message}`, 500));
     }
 }));

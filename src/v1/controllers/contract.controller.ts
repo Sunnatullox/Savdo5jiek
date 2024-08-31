@@ -21,16 +21,11 @@ import UzTshContractHtml from "../data/contracts/uz/uz_tsh";
 import { numberToWordsRu, numberToWordsUz } from "../utils/numberToWords";
 import RuFqContractHtml from "../data/contracts/ru/ru_fq";
 import RuTshContractHtml from "../data/contracts/ru/ru_tsh";
-import {
-  AdminInfo,
-  Administration,
-  Contract,
-  LegalInfo,
-  Payment,
-  User,
-} from "@prisma/client";
-import { IProduct } from "../types/product.type";
 import { qrCodeGenerator } from "../utils/fileUpload";
+import { AdminInfo, Administrator } from "../types/adminstrator.type";
+import { ILegalInfo, IUser } from "../types/user.type";
+import { IPayment } from "../types/payment.type";
+import { IContract } from "../types/contract.type";
 
 export const createContractByUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -40,133 +35,73 @@ export const createContractByUser = asyncHandler(
       }
 
       const { id } = req.user;
-      const {
-        products,
-        totalPrice,
-        isDelivery,
-      }: {
-        products: { id: string; qty: number }[];
-        totalPrice: number;
-        isDelivery: boolean;
-      } = req.body;
+      const { products, totalPrice, isDelivery } = req.body;
 
-      if (products.length === 0 || !totalPrice) {
+      if (!products.length || !totalPrice) {
         return next(new ErrorHandler("All fields are required", 400));
       }
 
       const findsProducts = await prisma.product.findMany({
-        where: {
-          id: { in: products.map((product) => product.id) },
-        },
-        include: {
-          category: true,
-        },
+        where: { id: { in: products.map((product) => product.id) } },
+        include: { category: true },
       });
 
-      const productsWithQty: (IProduct & { qty: number })[] = [];
-      for (const product of products) {
+      const productsWithQty = products.map((product) => {
         const foundProduct = findsProducts.find((p) => p.id === product.id);
         if (foundProduct) {
-          productsWithQty.push({ ...foundProduct, qty: product.qty } as IProduct & { qty: number });
+          return { ...foundProduct, qty: product.qty };
         }
-      }
+      }).filter(Boolean);
 
       if (findsProducts.length !== products.length) {
-        return next(
-          new ErrorHandler("Please select the correct products", 404)
-        );
+        return next(new ErrorHandler("Please select the correct products", 404));
       }
 
       const findAdmin = await prisma.administration.findFirst({
-        where: {
-          role: "ADMIN",
-        },
-        include: {
-          AdminInfo: true,
-        },
-      });
+        where: { role: "ADMIN" },
+        include: { AdminInfo: true },
+      }) as unknown as Administrator & { AdminInfo: AdminInfo };
       if (!findAdmin) {
         return next(new ErrorHandler("Admin not found", 404));
       }
 
       const findUser = await prisma.user.findFirst({
-        where: {
-          id,
-        },
-        include: {
-          legal_info: true,
-        },
-      });
+        where: { id },
+        include: { legal_info: true },
+      }) as unknown as IUser & { legal_info: ILegalInfo };
       if (!findUser) {
         return next(new ErrorHandler("User not found", 404));
       }
-      if (productsWithQty.length === 0) {
-        return next(
-          new ErrorHandler("Please select the correct products", 404)
-        );
-      }
+
       const contract_id = uniqid("", "UZ");
-      // now date
       const now = new Date();
-      const day = String(now.getDate()).padStart(2, "0");
-      const month = String(now.getMonth() + 1).padStart(2, "0");
-      const year = now.getFullYear();
-
-      const formattedDate = `${day}.${month}.${year}`;
-
-      const productsCategoryUz = await Promise.all(
-        findsProducts.map(async (product) => await product.category.name_uz)
-      );
-      const productsCategoryRu = await Promise.all(
-        findsProducts.map(async (product) => await product.category.name_ru)
-      );
-
-      // delivery date
-      const deliveryDate = new Date(new Date().setMonth(now.getMonth() + 1));
-      const deliveryDay = String(deliveryDate.getDate()).padStart(2, "0");
-      const deliveryMonth = String(deliveryDate.getMonth() + 1).padStart(
-        2,
-        "0"
-      );
-      const deliveryYear = deliveryDate.getFullYear();
-
-      const formattedDeliveryDate = `${deliveryDay}.${deliveryMonth}.${deliveryYear}`;
+      const formattedDate = now.toLocaleDateString("en-GB").split('/').join('.');
+      const deliveryDate = new Date(now.setMonth(now.getMonth() + 1));
+      const formattedDeliveryDate = deliveryDate.toLocaleDateString("en-GB").split('/').join('.');
+      const contractEndDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
+      const formattedContractEndDate = contractEndDate.toLocaleDateString("en-GB").split('/').join('.');
 
       const writtenTotalPriceRu = numberToWordsRu(totalPrice);
       const writtenTotalPriceUz = numberToWordsUz(Number(totalPrice));
 
-      // contract end date
-      const contractEndDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
-      const contractEndDateDay = String(contractEndDate.getDate()).padStart(
-        2,
-        "0"
-      );
-      const contractEndDateMonth = String(
-        contractEndDate.getMonth() + 1
-      ).padStart(2, "0");
-      const contractEndDateYear = contractEndDate.getFullYear();
-
-      const formattedContractEndDate = `${contractEndDateDay}.${contractEndDateMonth}.${contractEndDateYear}`;
-
       const fileNameUz = `document-${Date.now()}-uz.pdf`;
       const fileNameRu = `document-${Date.now()}-ru.pdf`;
-      const qrCodeFileUz = qrCodeGenerator(`${req.protocol}://${req.get("host")}/public/contracts/uz/${fileNameUz}`);
-      const qrCodeFileRu = qrCodeGenerator(`${req.protocol}://${req.get("host")}/public/contracts/ru/${fileNameRu}`);
-
+      const qrCodeFileUz = await qrCodeGenerator(`${req.protocol}://${req.get("host")}/public/contracts/uz/${fileNameUz}`);
+      const qrCodeFileRu = await qrCodeGenerator(`${req.protocol}://${req.get("host")}/public/contracts/ru/${fileNameRu}`);
 
       const contractFile = {
         contractFileUz: !findUser.is_LLC
           ? `${req.protocol}://${req.get("host")}/public` +
             (await htmlToPDFAndSave(
               await UzFqContractHtml(
-                findAdmin as Administration & { AdminInfo: AdminInfo },
-                findUser as User & { legal_info: LegalInfo },
+                findAdmin,
+                findUser,
                 productsWithQty,
                 isDelivery,
                 {
                   contractId: contract_id,
                   contractDate: formattedDate,
-                  productsCategoryUz: productsCategoryUz.join(", "),
+                  productsCategoryUz: findsProducts.map(p => p.category.name_uz).join(", "),
                   totalPrice,
                   deliveryDate: formattedDeliveryDate,
                   writtenTotalPriceUz,
@@ -180,19 +115,19 @@ export const createContractByUser = asyncHandler(
           : `${req.protocol}://${req.get("host")}/public` +
             (await htmlToPDFAndSave(
               await UzTshContractHtml(
-                findAdmin as Administration & { AdminInfo: AdminInfo },
-                findUser as User & { legal_info: LegalInfo },
+                findAdmin,
+                findUser,
                 productsWithQty,
                 isDelivery,
                 {
                   contractId: contract_id,
                   contractDate: formattedDate,
-                  productsCategoryUz: productsCategoryUz.join(", "),
+                  productsCategoryUz: findsProducts.map(p => p.category.name_uz).join(", "),
                   totalPrice,
                   deliveryDate: formattedDeliveryDate,
                   writtenTotalPriceUz,
                   contractEndDate: formattedContractEndDate,
-                  qrcode:qrCodeFileUz
+                  qrcode: qrCodeFileUz
                 }
               ),
               "uz",
@@ -202,19 +137,19 @@ export const createContractByUser = asyncHandler(
           ? `${req.protocol}://${req.get("host")}/public` +
             (await htmlToPDFAndSave(
               await RuFqContractHtml(
-                findAdmin as Administration & { AdminInfo: AdminInfo },
+                findAdmin,
                 findUser,
                 productsWithQty,
                 isDelivery,
                 {
                   contractId: contract_id,
                   contractDate: formattedDate,
-                  productsCategoryRu: productsCategoryRu.join(", "),
+                  productsCategoryRu: findsProducts.map(p => p.category.name_ru).join(", "),
                   totalPrice,
                   deliveryDate: formattedDeliveryDate,
                   writtenTotalPriceRu,
                   contractEndDate: formattedContractEndDate,
-                  qrcode:qrCodeFileRu
+                  qrcode: qrCodeFileRu
                 }
               ),
               "ru",
@@ -223,19 +158,19 @@ export const createContractByUser = asyncHandler(
           : `${req.protocol}://${req.get("host")}/public` +
             (await htmlToPDFAndSave(
               await RuTshContractHtml(
-                findAdmin as Administration & { AdminInfo: AdminInfo },
-                findUser as User & { legal_info: LegalInfo },
+                findAdmin,
+                findUser,
                 productsWithQty,
                 isDelivery,
                 {
                   contractId: contract_id,
                   contractDate: formattedDate,
-                  productsCategoryRu: productsCategoryRu.join(", "),
+                  productsCategoryRu: findsProducts.map(p => p.category.name_ru).join(", "),
                   totalPrice,
                   deliveryDate: formattedDeliveryDate,
                   writtenTotalPriceRu,
                   contractEndDate: formattedContractEndDate,
-                  qrcode:qrCodeFileRu
+                  qrcode: qrCodeFileRu
                 }
               ),
               "ru",
@@ -247,7 +182,7 @@ export const createContractByUser = asyncHandler(
         contract_id,
         User: { connect: { id } },
         products: productsWithQty as any,
-        totalPrice: totalPrice,
+        totalPrice,
         contractFile: contractFile as any,
         deliveryFile: "",
         shippingAddress: "",
@@ -265,33 +200,27 @@ export const createContractByUser = asyncHandler(
       });
     } catch (error: any) {
       console.log("Contract error", error);
-      return next(
-        new ErrorHandler(`Error creating contract: ${error.message}`, 500)
-      );
+      return next(new ErrorHandler(`Error creating contract: ${error.message}`, 500));
     }
   }
 );
 
-export const getContractsByIdUser = asyncHandler(
+
+export const getContractsListByUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (!req.user) {
-        return next(new ErrorHandler("Please login to get a contract", 401));
-      }
-      const { id } = req.user;
-      const contract = await getContractsByIdService(id, req.user.is_LLC);
+        const {id, is_LLC}=req.user as IUser
+      const contract = await getContractsByIdService(id, is_LLC);
       res.status(200).json({
         success: true,
-        message: "Contract fetched successfully",
+        message: "Contract list fetched successfully",
         contract,
       });
-    } catch (error: any) {
-      return next(
-        new ErrorHandler(`Error getting contract: ${error.message}`, 500)
-      );
+    }catch(error:any){
+      next(new ErrorHandler(`Something went wrong: ${error.message}`, 500));
     }
   }
-);
+)
 
 export const getContractsByAdmin = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -303,9 +232,7 @@ export const getContractsByAdmin = asyncHandler(
         contracts,
       });
     } catch (error: any) {
-      return next(
-        new ErrorHandler(`Error getting contracts: ${error.message}`, 500)
-      );
+      return next(new ErrorHandler(`Error getting contracts: ${error.message}`, 500));
     }
   }
 );
@@ -325,14 +252,12 @@ export const getContractByAdmin = asyncHandler(
         contract,
       });
     } catch (error: any) {
-      return next(
-        new ErrorHandler(`Error getting contract: ${error.message}`, 500)
-      );
+      return next(new ErrorHandler(`Error getting contract: ${error.message}`, 500));
     }
   }
 );
 
-export const updateContratcByAdminStatus = asyncHandler(
+export const updateContractByAdminStatus = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
@@ -341,17 +266,15 @@ export const updateContratcByAdminStatus = asyncHandler(
         return next(new ErrorHandler("Status is required", 400));
       }
 
-      const findContract = (await getContractByIdService(id)) as Contract & {
-        User: User & { legal_info: LegalInfo };
+      const findContract = await getContractByIdService(id) as unknown as IContract & {
+        User: IUser & { legal_info: ILegalInfo };
       };
       if (!findContract) {
         return next(new ErrorHandler("Contract not found", 404));
       }
 
       if (findContract.status === status) {
-        return next(
-          new ErrorHandler("Contract status is already updated", 400)
-        );
+        return next(new ErrorHandler("Contract status is already updated", 400));
       }
 
       const contract = await updateContractService(id, { status });
@@ -360,7 +283,9 @@ export const updateContratcByAdminStatus = asyncHandler(
         message: "Contract status updated successfully",
         contract,
       });
-    } catch (error: any) {}
+    } catch (error: any) {
+      next(new ErrorHandler(`Error updating contract status: ${error.message}`, 500));
+    }
   }
 );
 
@@ -368,9 +293,9 @@ export const deleteContractByAdmin = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
-      const findContract = (await getContractByIdService(id)) as Contract & {
-        User: User & { legal_info: LegalInfo };
-        Payment: Payment[];
+      const findContract = await getContractByIdService(id) as unknown as IContract & {
+        User: IUser & { legal_info: ILegalInfo };
+        Payment: IPayment[];
       };
 
       if (!findContract) {
@@ -385,38 +310,30 @@ export const deleteContractByAdmin = asyncHandler(
         return next(new ErrorHandler("Contract payment is approved", 400));
       }
 
-      const contract = (await deleteContractService(id)) as any;
+      const contract = await deleteContractService(id) as any;
+
+      const deleteFile = async (fileUrl: string) => {
+        const url = new URL(fileUrl);
+        const filePath = `.${url.pathname}`;
+        if (fs.existsSync(filePath)) {
+          await fs.promises.unlink(filePath);
+        }
+      };
 
       if (contract?.contractFile?.contractFileUz) {
-        const url_uz = new URL(contract?.contractFile?.contractFileUz);
-        const filePath_uz = `.${url_uz.pathname}`;
-        if (fs.existsSync(filePath_uz)) {
-          fs.unlinkSync(filePath_uz);
-        }
+        await deleteFile(contract.contractFile.contractFileUz);
       }
 
       if (contract?.contractFile?.contractFileRu) {
-        const url_ru = new URL(contract?.contractFile?.contractFileRu);
-        const filePath_ru = `.${url_ru.pathname}`;
-        if (fs.existsSync(filePath_ru)) {
-          fs.unlinkSync(filePath_ru);
-        }
+        await deleteFile(contract.contractFile.contractFileRu);
       }
 
       if (contract?.deliveryFile?.deliveryFileUz) {
-        const url_delivery = new URL(contract.deliveryFile.deliveryFileUz);
-        const filePath_delivery = `.${url_delivery.pathname}`;
-        if (fs.existsSync(filePath_delivery)) {
-          fs.unlinkSync(filePath_delivery);
-        }
+        await deleteFile(contract.deliveryFile.deliveryFileUz);
       }
 
       if (contract?.deliveryFile?.deliveryFileRu) {
-        const url_delivery = new URL(contract.deliveryFile.deliveryFileRu);
-        const filePath_delivery = `.${url_delivery.pathname}`;
-        if (fs.existsSync(filePath_delivery)) {
-          fs.unlinkSync(filePath_delivery);
-        }
+        await deleteFile(contract.deliveryFile.deliveryFileRu);
       }
 
       res.status(200).json({
@@ -425,9 +342,7 @@ export const deleteContractByAdmin = asyncHandler(
         contract,
       });
     } catch (error: any) {
-      return next(
-        new ErrorHandler(`Error deleting contract: ${error.message}`, 500)
-      );
+      return next(new ErrorHandler(`Error deleting contract: ${error.message}`, 500));
     }
   }
 );
@@ -435,8 +350,8 @@ export const deleteContractByAdmin = asyncHandler(
 export const newNotificationsContractisAdmin = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const contracts = (await newNotifsContractisAdmin()) as (Contract & {
-        User: User;
+      const contracts = await newNotifsContractisAdmin() as unknown as (IContract & {
+        User: IUser;
       })[];
       res.status(200).json({
         success: true,
@@ -444,9 +359,7 @@ export const newNotificationsContractisAdmin = asyncHandler(
         contracts,
       });
     } catch (error: any) {
-      return next(
-        new ErrorHandler(`Error creating notification: ${error.message}`, 500)
-      );
+      return next(new ErrorHandler(`Error creating notification: ${error.message}`, 500));
     }
   }
 );
@@ -458,18 +371,15 @@ export const getContractById = asyncHandler(
       if (!req.user) {
         return next(new ErrorHandler("Please login to get a contract", 401));
       }
-      const contract = (await getContractByIdService(
-        id,
-        req.user?.id
-      )) as Contract & {
-        User: User;
-        Payment: Payment[];
+      const contract = await getContractByIdService(id, req.user.id) as unknown as IContract & {
+        User: IUser;
+        Payment: IPayment[];
       };
       if (!contract) {
         return next(new ErrorHandler("Contract not found", 404));
       }
 
-      if (contract.isRead === false) {
+      if (!contract.isRead) {
         await updateContractService(id, { isRead: true });
       }
 
@@ -478,7 +388,9 @@ export const getContractById = asyncHandler(
         message: "Contract fetched successfully",
         contract,
       });
-    } catch (error: any) {}
+    } catch (error: any) {
+      next(new ErrorHandler(`Error getting contract: ${error.message}`, 500));
+    }
   }
 );
 
@@ -486,7 +398,7 @@ export const getContractsByTaxAgent = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const contracts = await getContractByTaxAgentService({
-        where: {status: "approved"},
+        where: { status: "approved" },
       });
       res.status(200).json({
         success: true,
@@ -494,9 +406,7 @@ export const getContractsByTaxAgent = asyncHandler(
         contracts,
       });
     } catch (error: any) {
-      return next(
-        new ErrorHandler(`Error getting contract: ${error.message}`, 500)
-      );
+      return next(new ErrorHandler(`Error getting contracts: ${error.message}`, 500));
     }
   }
 );
@@ -505,17 +415,16 @@ export const uploadContractDeliveryDoc = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
-      const  contract_delivery_doc  = req.files as Express.Multer.File[]
+      const contract_delivery_doc = req.files as Express.Multer.File[];
 
-      if(contract_delivery_doc.length === 0) {
+      if (!contract_delivery_doc.length) {
         return next(new ErrorHandler("Contract delivery document is required", 400));
       }
+
       const contract_delivery_doc_path = contract_delivery_doc.map((file) => {
-        return `${req.protocol}://${req.get("host")}/public/contracts/contract_delivery_doc/${
-          file.filename
-        }`;
+        return `${req.protocol}://${req.get("host")}/public/contracts/contract_delivery_doc/${file.filename}`;
       });
-      
+
       const contract = await updateContractService(id, {
         deliveryFile: contract_delivery_doc_path as any,
       });
@@ -525,9 +434,8 @@ export const uploadContractDeliveryDoc = asyncHandler(
         message: "Contract delivery document uploaded successfully",
         contract,
       });
-
     } catch (error: any) {
-      
+      next(new ErrorHandler(`Error uploading contract delivery document: ${error.message}`, 500));
     }
   }
-)
+);

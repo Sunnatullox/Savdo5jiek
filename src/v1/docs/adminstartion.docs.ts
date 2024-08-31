@@ -107,8 +107,8 @@
 
 /**
  * @swagger
- * /api/v1/adminstrator/adminstrator-two-factor-auth-update:
- *  put:
+ * /api/v1/adminstrator/adminstrator-two-factor-auth-update-and-create:
+ *  post:
  *    summary: Update two factor authentication
  *    tags: [Adminstrator]
  *    description: Update two factor authentication
@@ -181,7 +181,7 @@
 
 /**
  * @swagger
- * /api/v1/adminstrator/adminstrator-info:
+ * /api/v1/adminstrator/get-me-adminstrator:
  *  get:
  *    summary: Get adminstrator info
  *    tags: [Adminstrator]

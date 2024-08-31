@@ -8,8 +8,8 @@ export interface IUser {
   middle_name: string;
   valid: boolean;
   birth_date: string;
-  address?: string;
-  phone_number?: string;
+  address?: string | null;
+  phone_number?: string | null;
   passport_no: string;
   sur_name: string;
   pin_jshshir: string;

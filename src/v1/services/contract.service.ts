@@ -37,7 +37,7 @@ export async function getContractsByIdService(id: string, is_LLC: boolean) {
 }
 
 export async function getContractByIdService(id: string, userId?: string) {
-  return await prisma.contract.findUnique({
+const contract=    await prisma.contract.findUnique({
     where: userId ? { id, userId } : { id },
     include: {
       User: {
@@ -48,6 +48,13 @@ export async function getContractByIdService(id: string, userId?: string) {
       Payment: true,
     },
   });
+  if(!userId){
+    await prisma.contract.update({
+      where:{id},
+      data:{isRead:true}
+    })
+  }
+  return contract
 }
 
 export async function updateContractService(id: string, data: Partial<Prisma.ContractUpdateInput>) {

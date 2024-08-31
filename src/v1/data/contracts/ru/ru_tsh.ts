@@ -1,16 +1,10 @@
-import {
-  AdminInfo,
-  Administration,
-  LegalInfo,
-  Product,
-  User,
-  Categorie,
-} from "@prisma/client";
+import { AdminInfo, Administrator } from "../../../types/adminstrator.type";
+import { ILegalInfo, IUser } from "../../../types/user.type";
 import { formatNumber } from "../../../utils/numberToWords";
 
 export default async function RuTshContractHtml(
-  admin: Administration & { AdminInfo: AdminInfo },
-  user: User & { legal_info: LegalInfo },
+  admin: Administrator & { AdminInfo: AdminInfo },
+  user: IUser & { legal_info: ILegalInfo },
   products: any,
   isDelivery: boolean,
   data: any

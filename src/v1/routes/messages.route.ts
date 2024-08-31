@@ -33,13 +33,13 @@ router.get(
 router.get(
   "/get-notification-user",
   isAuthenticatedUser,
-  messagesController.getNotficationUser
+  messagesController.getNotificationUser
 );
 router.get(
   "/get-notification-admin",
   isAuthenticatedAdminstrator,
   isAdministrator(Role.ADMIN),
-  messagesController.getNotficationAdmin
+  messagesController.getNotificationAdmin
 );
 
 export default router;

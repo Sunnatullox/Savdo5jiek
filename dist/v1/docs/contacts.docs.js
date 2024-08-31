@@ -2,7 +2,7 @@
 // Create Contact Us
 /**
  * @swagger
- * /create-contact-us:
+ * /api/v1/contacts/create-contact-us:
  *   post:
  *     summary: Create a new contact message
  *     tags: [Contacts]
