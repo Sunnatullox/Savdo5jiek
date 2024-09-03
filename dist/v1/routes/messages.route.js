@@ -34,4 +34,6 @@ router.get("/get-messages-user/:contractId", auth_1.isAuthenticatedUser, message
 router.get("/get-messages-admin/:contractId", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), messagesController.getMessagesAdminByContractId);
 router.get("/get-notification-user", auth_1.isAuthenticatedUser, messagesController.getNotificationUser);
 router.get("/get-notification-admin", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), messagesController.getNotificationAdmin);
+router.delete("/delete-message-user/:messageId", auth_1.isAuthenticatedUser, messagesController.deleteMessageUser);
+router.delete("/delete-message-admin/:messageId", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), messagesController.deleteMessageAdmin);
 exports.default = router;

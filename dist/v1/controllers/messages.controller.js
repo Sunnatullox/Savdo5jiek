@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNotificationAdmin = exports.getNotificationUser = exports.getMessagesUserByContractId = exports.getMessagesAdminByContractId = exports.sendMessageAdmin = exports.sendMessageUser = void 0;
+exports.deleteMessageAdmin = exports.deleteMessageUser = exports.getNotificationAdmin = exports.getNotificationUser = exports.getMessagesUserByContractId = exports.getMessagesAdminByContractId = exports.sendMessageAdmin = exports.sendMessageUser = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const messages_service_1 = require("../services/messages.service");
 const ErrorHandler_1 = __importDefault(require("../middleware/ErrorHandler"));
@@ -113,5 +113,47 @@ exports.getNotificationAdmin = (0, express_async_handler_1.default)((req, res, n
     }
     catch (error) {
         next(new ErrorHandler_1.default(`Error fetching notifications: ${error.message}`, error.statusCode || 500));
+    }
+}));
+exports.deleteMessageUser = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { messageId } = req.params;
+        const { id } = req.user;
+        if (!messageId) {
+            return next(new ErrorHandler_1.default("Message ID is required", 400));
+        }
+        const message = yield (0, messages_service_1.getMessagesUserByContractIdService)(messageId, id);
+        if (!message) {
+            return next(new ErrorHandler_1.default("Message not found", 404));
+        }
+        yield (0, messages_service_1.deleteMessageUserService)(messageId, id);
+        res.status(200).json({
+            success: true,
+            message: "Message deleted successfully",
+        });
+    }
+    catch (error) {
+        next(new ErrorHandler_1.default(`Error deleting message: ${error.message}`, error.statusCode || 500));
+    }
+}));
+exports.deleteMessageAdmin = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { messageId } = req.params;
+        const { id } = req.adminstrator;
+        if (!messageId) {
+            return next(new ErrorHandler_1.default("Message ID is required", 400));
+        }
+        const message = yield (0, messages_service_1.getMessagesAdminByContractIdService)(messageId);
+        if (!message) {
+            return next(new ErrorHandler_1.default("Message not found", 404));
+        }
+        yield (0, messages_service_1.deleteMessageAdminService)(messageId);
+        res.status(200).json({
+            success: true,
+            message: "Message deleted successfully",
+        });
+    }
+    catch (error) {
+        next(new ErrorHandler_1.default(`Error deleting message: ${error.message}`, error.statusCode || 500));
     }
 }));

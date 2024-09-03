@@ -88,6 +88,10 @@ exports.deleteContactUsAdmin = (0, express_async_handler_1.default)((req, res, n
         if (!id) {
             return next(new ErrorHandler_1.default("Contact Us id is required", 400));
         }
+        const contactUs = yield (0, contact_servoce_1.getContactUs)(id);
+        if (!contactUs) {
+            return next(new ErrorHandler_1.default("Contact Us not found", 404));
+        }
         yield (0, contact_servoce_1.deleteContactUs)(id);
         res.status(200).json({
             success: true,

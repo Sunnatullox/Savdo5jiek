@@ -41,5 +41,16 @@ router.get(
   isAdministrator(Role.ADMIN),
   messagesController.getNotificationAdmin
 );
+router.delete(
+  "/delete-message-user/:messageId",
+  isAuthenticatedUser,
+  messagesController.deleteMessageUser
+);
+router.delete(
+  "/delete-message-admin/:messageId",
+  isAuthenticatedAdminstrator,
+  isAdministrator(Role.ADMIN),
+  messagesController.deleteMessageAdmin
+);
 
 export default router;

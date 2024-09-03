@@ -843,6 +843,11 @@ debug@4, debug@^4, debug@^4.1.1, debug@^4.3.4, debug@^4.3.5, debug@^4.3.6:
   dependencies:
     ms "2.1.2"
 
+debug@~0.7.2:
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-0.7.4.tgz#06e1ea8082c2cb14e39806e22e2f6f757f92af39"
+  integrity sha512-EohAb3+DSHSGx8carOSKJe8G0ayV5/i609OD0J2orCkuyae7SyZSz2aoLmQF2s0Pj5gITDebwPH7GFBlqOUQ1Q==
+
 decamelize@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/decamelize/-/decamelize-1.2.0.tgz#f6534d15148269b20352e7bee26f501f9a191290"
@@ -1012,6 +1017,15 @@ express-async-handler@^1.2.0:
   resolved "https://registry.yarnpkg.com/express-async-handler/-/express-async-handler-1.2.0.tgz#ffc9896061d90f8d2e71a2d2b8668db5b0934391"
   integrity sha512-rCSVtPXRmQSW8rmik/AIb2P0op6l7r1fMW538yyvTMltCO4xQEWMmobfrIxN2V1/mVrgxB8Az3reYF6yUZw37w==
 
+express-static-cache@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/express-static-cache/-/express-static-cache-0.0.6.tgz#28c11e223274a929a6890e14be6816338ec24c1b"
+  integrity sha512-SfLNIwPY6Yl73YFUsgb/zcAo2slrQN+8nRT+N4jmQ7OhrkwBIkHpYilMp1+LqcrQs6NnId0EZSO6WjT1q1WANA==
+  dependencies:
+    debug "~0.7.2"
+    fs-readdir-recursive "~0.0.1"
+    mime "~1.2.11"
+
 express-useragent@^1.0.15:
   version "1.0.15"
   resolved "https://registry.yarnpkg.com/express-useragent/-/express-useragent-1.0.15.tgz#cefda5fa4904345d51d3368b117a8dd4124985d9"
@@ -1137,6 +1151,11 @@ fs-extra@^11.2.0:
     graceful-fs "^4.2.0"
     jsonfile "^6.0.1"
     universalify "^2.0.0"
+
+fs-readdir-recursive@~0.0.1:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/fs-readdir-recursive/-/fs-readdir-recursive-0.0.2.tgz#a7863a54832b7af554febbc92d29662eb9f2797a"
+  integrity sha512-5PHtd3Bxiw2KR01vfpkCRRqKw6/xMuv5ZTKzNh+TNJuQdkLxPFT9aA1zpVgdaLLouyR8cSYd7gXQdNv5Y+4cqQ==
 
 fs.realpath@^1.0.0:
   version "1.0.0"
@@ -1550,6 +1569,11 @@ mime@1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/mime/-/mime-1.6.0.tgz#32cd9e5c64553bd58d19a568af452acff04981b1"
   integrity sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg==
+
+mime@~1.2.11:
+  version "1.2.11"
+  resolved "https://registry.yarnpkg.com/mime/-/mime-1.2.11.tgz#58203eed86e3a5ef17aed2b7d9ebd47f0a60dd10"
+  integrity sha512-Ysa2F/nqTNGHhhm9MV8ure4+Hc+Y8AWiqUdHxsO7xu8zc92ND9f3kpALHjaP026Ft17UfxrMt95c50PLUeynBw==
 
 minimatch@^3.0.4, minimatch@^3.1.2:
   version "3.1.2"

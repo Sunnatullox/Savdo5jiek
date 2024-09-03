@@ -26,6 +26,8 @@ const numberToWords_1 = require("../utils/numberToWords");
 const ru_fq_1 = __importDefault(require("../data/contracts/ru/ru_fq"));
 const ru_tsh_1 = __importDefault(require("../data/contracts/ru/ru_tsh"));
 const fileUpload_1 = require("../utils/fileUpload");
+const payment_service_1 = require("../services/payment.service");
+const messages_service_1 = require("../services/messages.service");
 exports.createContractByUser = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (!req.user) {
@@ -150,7 +152,9 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
             totalPrice,
             contractFile: contractFile,
             deliveryFile: "",
-            shippingAddress: findUser.is_LLC ? findUser.legal_info.address : findUser.address,
+            shippingAddress: findUser.is_LLC
+                ? findUser.legal_info.address
+                : findUser.address,
             isDelivery,
             paymentEndDate: yield (0, contract_service_1.addBusinessDays)(new Date(), 7),
             contractEndDate: formattedContractEndDate,
@@ -246,6 +250,7 @@ exports.deleteContractByAdmin = (0, express_async_handler_1.default)((req, res, 
                 where: { id },
                 include: {
                     Payment: true,
+                    Message: true,
                 },
             });
             if (!contract) {
@@ -258,20 +263,32 @@ exports.deleteContractByAdmin = (0, express_async_handler_1.default)((req, res, 
             }
             // Delete payments
             for (const payment of contract.Payment) {
-                yield prisma.payment.delete({
-                    where: { id: payment.id },
-                });
+                yield deleteFile(payment.receiptImage);
+                yield (0, payment_service_1.deletePayment)(payment.id);
+            }
+            // Delete messages
+            for (const message of contract.Message) {
+                yield (0, messages_service_1.deleteMessageAdminService)(message.id);
             }
             // Delete contract files
-            const deleteFile = (fileUrl) => __awaiter(void 0, void 0, void 0, function* () {
-                const url = new URL(fileUrl);
-                const filePath = `.${url.pathname}`;
-                if (fs_1.default.existsSync(filePath)) {
-                    yield fs_1.default.promises.unlink(filePath);
+            function deleteFile(fileUrl) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    const url = new URL(fileUrl);
+                    const filePath = `.${url.pathname}`;
+                    if (fs_1.default.existsSync(filePath)) {
+                        yield fs_1.default.promises.unlink(filePath);
+                    }
+                });
+            }
+            ;
+            const contractFile = contract.contractFile;
+            if (contractFile) {
+                if (contractFile.contractFileUz) {
+                    yield deleteFile(contractFile.contractFileUz);
                 }
-            });
-            if (contract.contractFile) {
-                yield deleteFile(contract.contractFile);
+                if (contractFile.contractFileRu) {
+                    yield deleteFile(contractFile.contractFileRu);
+                }
             }
             // Finally, delete the contract
             yield prisma.contract.delete({
@@ -284,6 +301,7 @@ exports.deleteContractByAdmin = (0, express_async_handler_1.default)((req, res, 
         });
     }
     catch (error) {
+        console.log("Error deleting contract", error);
         next(new ErrorHandler_1.default(`Error deleting contract: ${error.message}`, 500));
     }
 }));

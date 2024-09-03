@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNotficationAdminService = exports.getNotficationUserService = exports.getMessagesUserByContractIdService = exports.getMessagesAdminByContractIdService = exports.sendMessageAdminService = exports.sendMessageUserService = void 0;
+exports.deleteMessageAdminService = exports.deleteMessageUserService = exports.getNotficationAdminService = exports.getNotficationUserService = exports.getMessagesUserByContractIdService = exports.getMessagesAdminByContractIdService = exports.sendMessageAdminService = exports.sendMessageUserService = void 0;
 const db_1 = __importDefault(require("../config/db"));
 const contract_service_1 = require("./contract.service");
 const sendMessageUserService = (contractId, userId, message) => __awaiter(void 0, void 0, void 0, function* () {
@@ -106,3 +106,21 @@ const getNotficationAdminService = () => __awaiter(void 0, void 0, void 0, funct
     return messages;
 });
 exports.getNotficationAdminService = getNotficationAdminService;
+const deleteMessageUserService = (messageId, userId) => __awaiter(void 0, void 0, void 0, function* () {
+    yield db_1.default.message.delete({
+        where: {
+            id: messageId,
+            userId: userId,
+        },
+    });
+});
+exports.deleteMessageUserService = deleteMessageUserService;
+const deleteMessageAdminService = (messageId, adminId) => __awaiter(void 0, void 0, void 0, function* () {
+    yield db_1.default.message.delete({
+        where: {
+            id: messageId,
+            adminId: adminId,
+        },
+    });
+});
+exports.deleteMessageAdminService = deleteMessageAdminService;

@@ -27,7 +27,7 @@ function createContactUs(data) {
 }
 function getContactUs(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield db_1.default.contract.findUnique({
+        return yield db_1.default.contactUs.findUnique({
             where: {
                 id
             }
@@ -36,12 +36,12 @@ function getContactUs(id) {
 }
 function getContactUsList(query) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield db_1.default.contract.findMany(query);
+        return yield db_1.default.contactUs.findMany(query);
     });
 }
 function updateContactUs(id, data) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield db_1.default.contract.update({
+        return yield db_1.default.contactUs.update({
             where: {
                 id
             },
@@ -51,7 +51,7 @@ function updateContactUs(id, data) {
 }
 function deleteContactUs(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield db_1.default.contract.delete({
+        return yield db_1.default.contactUs.delete({
             where: {
                 id
             }

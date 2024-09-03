@@ -44,6 +44,7 @@ const express_useragent_1 = __importDefault(require("express-useragent"));
 const request_ip_1 = __importStar(require("request-ip"));
 const checkVPN_1 = __importDefault(require("./utils/checkVPN"));
 require("./utils/scheduler");
+const express_static_cache_1 = __importDefault(require("express-static-cache"));
 // impoer routes
 const adminstrator_route_1 = __importDefault(require("./routes/adminstrator.route"));
 const categorie_route_1 = __importDefault(require("./routes/categorie.route"));
@@ -81,18 +82,23 @@ app.use((0, cors_1.default)({
     optionsSuccessStatus: 200,
 }));
 const rateLimiter = new rate_limiter_flexible_1.RateLimiterMemory({
-    points: 10, // 10 requests
-    duration: 1, // per 1 second by IP
+    points: 100, // 100 requests
+    duration: 60, // per 1 second by IP
 });
 app.use((req, res, next) => {
-    rateLimiter
-        .consume(req.ip)
-        .then(() => {
+    if (req.path.startsWith('/public')) {
         next();
-    })
-        .catch(() => {
-        res.status(429).send("Too Many Requests");
-    });
+    }
+    else {
+        rateLimiter
+            .consume(req.ip)
+            .then(() => {
+            next();
+        })
+            .catch(() => {
+            res.status(429).send("Too Many Requests");
+        });
+    }
 });
 app.use((0, helmet_1.default)());
 app.set('trust proxy', true);
@@ -108,7 +114,10 @@ app.use((0, morgan_1.default)(process.env.NODE_ENV === "production" ? "combined"
 app.use("/public", (req, res, next) => {
     res.header("Cross-Origin-Resource-Policy", "cross-origin");
     next();
-}, express_1.default.static(path_1.default.join(__dirname, "../../public")));
+}, (0, express_static_cache_1.default)(path_1.default.join(__dirname, '../../public'), {
+    maxAge: 86400, // Cache duration in seconds (e.g., one day)
+    cacheControl: true
+}), express_1.default.static(path_1.default.join(__dirname, "../../public")));
 // routes
 app.use("/api/v1/adminstrator", adminstrator_route_1.default);
 app.use("/api/v1/categorie", categorie_route_1.default);

@@ -93,7 +93,12 @@ export const deleteContactUsAdmin = asyncHandler(
       if (!id) {
         return next(new ErrorHandler("Contact Us id is required", 400));
       }
-      
+
+      const contactUs = await getContactUs(id);
+      if (!contactUs) {
+        return next(new ErrorHandler("Contact Us not found", 404));
+      }
+
       await deleteContactUs(id);
       res.status(200).json({
         success: true,

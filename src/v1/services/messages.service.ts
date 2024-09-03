@@ -108,3 +108,21 @@ export const getNotficationAdminService = async (): Promise<object[]> => {
   });
   return messages;
 };
+
+export const deleteMessageUserService = async (messageId: string, userId?: string): Promise<void> => {
+  await prisma.message.delete({
+    where: {
+      id: messageId,
+      userId: userId,
+    },
+  });
+};
+
+export const deleteMessageAdminService = async (messageId: string, adminId?: string): Promise<void> => {
+  await prisma.message.delete({
+    where: {
+      id: messageId,
+      adminId: adminId,
+    },
+  });
+};

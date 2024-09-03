@@ -26,6 +26,8 @@ import { AdminInfo, Administrator } from "../types/adminstrator.type";
 import { ILegalInfo, IUser } from "../types/user.type";
 import { IPayment } from "../types/payment.type";
 import { IContract } from "../types/contract.type";
+import { deletePayment } from "../services/payment.service";
+import { deleteMessageAdminService, deleteMessageUserService } from "../services/messages.service";
 
 export const createContractByUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -210,7 +212,9 @@ export const createContractByUser = asyncHandler(
         totalPrice,
         contractFile: contractFile as any,
         deliveryFile: "",
-        shippingAddress: findUser.is_LLC ? findUser.legal_info.address : findUser.address,
+        shippingAddress: findUser.is_LLC
+          ? findUser.legal_info.address
+          : findUser.address,
         isDelivery,
         paymentEndDate: await addBusinessDays(new Date(), 7),
         contractEndDate: formattedContractEndDate,
@@ -339,6 +343,7 @@ export const deleteContractByAdmin = asyncHandler(
           where: { id },
           include: {
             Payment: true,
+            Message: true,
           },
         });
 
@@ -357,22 +362,31 @@ export const deleteContractByAdmin = asyncHandler(
 
         // Delete payments
         for (const payment of contract.Payment) {
-          await prisma.payment.delete({
-            where: { id: payment.id },
-          });
+          await deleteFile(payment.receiptImage as string);
+          await deletePayment(payment.id);
+        }
+
+        // Delete messages
+        for (const message of contract.Message) {
+          await deleteMessageAdminService(message.id);
         }
 
         // Delete contract files
-        const deleteFile = async (fileUrl: string) => {
+        async function deleteFile (fileUrl: string) {
           const url = new URL(fileUrl);
           const filePath = `.${url.pathname}`;
           if (fs.existsSync(filePath)) {
             await fs.promises.unlink(filePath);
           }
         };
-
-        if (contract.contractFile) {
-          await deleteFile(contract.contractFile as string);
+        const contractFile = contract.contractFile as any;
+        if (contractFile) {
+          if (contractFile.contractFileUz) {
+            await deleteFile(contractFile.contractFileUz as string);
+          }
+          if (contractFile.contractFileRu) {
+            await deleteFile(contractFile.contractFileRu as string);
+          }
         }
 
         // Finally, delete the contract
@@ -386,6 +400,7 @@ export const deleteContractByAdmin = asyncHandler(
         message: "Contract deleted successfully",
       });
     } catch (error: any) {
+      console.log("Error deleting contract", error);  
       next(new ErrorHandler(`Error deleting contract: ${error.message}`, 500));
     }
   }

@@ -9,21 +9,21 @@ export async function createContactUs(data: Prisma.ContactUsCreateInput) {
 }
 
 export async function getContactUs(id: string) {
-    return await prisma.contract.findUnique({
+    return await prisma.contactUs.findUnique({
         where: {
             id
         }
     })
 }
 
-export async function getContactUsList(query: Prisma.ContractFindManyArgs) {
-    return await prisma.contract.findMany(query)
+export async function getContactUsList(query: Prisma.ContactUsFindManyArgs) {
+    return await prisma.contactUs.findMany(query)
 }
 
 
 
-export async function updateContactUs(id: string, data: Prisma.ContractUpdateInput) {
-    return await prisma.contract.update({
+export async function updateContactUs(id: string, data: Prisma.ContactUsUpdateInput) {
+    return await prisma.contactUs.update({
         where: {
             id
         },
@@ -32,7 +32,7 @@ export async function updateContactUs(id: string, data: Prisma.ContractUpdateInp
 }
 
 export async function deleteContactUs(id: string) {
-    return await prisma.contract.delete({
+    return await prisma.contactUs.delete({
         where: {
             id
         }

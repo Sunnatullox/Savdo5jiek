@@ -136,3 +136,47 @@
  *      500:
  *        description: Internal server error
  */
+/**
+ * @swagger
+ * /api/v1/messages/delete-message-user/{messageId}:
+ *  delete:
+ *    summary: Delete a message for the user
+ *    tags: [Messages]
+ *    parameters:
+ *      - in: path
+ *        name: messageId
+ *        required: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      200:
+ *        description: Message deleted successfully
+ *      400:
+ *        description: Bad request
+ *      401:
+ *        description: Unauthorized
+ *      500:
+ *        description: Internal server error
+ */
+/**
+ * @swagger
+ * /api/v1/messages/delete-message-admin/{messageId}:
+ *  delete:
+ *    summary: Delete a message for the admin
+ *    tags: [Messages]
+ *    parameters:
+ *      - in: path
+ *        name: messageId
+ *        required: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      200:
+ *        description: Message deleted successfully
+ *      400:
+ *        description: Bad request
+ *      401:
+ *        description: Unauthorized
+ *      500:
+ *
+ */ 

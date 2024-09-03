@@ -15,6 +15,7 @@ import useragent from "express-useragent";
 import requestIp, { getClientIp } from "request-ip";
 import checkVPN from "./utils/checkVPN";
 import "./utils/scheduler";
+import expressStaticCache from 'express-static-cache';
 
 // impoer routes
 import adminstratorRoutes from "./routes/adminstrator.route";
@@ -58,18 +59,22 @@ app.use(
   })
 );
 const rateLimiter = new RateLimiterMemory({
-  points: 10, // 10 requests
-  duration: 1, // per 1 second by IP
+  points: 100, // 100 requests
+  duration: 60, // per 1 second by IP
 });
 app.use((req: Request, res: Response, next: NextFunction) => {
-  rateLimiter
-    .consume(req.ip as string)
-    .then(() => {
-      next();
-    })
-    .catch(() => {
-      res.status(429).send("Too Many Requests");
-    });
+  if (req.path.startsWith('/public')) {
+    next(); 
+  } else {
+    rateLimiter
+      .consume(req.ip as string)
+      .then(() => {
+        next();
+      })
+      .catch(() => {
+        res.status(429).send("Too Many Requests");
+      });
+  }
 });
 app.use(helmet());
 app.set('trust proxy', true)
@@ -86,7 +91,10 @@ app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 app.use("/public",(req, res, next) => {
   res.header("Cross-Origin-Resource-Policy", "cross-origin");
   next();
-}, express.static(path.join(__dirname, "../../public")));
+}, expressStaticCache(path.join(__dirname, '../../public'), {
+  maxAge: 86400,  // Cache duration in seconds (e.g., one day)
+  cacheControl: true
+}), express.static(path.join(__dirname, "../../public")));
 
 // routes
 app.use("/api/v1/adminstrator", adminstratorRoutes);

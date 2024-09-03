@@ -1,5 +1,7 @@
 import asyncHandler from "express-async-handler";
 import {
+  deleteMessageAdminService,
+  deleteMessageUserService,
   getMessagesAdminByContractIdService,
   getMessagesUserByContractIdService,
   getNotficationAdminService,
@@ -128,6 +130,60 @@ export const getNotificationAdmin = asyncHandler(
       });
     } catch (error: any) {
       next(new ErrorHandler(`Error fetching notifications: ${error.message}`, error.statusCode || 500));
+    }
+  }
+);
+
+export const deleteMessageUser = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { messageId } = req.params;
+      const { id } = req.user as IUser;
+
+      if (!messageId) {
+        return next(new ErrorHandler("Message ID is required", 400));
+      }
+
+      const message = await getMessagesUserByContractIdService(messageId, id);
+
+      if (!message) {
+        return next(new ErrorHandler("Message not found", 404));
+      }
+
+      await deleteMessageUserService(messageId, id);
+      res.status(200).json({
+        success: true,
+        message: "Message deleted successfully",
+      });
+    } catch (error: any) {
+      next(new ErrorHandler(`Error deleting message: ${error.message}`, error.statusCode || 500));
+    }
+  }
+);
+
+export const deleteMessageAdmin = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { messageId } = req.params;
+      const { id } = req.adminstrator as Administrator;
+
+      if (!messageId) {
+        return next(new ErrorHandler("Message ID is required", 400));
+      }
+
+      const message = await getMessagesAdminByContractIdService(messageId);
+
+      if (!message) {
+        return next(new ErrorHandler("Message not found", 404));
+      }
+
+      await deleteMessageAdminService(messageId);
+      res.status(200).json({
+        success: true,
+        message: "Message deleted successfully",
+      });
+    } catch (error: any) {
+      next(new ErrorHandler(`Error deleting message: ${error.message}`, error.statusCode || 500));
     }
   }
 );
