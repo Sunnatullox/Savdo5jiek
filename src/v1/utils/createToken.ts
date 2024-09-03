@@ -46,27 +46,28 @@ interface ITokenOptions {
   secure?: boolean;
 }
 
+
 export const accessTokenExpire = parseInt(
-  (process.env.ACCESS_TOKEN_EXPIRE as string) || "1440", // 1 day
-  10
+  process.env.ACCESS_TOKEN_EXPIRE || "72", // 72 hours
+  10 // base 10
 );
 
 export const refreshTokenExpire = parseInt(
-  (process.env.REFRESH_TOKEN_EXPIRE as string) || "1440", // 1 day
+  process.env.REFRESH_TOKEN_EXPIRE || "3", // 3 days
   10
 );
 
 export const accessTokenOptions: ITokenOptions = {
-  expires: new Date(Date.now() + accessTokenExpire * 24 * 60 * 60 * 1000), // 1 day
-  maxAge: accessTokenExpire * 24 * 60 * 60 * 1000, // 1 day
+  expires: new Date(Date.now() + accessTokenExpire * 60 * 60 * 1000), // 3 days
+  maxAge: accessTokenExpire * 60 * 60 * 1000, // 3 days
   httpOnly: true,
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Cross-Site HTTP Only
-  secure: process.env.NODE_ENV === "production", // Secure cookie
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  secure: process.env.NODE_ENV === "production",
 };
 
 export const refreshTokenOptions: ITokenOptions = {
-  expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000), // 1 day
-  maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000, // 1 day
+  expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000),
+  maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000,
   httpOnly: true,
   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   secure: process.env.NODE_ENV === "production",

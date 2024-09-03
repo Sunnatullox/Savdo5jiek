@@ -51,7 +51,7 @@ function signAccessToken(adminId) {
 }
 function signRefreshToken(adminId) {
     return __awaiter(this, void 0, void 0, function* () {
-        return jsonwebtoken_1.default.sign({ id: adminId }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1d' });
+        return jsonwebtoken_1.default.sign({ id: adminId }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '3d' });
     });
 }
 function comparePassword(plainPassword, hashedPassword) {

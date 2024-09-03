@@ -1,5 +1,35 @@
 
+/**
+ * @swagger
+ * /api/v1/analytics/get-12-month-payment-analytics:
+ *  get:
+ *    summary: Get 12-month payment analytics
+ *    tags: [Analytics]
+ *    description: Get 12-month payment analytics
+ *    responses:
+ *      '200':
+ *        description: 12-month payment analytics
+ *      '401':
+ *        description: Unauthorized
+ *      '500':
+ *        description: Internal server error
+ */
 
+/**
+ * @swagger
+ * /api/v1/analytics/get-12-month-user-registration-analytics:
+ *  get:
+ *    summary: Get 12-month user registration analytics
+ *    tags: [Analytics]
+ *    description: Get 12-month user registration analytics
+ *    responses:
+ *      '200':
+ *        description: 12-month user registration analytics
+ *      '401':
+ *        description: Unauthorized
+ *      '500':
+ *        description: Internal server error
+ */
 
 /**
  * @swagger

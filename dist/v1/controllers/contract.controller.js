@@ -40,36 +40,47 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
             where: { id: { in: products.map((product) => product.id) } },
             include: { category: true },
         });
-        const productsWithQty = products.map((product) => {
+        const productsWithQty = products
+            .map((product) => {
             const foundProduct = findsProducts.find((p) => p.id === product.id);
             if (foundProduct) {
                 return Object.assign(Object.assign({}, foundProduct), { qty: product.qty });
             }
-        }).filter(Boolean);
+        })
+            .filter(Boolean);
         if (findsProducts.length !== products.length) {
             return next(new ErrorHandler_1.default("Please select the correct products", 404));
         }
-        const findAdmin = yield db_1.default.administration.findFirst({
+        const findAdmin = (yield db_1.default.administration.findFirst({
             where: { role: "ADMIN" },
             include: { AdminInfo: true },
-        });
+        }));
         if (!findAdmin) {
             return next(new ErrorHandler_1.default("Admin not found", 404));
         }
-        const findUser = yield db_1.default.user.findFirst({
+        const findUser = (yield db_1.default.user.findFirst({
             where: { id },
             include: { legal_info: true },
-        });
+        }));
         if (!findUser) {
             return next(new ErrorHandler_1.default("User not found", 404));
         }
         const contract_id = (0, uniqid_1.default)("", "UZ");
         const now = new Date();
-        const formattedDate = now.toLocaleDateString("en-GB").split('/').join('.');
+        const formattedDate = now
+            .toLocaleDateString("en-GB")
+            .split("/")
+            .join(".");
         const deliveryDate = new Date(now.setMonth(now.getMonth() + 1));
-        const formattedDeliveryDate = deliveryDate.toLocaleDateString("en-GB").split('/').join('.');
+        const formattedDeliveryDate = deliveryDate
+            .toLocaleDateString("en-GB")
+            .split("/")
+            .join(".");
         const contractEndDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
-        const formattedContractEndDate = contractEndDate.toLocaleDateString("en-GB").split('/').join('.');
+        const formattedContractEndDate = contractEndDate
+            .toLocaleDateString("en-GB")
+            .split("/")
+            .join(".");
         const writtenTotalPriceRu = (0, numberToWords_1.numberToWordsRu)(totalPrice);
         const writtenTotalPriceUz = (0, numberToWords_1.numberToWordsUz)(Number(totalPrice));
         const fileNameUz = `document-${Date.now()}-uz.pdf`;
@@ -82,46 +93,54 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
                     (yield (0, fileReplace_1.htmlToPDFAndSave)(yield (0, uz_fq_1.default)(findAdmin, findUser, productsWithQty, isDelivery, {
                         contractId: contract_id,
                         contractDate: formattedDate,
-                        productsCategoryUz: findsProducts.map(p => p.category.name_uz).join(", "),
+                        productsCategoryUz: findsProducts
+                            .map((p) => p.category.name_uz)
+                            .join(", "),
                         totalPrice,
                         deliveryDate: formattedDeliveryDate,
                         writtenTotalPriceUz,
                         contractEndDate: formattedContractEndDate,
-                        qrcode: qrCodeFileUz
+                        qrcode: qrCodeFileUz,
                     }), "uz", fileNameUz))
                 : `${req.protocol}://${req.get("host")}/public` +
                     (yield (0, fileReplace_1.htmlToPDFAndSave)(yield (0, uz_tsh_1.default)(findAdmin, findUser, productsWithQty, isDelivery, {
                         contractId: contract_id,
                         contractDate: formattedDate,
-                        productsCategoryUz: findsProducts.map(p => p.category.name_uz).join(", "),
+                        productsCategoryUz: findsProducts
+                            .map((p) => p.category.name_uz)
+                            .join(", "),
                         totalPrice,
                         deliveryDate: formattedDeliveryDate,
                         writtenTotalPriceUz,
                         contractEndDate: formattedContractEndDate,
-                        qrcode: qrCodeFileUz
+                        qrcode: qrCodeFileUz,
                     }), "uz", fileNameUz)),
             contractFileRu: !findUser.is_LLC
                 ? `${req.protocol}://${req.get("host")}/public` +
                     (yield (0, fileReplace_1.htmlToPDFAndSave)(yield (0, ru_fq_1.default)(findAdmin, findUser, productsWithQty, isDelivery, {
                         contractId: contract_id,
                         contractDate: formattedDate,
-                        productsCategoryRu: findsProducts.map(p => p.category.name_ru).join(", "),
+                        productsCategoryRu: findsProducts
+                            .map((p) => p.category.name_ru)
+                            .join(", "),
                         totalPrice,
                         deliveryDate: formattedDeliveryDate,
                         writtenTotalPriceRu,
                         contractEndDate: formattedContractEndDate,
-                        qrcode: qrCodeFileRu
+                        qrcode: qrCodeFileRu,
                     }), "ru", fileNameRu))
                 : `${req.protocol}://${req.get("host")}/public` +
                     (yield (0, fileReplace_1.htmlToPDFAndSave)(yield (0, ru_tsh_1.default)(findAdmin, findUser, productsWithQty, isDelivery, {
                         contractId: contract_id,
                         contractDate: formattedDate,
-                        productsCategoryRu: findsProducts.map(p => p.category.name_ru).join(", "),
+                        productsCategoryRu: findsProducts
+                            .map((p) => p.category.name_ru)
+                            .join(", "),
                         totalPrice,
                         deliveryDate: formattedDeliveryDate,
                         writtenTotalPriceRu,
                         contractEndDate: formattedContractEndDate,
-                        qrcode: qrCodeFileRu
+                        qrcode: qrCodeFileRu,
                     }), "ru", fileNameRu)),
         };
         const newContract = yield (0, contract_service_1.createContractService)({
@@ -131,7 +150,7 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
             totalPrice,
             contractFile: contractFile,
             deliveryFile: "",
-            shippingAddress: "",
+            shippingAddress: findUser.is_LLC ? findUser.legal_info.address : findUser.address,
             isDelivery,
             paymentEndDate: yield (0, contract_service_1.addBusinessDays)(new Date(), 7),
             contractEndDate: formattedContractEndDate,
@@ -200,7 +219,7 @@ exports.updateContractByAdminStatus = (0, express_async_handler_1.default)((req,
         if (!status) {
             return next(new ErrorHandler_1.default("Status is required", 400));
         }
-        const findContract = yield (0, contract_service_1.getContractByIdService)(id);
+        const findContract = (yield (0, contract_service_1.getContractByIdService)(id));
         if (!findContract) {
             return next(new ErrorHandler_1.default("Contract not found", 404));
         }
@@ -219,50 +238,58 @@ exports.updateContractByAdminStatus = (0, express_async_handler_1.default)((req,
     }
 }));
 exports.deleteContractByAdmin = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d;
+    const { id } = req.params; // Contract ID
     try {
-        const { id } = req.params;
-        const findContract = yield (0, contract_service_1.getContractByIdService)(id);
-        if (!findContract) {
-            return next(new ErrorHandler_1.default("Contract not found", 404));
-        }
-        const findContactPaymentStatusApproved = findContract.Payment.some((payment) => payment.status === "approved");
-        if (findContactPaymentStatusApproved) {
-            return next(new ErrorHandler_1.default("Contract payment is approved", 400));
-        }
-        const contract = yield (0, contract_service_1.deleteContractService)(id);
-        const deleteFile = (fileUrl) => __awaiter(void 0, void 0, void 0, function* () {
-            const url = new URL(fileUrl);
-            const filePath = `.${url.pathname}`;
-            if (fs_1.default.existsSync(filePath)) {
-                yield fs_1.default.promises.unlink(filePath);
+        // Transaction start
+        yield db_1.default.$transaction((prisma) => __awaiter(void 0, void 0, void 0, function* () {
+            const contract = yield prisma.contract.findUnique({
+                where: { id },
+                include: {
+                    Payment: true,
+                },
+            });
+            if (!contract) {
+                throw new ErrorHandler_1.default("Contract not found", 404);
             }
-        });
-        if ((_a = contract === null || contract === void 0 ? void 0 : contract.contractFile) === null || _a === void 0 ? void 0 : _a.contractFileUz) {
-            yield deleteFile(contract.contractFile.contractFileUz);
-        }
-        if ((_b = contract === null || contract === void 0 ? void 0 : contract.contractFile) === null || _b === void 0 ? void 0 : _b.contractFileRu) {
-            yield deleteFile(contract.contractFile.contractFileRu);
-        }
-        if ((_c = contract === null || contract === void 0 ? void 0 : contract.deliveryFile) === null || _c === void 0 ? void 0 : _c.deliveryFileUz) {
-            yield deleteFile(contract.deliveryFile.deliveryFileUz);
-        }
-        if ((_d = contract === null || contract === void 0 ? void 0 : contract.deliveryFile) === null || _d === void 0 ? void 0 : _d.deliveryFileRu) {
-            yield deleteFile(contract.deliveryFile.deliveryFileRu);
-        }
+            // Check if any payment is approved
+            const approvedPaymentExists = contract.Payment.some((payment) => payment.status === "approved");
+            if (approvedPaymentExists) {
+                throw new ErrorHandler_1.default("Contract payment is approved", 400);
+            }
+            // Delete payments
+            for (const payment of contract.Payment) {
+                yield prisma.payment.delete({
+                    where: { id: payment.id },
+                });
+            }
+            // Delete contract files
+            const deleteFile = (fileUrl) => __awaiter(void 0, void 0, void 0, function* () {
+                const url = new URL(fileUrl);
+                const filePath = `.${url.pathname}`;
+                if (fs_1.default.existsSync(filePath)) {
+                    yield fs_1.default.promises.unlink(filePath);
+                }
+            });
+            if (contract.contractFile) {
+                yield deleteFile(contract.contractFile);
+            }
+            // Finally, delete the contract
+            yield prisma.contract.delete({
+                where: { id },
+            });
+        }));
         res.status(200).json({
             success: true,
             message: "Contract deleted successfully",
-            contract,
         });
     }
     catch (error) {
-        return next(new ErrorHandler_1.default(`Error deleting contract: ${error.message}`, 500));
+        next(new ErrorHandler_1.default(`Error deleting contract: ${error.message}`, 500));
     }
 }));
 exports.newNotificationsContractisAdmin = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const contracts = yield (0, contract_service_1.newNotifsContractisAdmin)();
+        const contracts = (yield (0, contract_service_1.newNotifsContractisAdmin)());
         res.status(200).json({
             success: true,
             message: "Notifications fetched successfully",
@@ -279,7 +306,7 @@ exports.getContractById = (0, express_async_handler_1.default)((req, res, next) 
         if (!req.user) {
             return next(new ErrorHandler_1.default("Please login to get a contract", 401));
         }
-        const contract = yield (0, contract_service_1.getContractByIdService)(id, req.user.id);
+        const contract = (yield (0, contract_service_1.getContractByIdService)(id, req.user.id));
         if (!contract) {
             return next(new ErrorHandler_1.default("Contract not found", 404));
         }

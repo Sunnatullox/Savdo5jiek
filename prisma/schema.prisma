@@ -144,6 +144,7 @@ model Administration {
   Device          Device[]
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
+  Message         Message[]
 }
 
 model AdminInfo {
@@ -194,17 +195,19 @@ model ContactUs {
 }
 
 model Message {
-  id          String   @id @default(uuid()) @map("_id")
-  message     String
-  isReadAdmin Boolean  @default(false)
-  isReadUser  Boolean  @default(false)
-  isAdmin     Boolean  @default(false)
-  user        User     @relation(fields: [userId], references: [id])
-  userId      String
-  contract    Contract @relation(fields: [contractId], references: [id])
-  contractId  String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id               String          @id @default(uuid()) @map("_id")
+  message          String
+  isReadAdmin      Boolean         @default(false)
+  isReadUser       Boolean         @default(false)
+  isAdmin          Boolean         @default(false)
+  user             User?           @relation(fields: [userId], references: [id])
+  userId           String?
+  contract         Contract        @relation(fields: [contractId], references: [id])
+  contractId       String
+  admin            Administration? @relation(fields: [adminId], references: [id])
+  adminId          String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
 }
 
 model Device {

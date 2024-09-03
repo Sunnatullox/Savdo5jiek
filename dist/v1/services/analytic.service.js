@@ -12,8 +12,97 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLowStockProductsService = exports.getUserAnalyticsService = exports.get12MonthProductSalesAnalyticsService = exports.get12MonthContractAnalyticsService = void 0;
+exports.getLowStockProductsService = exports.getUserAnalyticsService = exports.get12MonthProductSalesAnalyticsService = exports.get12MonthContractAnalyticsService = exports.get12MonthUserRegistrationAnalyticsService = exports.get12MonthPaymentAnalyticsService = void 0;
 const db_1 = __importDefault(require("../config/db"));
+const get12MonthPaymentAnalyticsService = () => __awaiter(void 0, void 0, void 0, function* () {
+    const today = new Date();
+    const lastYear = new Date(new Date().setFullYear(today.getFullYear() - 1));
+    const payments = yield db_1.default.payment.findMany({
+        where: {
+            createdAt: {
+                gte: lastYear,
+            },
+            status: "approved",
+        },
+    });
+    const totalPaymentsEver = yield db_1.default.payment.aggregate({
+        _sum: {
+            amount: true,
+        },
+        where: {
+            status: "approved",
+        },
+    });
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December",
+    ];
+    const currentMonth = today.getMonth();
+    const orderedMonthNames = [
+        ...monthNames.slice(currentMonth + 1), // Start from the month after current
+        ...monthNames.slice(0, currentMonth + 1), // Then add months before and including current month
+    ].reverse(); // Reverse to start from current month and go backwards
+    const monthlyData = Array.from({ length: 12 }, (_, index) => ({
+        month: orderedMonthNames[index],
+        totalPayments: 0,
+        totalAmount: 0,
+    }));
+    let totalAmountForYear = 0;
+    payments.forEach((payment) => {
+        const paymentDate = new Date(payment.createdAt);
+        const paymentMonth = paymentDate.getMonth();
+        const yearDifference = today.getFullYear() - paymentDate.getFullYear();
+        const monthIndex = (currentMonth - paymentMonth + 12 * yearDifference) % 12; // Adjust for year difference
+        monthlyData[monthIndex].totalPayments++;
+        monthlyData[monthIndex].totalAmount += payment.amount;
+        totalAmountForYear += payment.amount;
+    });
+    return {
+        monthlyData,
+        totalAmountForYear,
+        totalPaymentsEver: totalPaymentsEver._sum.amount || 0 // Agar hech qanday to'lov bo'lmagan bo'lsa, 0 qaytariladi
+    };
+});
+exports.get12MonthPaymentAnalyticsService = get12MonthPaymentAnalyticsService;
+const get12MonthUserRegistrationAnalyticsService = () => __awaiter(void 0, void 0, void 0, function* () {
+    const today = new Date();
+    const lastYear = new Date(new Date().setFullYear(today.getFullYear() - 1));
+    const usersLastYear = yield db_1.default.user.findMany({
+        where: {
+            createdAt: {
+                gte: lastYear,
+            },
+        },
+    });
+    const totalUsersEver = yield db_1.default.user.count(); // Count all users ever registered
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December",
+    ];
+    const currentMonth = today.getMonth();
+    const orderedMonthNames = [
+        ...monthNames.slice(currentMonth + 1),
+        ...monthNames.slice(0, currentMonth + 1),
+    ].reverse();
+    const monthlyData = Array.from({ length: 12 }, (_, index) => ({
+        month: orderedMonthNames[index],
+        userRegistrations: 0,
+    }));
+    let totalRegistrationsLastYear = 0;
+    usersLastYear.forEach((user) => {
+        const registrationMonth = new Date(user.createdAt).getMonth();
+        const yearDifference = today.getFullYear() - new Date(user.createdAt).getFullYear();
+        const monthIndex = (currentMonth - registrationMonth + 12 * yearDifference) % 12;
+        monthlyData[monthIndex].userRegistrations++;
+        totalRegistrationsLastYear++;
+    });
+    return {
+        monthlyData,
+        totalRegistrationsLastYear,
+        totalUsersEver
+    };
+});
+exports.get12MonthUserRegistrationAnalyticsService = get12MonthUserRegistrationAnalyticsService;
 const get12MonthContractAnalyticsService = () => __awaiter(void 0, void 0, void 0, function* () {
     const today = new Date();
     const lastYear = new Date(today.setFullYear(today.getFullYear() - 1));
@@ -59,7 +148,7 @@ const get12MonthContractAnalyticsService = () => __awaiter(void 0, void 0, void 
         contract.Payment.forEach((payment) => {
             const typedPayment = payment;
             if (typedPayment.status === "approved") {
-                monthlyData[month].approvedPayments++;
+                monthlyData[month].approvedPayments += typedPayment.amount; // O'zgartirilgan qism: faqat sonini emas, balki summasini ham qo'shish
             }
         });
     });

@@ -200,8 +200,7 @@ function UzTshContractHtml(admin, user, products, isDelivery, data) {
 			<strong><span style="font-family:Cambria; ">2. MAHSULOTNING NARXI VA TOʻLASH TARTIBI</span></strong>
 		</p>
 		<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
-			<span style="font-family:Cambria">2.1 Maxsulot aniq markasi,</span><span style="font-family:Cambria">&#xa0;
-			</span><span style="font-family:Cambria">miqdori, yetkazib berish xizmati yokida yetkazib berish xizmatisiz
+			<span style="font-family:Cambria">2.1 Maxsulot aniq markasi, miqdori, yetkazib berish xizmati yokida yetkazib berish xizmatisiz
 				va narxi qiymatining summasi quyidagi spesifikasiyada aniqlanadi:</span>
 		</p>
 		<table style="
@@ -334,7 +333,8 @@ function UzTshContractHtml(admin, user, products, isDelivery, data) {
                 ">(qqs siz)</span>
 					</h1>
 				</td>
-				${isDelivery ? (`<td style="
+				${isDelivery
+            ? `<td style="
               width: 53pt;
               border-right: 0.75pt solid #000000;
               border-left: 0.75pt solid #000000;
@@ -355,7 +355,8 @@ function UzTshContractHtml(admin, user, products, isDelivery, data) {
                   color: #000000;
                 ">Yetkazib berish xizmati bilan</span>
 					</h1>
-				</td>`) : ""}
+				</td>`
+            : ""}
 
 				<td style="
               width: 60.1pt;
@@ -405,7 +406,8 @@ function UzTshContractHtml(admin, user, products, isDelivery, data) {
 				</td>
 			</tr>
 			
-			${products.map((product, index) => {
+			${products
+            .map((product, index) => {
             return `
 					<tr style="height: 14.65pt">
 				<td style="
@@ -463,12 +465,11 @@ function UzTshContractHtml(admin, user, products, isDelivery, data) {
               vertical-align: top;
             ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
-						<span style="font-family: Cambria;">${(0, numberToWords_1.formatNumber)(product.discount !== 0
-                ? product.discount
-                : product.price) || "_?_"}</span>
+						<span style="font-family: Cambria;">${(0, numberToWords_1.formatNumber)(product.discount !== 0 ? product.discount : product.price) || "_?_"}</span>
 					</p>
 				</td>
-				${isDelivery ? (`
+				${isDelivery
+                ? `
 				<td style="
               width: 53pt;
               border: 0.75pt solid #000000;
@@ -480,7 +481,8 @@ function UzTshContractHtml(admin, user, products, isDelivery, data) {
 						<span style="font-family: Cambria;">Kalkulyatsiya hisobi qo’shimcha ilova qilinadi</span>
 					</p>
 				</td>
-				`) : ""}
+				`
+                : ""}
 				<td style="
               width: 60.1pt;
               border: 0.75pt solid #000000;
@@ -490,9 +492,7 @@ function UzTshContractHtml(admin, user, products, isDelivery, data) {
             ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
 						<span style="font-family: Cambria;">${(0, numberToWords_1.formatNumber)(product.qty *
-                (product.discount !== 0
-                    ? product.discount
-                    : product.price) || 0)}</span>
+                (product.discount !== 0 ? product.discount : product.price) || 0)}</span>
 					</p>
 				</td>
 				<td style="
@@ -510,7 +510,8 @@ function UzTshContractHtml(admin, user, products, isDelivery, data) {
 				</td>
 			</tr>
 				`;
-        })}
+        })
+            .join("")}
 			<tr style="height: 21.6pt">
 				<td style="
               width: 19.5pt;
@@ -577,7 +578,8 @@ function UzTshContractHtml(admin, user, products, isDelivery, data) {
 						<span style="font-family: Cambria">&#xa0;</span>
 					</p>
 				</td>
-				${isDelivery ? (`
+				${isDelivery
+            ? `
 				<td style="
               width: 53pt;
               border-top: 0.75pt solid #000000;
@@ -591,7 +593,8 @@ function UzTshContractHtml(admin, user, products, isDelivery, data) {
 						<span style="font-family: Cambria">&#xa0;</span>
 					</p>
 				</td>
-				`) : ""}
+				`
+            : ""}
 				<td style="
               width: 60.1pt;
               border-top: 0.75pt solid #000000;
@@ -988,8 +991,7 @@ function UzTshContractHtml(admin, user, products, isDelivery, data) {
 				<p><strong style="font-family:Cambria;">MFO:</strong> ${user.legal_info.mfo || "_?_"}</p>
 				<p class="noSpacing"><strong style="font-family:Cambria;">Rahbar:</strong> ${user.first_name
             .charAt(0)
-            .toUpperCase()}.${user.middle_name.charAt(0).toUpperCase()}.${user.sur_name.charAt(0).toUpperCase() +
-            user.sur_name.slice(1).toLowerCase()}</p>
+            .toUpperCase()}.${user.middle_name.charAt(0).toUpperCase()}.${user.sur_name.charAt(0).toUpperCase() + user.sur_name.slice(1).toLowerCase()}</p>
 			</div>
 		</div>
 		<p>

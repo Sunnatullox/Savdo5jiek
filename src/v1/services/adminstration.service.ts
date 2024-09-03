@@ -20,7 +20,7 @@ export async function signAccessToken(adminId: string) {
 }
 
 export async function signRefreshToken(adminId: string) {
-  return jwt.sign({ id: adminId }, process.env.REFRESH_TOKEN_SECRET as string, { expiresIn: '1d' });
+  return jwt.sign({ id: adminId }, process.env.REFRESH_TOKEN_SECRET as string, { expiresIn: '3d' });
 }
 
 export async function comparePassword(plainPassword: string, hashedPassword: string): Promise<boolean> {

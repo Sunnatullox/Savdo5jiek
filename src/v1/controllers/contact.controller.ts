@@ -93,6 +93,7 @@ export const deleteContactUsAdmin = asyncHandler(
       if (!id) {
         return next(new ErrorHandler("Contact Us id is required", 400));
       }
+      
       await deleteContactUs(id);
       res.status(200).json({
         success: true,

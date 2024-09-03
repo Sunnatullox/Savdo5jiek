@@ -49,6 +49,7 @@ exports.sendMessageAdmin = (0, express_async_handler_1.default)((req, res, next)
         });
     }
     catch (error) {
+        console.log("Message Admin Error", error);
         next(new ErrorHandler_1.default(`Error sending message: ${error.message}`, error.statusCode || 500));
     }
 }));

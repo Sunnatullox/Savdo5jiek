@@ -12,13 +12,6 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: The OAuth code.
- *       - in: header
- *         name: x_redirect_uri
- *         required: true
- *         schema:
- *           type: string
- *         description: Redirect URI after authentication.
  *    responses:
  *      '200':
  *        description: A successful response

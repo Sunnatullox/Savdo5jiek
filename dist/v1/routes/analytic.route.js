@@ -28,6 +28,8 @@ const auth_1 = require("../middleware/auth");
 const adminstrator_type_1 = require("../types/adminstrator.type");
 const analyticsController = __importStar(require("../controllers/analytic.controller"));
 const router = (0, express_1.Router)();
+router.get("/get-12-month-payment-analytics", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), analyticsController.get12MonthPaymentAnalytics);
+router.get("/get-12-month-user-registration-analytics", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), analyticsController.get12MonthUserRegistrationAnalytics);
 router.get("/get-12-month-contract-analytics", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), analyticsController.get12MonthContractAnalytics);
 router.get("/get-12-month-product-sales-analytics", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), analyticsController.get12MonthProductSalesAnalytics);
 router.get("/get-user-analytics", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), analyticsController.getUserAnalytics);

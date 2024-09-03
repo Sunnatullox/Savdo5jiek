@@ -1,4 +1,5 @@
 import prisma from "../config/db";
+import { getContractsByIdService } from "./contract.service";
 
 export const sendMessageUserService = async (
   contractId: string,
@@ -9,6 +10,7 @@ export const sendMessageUserService = async (
     data: {
       message,
       userId,
+      isReadUser:true,
       contractId,
     },
   });
@@ -24,48 +26,23 @@ export const sendMessageAdminService = async (
     data: {
       message,
       isAdmin: true,
+      isReadAdmin: true,
       contractId,
-      userId: adminId,
+      adminId,
     },
   });
   return messageData;
 };
-
-// export const getMessagesUser = async (userId: string): Promise<object[]> => {
-//   const messages = await prisma.message.findMany({
-//     where: {
-//       userId,
-//     },
-//     include: {
-//       contract: true,
-//     },
-//   });
-//   return messages;
-// };
-
-// export const getMessagesAdmin = async (): Promise<object[]> => {
-//   const messages = await prisma.message.findMany({
-//     where: {
-//       isAdmin: true,
-//     },
-//     include: {
-//       contract: true,
-//     },
-//   });
-//   return messages;
-// };
 
 export const getMessagesAdminByContractIdService = async (
   contractId: string
 ): Promise<object[]> => {
   const messages = await prisma.message.findMany({
     where: {
-      contractId,
-      isAdmin: true,
+      contractId
     },
     include: {
       user: true,
-      contract: true,
     },
   });
 
@@ -92,7 +69,6 @@ export const getMessagesUserByContractIdService = async (
     },
     include: {
       user: true,
-      contract: true,
     },
   });
   await prisma.message.updateMany({
@@ -110,10 +86,14 @@ export const getMessagesUserByContractIdService = async (
 export const getNotficationUserService = async (
   userId: string
 ): Promise<object[]> => {
+  const findUserContract = await getContractsByIdService(userId)
   const messages = await prisma.message.findMany({
     where: {
-      userId,
+      contractId: {
+        in: findUserContract.map((contract) => contract.id),
+      },
       isReadUser: false,
+      isAdmin: true,
     },
   });
   return messages;
@@ -122,7 +102,7 @@ export const getNotficationUserService = async (
 export const getNotficationAdminService = async (): Promise<object[]> => {
   const messages = await prisma.message.findMany({
     where: {
-      isAdmin: true,
+      isAdmin: false,
       isReadAdmin: false,
     },
   });

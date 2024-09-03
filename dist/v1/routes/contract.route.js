@@ -35,7 +35,7 @@ router.get("/get-contract-by-user/:id", auth_1.isAuthenticatedUser, contractCont
 router.get("/get-contracts-by-admin", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), contractController.getContractsByAdmin);
 router.get("/get-contract-by-admin/:id", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), contractController.getContractByAdmin);
 router.put("/update-contract-status-by-admin/:id", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), contractController.updateContractByAdminStatus);
-router.post("/upload-contract-delivery-doc/:id", auth_1.isAuthenticatedUser, fileUpload_1.docUpload.array("contract_delivery_doc", 2), contractController.uploadContractDeliveryDoc);
+router.post("/upload-contract-delivery-doc/:id", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), fileUpload_1.docUpload.array("contract_delivery_doc", 2), contractController.uploadContractDeliveryDoc);
 router.delete("/delete-contract-by-admin/:id", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), contractController.deleteContractByAdmin);
 router.get("/get-new-notifications-contract-by-admin", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), contractController.newNotificationsContractisAdmin);
 router.get("/get-contracts-by-tax-agent", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.TAX_AGENT), contractController.getContractsByTaxAgent);

@@ -8,6 +8,20 @@ import * as analyticsController from "../controllers/analytic.controller";
 const router = Router();
 
 router.get(
+  "/get-12-month-payment-analytics",
+  isAuthenticatedAdminstrator,
+  isAdministrator(Role.ADMIN),
+  analyticsController.get12MonthPaymentAnalytics
+);
+
+router.get(
+  "/get-12-month-user-registration-analytics",
+  isAuthenticatedAdminstrator,
+  isAdministrator(Role.ADMIN),
+  analyticsController.get12MonthUserRegistrationAnalytics
+);
+
+router.get(
   "/get-12-month-contract-analytics",
   isAuthenticatedAdminstrator,
   isAdministrator(Role.ADMIN),

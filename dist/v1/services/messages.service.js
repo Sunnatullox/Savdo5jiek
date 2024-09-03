@@ -14,11 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getNotficationAdminService = exports.getNotficationUserService = exports.getMessagesUserByContractIdService = exports.getMessagesAdminByContractIdService = exports.sendMessageAdminService = exports.sendMessageUserService = void 0;
 const db_1 = __importDefault(require("../config/db"));
+const contract_service_1 = require("./contract.service");
 const sendMessageUserService = (contractId, userId, message) => __awaiter(void 0, void 0, void 0, function* () {
     const messageData = yield db_1.default.message.create({
         data: {
             message,
             userId,
+            isReadUser: true,
             contractId,
         },
     });
@@ -30,44 +32,21 @@ const sendMessageAdminService = (adminId, contractId, message) => __awaiter(void
         data: {
             message,
             isAdmin: true,
+            isReadAdmin: true,
             contractId,
-            userId: adminId,
+            adminId,
         },
     });
     return messageData;
 });
 exports.sendMessageAdminService = sendMessageAdminService;
-// export const getMessagesUser = async (userId: string): Promise<object[]> => {
-//   const messages = await prisma.message.findMany({
-//     where: {
-//       userId,
-//     },
-//     include: {
-//       contract: true,
-//     },
-//   });
-//   return messages;
-// };
-// export const getMessagesAdmin = async (): Promise<object[]> => {
-//   const messages = await prisma.message.findMany({
-//     where: {
-//       isAdmin: true,
-//     },
-//     include: {
-//       contract: true,
-//     },
-//   });
-//   return messages;
-// };
 const getMessagesAdminByContractIdService = (contractId) => __awaiter(void 0, void 0, void 0, function* () {
     const messages = yield db_1.default.message.findMany({
         where: {
-            contractId,
-            isAdmin: true,
+            contractId
         },
         include: {
             user: true,
-            contract: true,
         },
     });
     yield db_1.default.message.updateMany({
@@ -89,7 +68,6 @@ const getMessagesUserByContractIdService = (contractId, userId) => __awaiter(voi
         },
         include: {
             user: true,
-            contract: true,
         },
     });
     yield db_1.default.message.updateMany({
@@ -105,10 +83,14 @@ const getMessagesUserByContractIdService = (contractId, userId) => __awaiter(voi
 });
 exports.getMessagesUserByContractIdService = getMessagesUserByContractIdService;
 const getNotficationUserService = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const findUserContract = yield (0, contract_service_1.getContractsByIdService)(userId);
     const messages = yield db_1.default.message.findMany({
         where: {
-            userId,
+            contractId: {
+                in: findUserContract.map((contract) => contract.id),
+            },
             isReadUser: false,
+            isAdmin: true,
         },
     });
     return messages;
@@ -117,7 +99,7 @@ exports.getNotficationUserService = getNotficationUserService;
 const getNotficationAdminService = () => __awaiter(void 0, void 0, void 0, function* () {
     const messages = yield db_1.default.message.findMany({
         where: {
-            isAdmin: true,
+            isAdmin: false,
             isReadAdmin: false,
         },
     });

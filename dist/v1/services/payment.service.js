@@ -19,7 +19,10 @@ exports.getPaymentsByContractIdAdminService = getPaymentsByContractIdAdminServic
 exports.getNotificationPaymentByAdminService = getNotificationPaymentByAdminService;
 exports.updatePayment = updatePayment;
 exports.deletePayment = deletePayment;
+exports.updatePaymentAndContractStatus = updatePaymentAndContractStatus;
 const db_1 = __importDefault(require("../config/db"));
+const product_service_1 = require("./product.service");
+const contract_service_1 = require("./contract.service");
 function createPayment(data) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield db_1.default.payment.create({
@@ -43,9 +46,14 @@ function getPaymentsByUserIdService(contractId, userId) {
 }
 function getPaymentsByContractIdAdminService(contractId) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield db_1.default.payment.findMany({
+        const contract = yield db_1.default.payment.findMany({
             where: { contractId },
         });
+        yield db_1.default.payment.updateMany({
+            where: { contractId },
+            data: { isRead: true },
+        });
+        return contract;
     });
 }
 function getNotificationPaymentByAdminService() {
@@ -67,6 +75,71 @@ function deletePayment(id) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield db_1.default.payment.delete({
             where: { id },
+        });
+    });
+}
+function updatePaymentAndContractStatus(paymentId, status) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield db_1.default.$transaction((prisma) => __awaiter(this, void 0, void 0, function* () {
+            const payment = yield prisma.payment.findUnique({
+                where: { id: paymentId },
+                include: { contract: true },
+            });
+            if (!payment) {
+                throw new Error("Payment not found");
+            }
+            if (!payment.contract) {
+                throw new Error("Contract associated with the payment not found");
+            }
+            let updatedPaidAmount = payment.contract.paidAmount;
+            let paidPercent = (updatedPaidAmount / payment.contract.totalPrice) * 100;
+            const productsInContract = typeof payment.contract.products === "string"
+                ? JSON.parse(payment.contract.products)
+                : payment.contract.products;
+            if (status === "approved") {
+                updatedPaidAmount += payment.amount;
+                paidPercent = (updatedPaidAmount / payment.contract.totalPrice) * 100;
+                if (paidPercent > 29.99) {
+                    for (const product of productsInContract) {
+                        const existingProduct = yield (0, product_service_1.getProductByIdService)(product.id);
+                        if (existingProduct) {
+                            yield (0, product_service_1.updateProductService)(product.id, {
+                                stock: existingProduct.stock - product.qty,
+                            });
+                        }
+                    }
+                }
+                yield (0, contract_service_1.updateContractService)(payment.contractId, {
+                    paidAmount: Number(updatedPaidAmount.toFixed(2)),
+                    paidPercent: Number(paidPercent.toFixed(2)),
+                    status: paidPercent > 29.99 ? "approved" : payment.contract.status,
+                });
+            }
+            else if (status === "rejected" && payment.status === "approved") {
+                updatedPaidAmount -= payment.amount;
+                paidPercent = (updatedPaidAmount / payment.contract.totalPrice) * 100;
+                if (paidPercent < 30) {
+                    for (const product of productsInContract) {
+                        const existingProduct = yield (0, product_service_1.getProductByIdService)(product.id);
+                        if (existingProduct) {
+                            yield (0, product_service_1.updateProductService)(product.id, {
+                                stock: existingProduct.stock + product.qty,
+                            });
+                        }
+                    }
+                }
+                yield (0, contract_service_1.updateContractService)(payment.contractId, {
+                    paidAmount: Number(updatedPaidAmount.toFixed(2)),
+                    paidPercent: Number(paidPercent.toFixed(2)),
+                    status: paidPercent < 30 ? "rejected" : payment.contract.status,
+                });
+            }
+            return yield prisma.payment.update({
+                where: { id: paymentId },
+                data: { status: status },
+            });
+        }), {
+            timeout: 10000 // 10 seconds
         });
     });
 }

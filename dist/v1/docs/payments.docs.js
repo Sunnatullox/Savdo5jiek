@@ -43,12 +43,12 @@
  *       '500':
  *         description: Internal server error
  */
-// Get payments by user
+// Get payment by user
 /**
  * @swagger
- * /api/v1/payments/get-payments-by-user/{id}:
+ * /api/v1/payments/get-payment-by-user/{id}:
  *  get:
- *    summary: Get payments by user
+*    summary: Get payment by user
  *    tags: [Payments]
  *    description: Get payments by user
  *    parameters:
@@ -70,11 +70,11 @@
 // Get payments by contract
 /**
  * @swagger
- * /api/v1/payments/get-payments-by-contract/{id}:
+ * /api/v1/payments/get-contractid-by-payments-user/{id}:
  *  get:
- *    summary: Get payments by contract
+ *    summary: Get contract id by payment user
  *    tags: [Payments]
- *    description: Get payments by contract
+ *    description: Get contract id by payment user
  *    parameters:
  *      - in: path
  *        name: id
@@ -91,12 +91,12 @@
  *      500:
  *        description: Internal server error
  */
-// Get payments by admin
+// Get payment by admin
 /**
  * @swagger
- * /api/v1/payments/get-payments-by-admin/{id}:
+ * /api/v1/payments/get-payment-by-admin/{id}:
  *  get:
- *    summary: Get payments by admin
+ *    summary: Get payment by admin
  *    tags: [Payments]
  *    description: Get payments by admin
  *    parameters:
@@ -115,14 +115,14 @@
  *      500:
  *        description: Internal server error
  */
-// Get payments by contract admin
+// Get payment by contract admin
 /**
  * @swagger
- * /api/v1/payments/get-payments-by-contract-admin/{id}:
+ * /api/v1/payments/get-contractid-by-payment-admin/{id}:
  *  get:
- *    summary: Get payments by contract admin
+ *    summary: Get contract id by payment admin
  *    tags: [Payments]
- *    description: Get payments by contract admin
+ *    description: Get contract id by payment admin
  *    parameters:
  *      - in: path
  *        name: id
@@ -174,7 +174,7 @@
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *        multipart/form-data:
  *           schema:
  *             type: object
  *             properties:

@@ -83,7 +83,10 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 
 // static files
-app.use("/public", express.static(path.join(__dirname, "../../public")));
+app.use("/public",(req, res, next) => {
+  res.header("Cross-Origin-Resource-Policy", "cross-origin");
+  next();
+}, express.static(path.join(__dirname, "../../public")));
 
 // routes
 app.use("/api/v1/adminstrator", adminstratorRoutes);
@@ -91,7 +94,7 @@ app.use("/api/v1/categorie", categorieRoutes);
 app.use("/api/v1/product", productRoutes);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/contract", contractRoutes);
-app.use("/api/v1/payment", paymentRoutes);
+app.use("/api/v1/payments", paymentRoutes);
 app.use("/api/v1/analytics", analyticsRoutes);
 app.use("/api/v1/messages", messagesRoutes);
 app.use("/api/v1/contacts", contactsRoutes);

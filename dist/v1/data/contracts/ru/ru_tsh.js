@@ -462,7 +462,7 @@ function RuTshContractHtml(admin, user, products, isDelivery, data) {
 				</td>
 			</tr>			
 			`;
-        })}
+        }).join("")}
 		<tr style="height: 22.45pt">
 			<td style="
             width: 15.85pt;

@@ -141,9 +141,7 @@ export default async function UzTshContractHtml(
 		</p>
 		<p class="NoSpacing" style="text-align:center; font-size:8pt">
 			<strong><span style="font-family:Cambria; ">№</span></strong><strong><span
-					style="font-family:Cambria;"> ${
-            data.contractId || "_?_"
-          }</span></strong>
+					style="font-family:Cambria;"> ${data.contractId || "_?_"}</span></strong>
 		</p>
 		<p class="NoSpacing" style="text-align:center; font-size:8pt">
 			<strong><span style="font-family:Cambria; ">&#xa0;</span></strong>
@@ -202,8 +200,7 @@ export default async function UzTshContractHtml(
 			<strong><span style="font-family:Cambria; ">2. MAHSULOTNING NARXI VA TOʻLASH TARTIBI</span></strong>
 		</p>
 		<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
-			<span style="font-family:Cambria">2.1 Maxsulot aniq markasi,</span><span style="font-family:Cambria">&#xa0;
-			</span><span style="font-family:Cambria">miqdori, yetkazib berish xizmati yokida yetkazib berish xizmatisiz
+			<span style="font-family:Cambria">2.1 Maxsulot aniq markasi, miqdori, yetkazib berish xizmati yokida yetkazib berish xizmatisiz
 				va narxi qiymatining summasi quyidagi spesifikasiyada aniqlanadi:</span>
 		</p>
 		<table style="
@@ -336,8 +333,9 @@ export default async function UzTshContractHtml(
                 ">(qqs siz)</span>
 					</h1>
 				</td>
-				${isDelivery ? (
-				`<td style="
+				${
+          isDelivery
+            ? `<td style="
               width: 53pt;
               border-right: 0.75pt solid #000000;
               border-left: 0.75pt solid #000000;
@@ -359,7 +357,8 @@ export default async function UzTshContractHtml(
                 ">Yetkazib berish xizmati bilan</span>
 					</h1>
 				</td>`
-				):""}
+            : ""
+        }
 
 				<td style="
               width: 60.1pt;
@@ -409,8 +408,9 @@ export default async function UzTshContractHtml(
 				</td>
 			</tr>
 			
-			${products.map((product: any, index: number) => {
-        return `
+			${products
+        .map((product: any, index: number) => {
+          return `
 					<tr style="height: 14.65pt">
 				<td style="
               width: 19.5pt;
@@ -433,9 +433,7 @@ export default async function UzTshContractHtml(
               vertical-align: top;
             ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
-						<span style="font-family: Cambria;">${
-              product.name_uz || "_?_"
-            }</span>
+						<span style="font-family: Cambria;">${product.name_uz || "_?_"}</span>
 					</p>
 				</td>
 				<td style="
@@ -447,9 +445,7 @@ export default async function UzTshContractHtml(
             ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
 						<span
-								style="font-family: Cambria;">${
-                  product.unit_uz || "_?_"
-                }</span>
+								style="font-family: Cambria;">${product.unit_uz || "_?_"}</span>
 					</p>
 				</td>
 				<td style="
@@ -460,9 +456,7 @@ export default async function UzTshContractHtml(
               vertical-align: top;
             ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
-						<span style="font-family: Cambria;">${
-              product.qty || "_?_"
-            }</span>
+						<span style="font-family: Cambria;">${product.qty || "_?_"}</span>
 					</p>
 				</td>
 				<td style="
@@ -475,16 +469,14 @@ export default async function UzTshContractHtml(
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
 						<span style="font-family: Cambria;">${
               formatNumber(
-                product.discount !== 0
-                  ? product.discount
-                  : product.price
+                product.discount !== 0 ? product.discount : product.price
               ) || "_?_"
             }</span>
 					</p>
 				</td>
 				${
-          isDelivery ? (
-          `
+          isDelivery
+            ? `
 				<td style="
               width: 53pt;
               border: 0.75pt solid #000000;
@@ -497,7 +489,8 @@ export default async function UzTshContractHtml(
 					</p>
 				</td>
 				`
-        ):""}
+            : ""
+        }
 				<td style="
               width: 60.1pt;
               border: 0.75pt solid #000000;
@@ -508,9 +501,7 @@ export default async function UzTshContractHtml(
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
 						<span style="font-family: Cambria;">${formatNumber(
               product.qty *
-                (product.discount !== 0
-                  ? product.discount
-                  : product.price) || 0
+                (product.discount !== 0 ? product.discount : product.price) || 0
             )}</span>
 					</p>
 				</td>
@@ -531,7 +522,8 @@ export default async function UzTshContractHtml(
 				</td>
 			</tr>
 				`;
-      })}
+        })
+        .join("")}
 			<tr style="height: 21.6pt">
 				<td style="
               width: 19.5pt;
@@ -599,8 +591,8 @@ export default async function UzTshContractHtml(
 					</p>
 				</td>
 				${
-          isDelivery ?(
-            `
+          isDelivery
+            ? `
 				<td style="
               width: 53pt;
               border-top: 0.75pt solid #000000;
@@ -614,7 +606,9 @@ export default async function UzTshContractHtml(
 						<span style="font-family: Cambria">&#xa0;</span>
 					</p>
 				</td>
-				`): ""}
+				`
+            : ""
+        }
 				<td style="
               width: 60.1pt;
               border-top: 0.75pt solid #000000;
@@ -647,9 +641,7 @@ export default async function UzTshContractHtml(
 		<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
 			<span style="font-family:Cambria">Mahsulotning umumiy narxi (QQS hisobga olinmaganda): </span>
 			<strong>
-			<span style="font-family:Cambria;">${
-        data.writtenTotalPriceUz || "_?_"
-      }</span>
+			<span style="font-family:Cambria;">${data.writtenTotalPriceUz || "_?_"}</span>
 			</strong>
 		</p>
 		<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
@@ -731,8 +723,8 @@ export default async function UzTshContractHtml(
 				yuz bermagan taqdirda, Maxsulotni etkazib berish </span>
 			<strong><span
 					style="font-family:Cambria;">${
-					data.contractEndDate || "_?_"
-				} yilgacha</span></strong>
+            data.contractEndDate || "_?_"
+          } yilgacha</span></strong>
 					<span
 				style="font-family:Cambria;"> </span><span style="font-family:Cambria">amal qiladi.</span>
 		</p>
@@ -782,7 +774,7 @@ export default async function UzTshContractHtml(
 				bo’lganligi xaqida «BUYURTMACHI”ni telefon orqali xabardor qilish, elektron pochta, va boshqa usullar
 				orqali xabar yuborishi hamda </span>
 				${
-          	!isDelivery
+          !isDelivery
             ? `<span style="font-family:Cambria;">«BUYURTMACHI”
 				tomonida mahsulotni o’zi tomonidan olib ketilishi majburiyatini oladi. </span>`
             : `
@@ -1054,8 +1046,7 @@ export default async function UzTshContractHtml(
 				<p class="noSpacing"><strong style="font-family:Cambria;">Rahbar:</strong> ${user.first_name
           .charAt(0)
           .toUpperCase()}.${user.middle_name.charAt(0).toUpperCase()}.${
-    user.sur_name.charAt(0).toUpperCase() +
-    user.sur_name.slice(1).toLowerCase()
+    user.sur_name.charAt(0).toUpperCase() + user.sur_name.slice(1).toLowerCase()
   }</p>
 			</div>
 		</div>

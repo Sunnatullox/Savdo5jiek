@@ -12,10 +12,34 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLowStockProducts = exports.getUserAnalytics = exports.get12MonthProductSalesAnalytics = exports.get12MonthContractAnalytics = void 0;
+exports.getLowStockProducts = exports.getUserAnalytics = exports.get12MonthProductSalesAnalytics = exports.get12MonthContractAnalytics = exports.get12MonthUserRegistrationAnalytics = exports.get12MonthPaymentAnalytics = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const ErrorHandler_1 = __importDefault(require("../middleware/ErrorHandler"));
 const analytic_service_1 = require("../services/analytic.service");
+exports.get12MonthPaymentAnalytics = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const analytics = yield (0, analytic_service_1.get12MonthPaymentAnalyticsService)();
+        res.status(200).json({
+            success: true,
+            analytics,
+        });
+    }
+    catch (error) {
+        next(new ErrorHandler_1.default(`Please try again later: ${error.message}`, 500));
+    }
+}));
+exports.get12MonthUserRegistrationAnalytics = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const analytics = yield (0, analytic_service_1.get12MonthUserRegistrationAnalyticsService)();
+        res.status(200).json({
+            success: true,
+            analytics,
+        });
+    }
+    catch (error) {
+        next(new ErrorHandler_1.default(`Please try again later: ${error.message}`, 500));
+    }
+}));
 exports.get12MonthContractAnalytics = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const analytics = yield (0, analytic_service_1.get12MonthContractAnalyticsService)();

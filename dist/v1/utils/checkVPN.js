@@ -25,8 +25,6 @@ const checkVPN = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             console.log(`Organization data not available for IP: ${ip}`);
             return next();
         }
-        // Debug maqsadida org qiymatini konsolga chiqarish
-        console.log(`Organization for IP ${ip}: ${org}`);
         if (org.includes("VPN") || org.includes("Proxy")) {
             return res.status(403).json({ error: "VPN is not allowed" });
         }

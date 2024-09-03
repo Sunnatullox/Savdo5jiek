@@ -37,8 +37,7 @@ function getContractsByAdminService() {
                     include: {
                         legal_info: true,
                     },
-                },
-                Payment: true,
+                }
             },
         });
     });
@@ -46,14 +45,13 @@ function getContractsByAdminService() {
 function getContractsByIdService(id, is_LLC) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield db_1.default.contract.findMany({
-            where: { userId: id, is_LLC: is_LLC },
+            where: { userId: id, is_LLC },
             include: {
                 User: {
                     include: {
-                        legal_info: true,
+                        legal_info: is_LLC,
                     },
-                },
-                Payment: true,
+                }
             },
         });
     });

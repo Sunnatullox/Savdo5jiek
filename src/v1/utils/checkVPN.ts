@@ -16,9 +16,6 @@ const checkVPN = async (req: Request, res: Response, next: NextFunction) => {
       return next();
     }
 
-    // Debug maqsadida org qiymatini konsolga chiqarish
-    console.log(`Organization for IP ${ip}: ${org}`);
-
     if (org.includes("VPN") || org.includes("Proxy")) {
       return res.status(403).json({ error: "VPN is not allowed" });
     }

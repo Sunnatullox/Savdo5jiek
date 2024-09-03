@@ -105,14 +105,17 @@ app.use(express_1.default.json({ limit: "10mb" }));
 app.use(express_1.default.urlencoded({ extended: true, limit: "10mb" }));
 app.use((0, morgan_1.default)(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 // static files
-app.use("/public", express_1.default.static(path_1.default.join(__dirname, "../../public")));
+app.use("/public", (req, res, next) => {
+    res.header("Cross-Origin-Resource-Policy", "cross-origin");
+    next();
+}, express_1.default.static(path_1.default.join(__dirname, "../../public")));
 // routes
 app.use("/api/v1/adminstrator", adminstrator_route_1.default);
 app.use("/api/v1/categorie", categorie_route_1.default);
 app.use("/api/v1/product", product_route_1.default);
 app.use("/api/v1/user", user_route_1.default);
 app.use("/api/v1/contract", contract_route_1.default);
-app.use("/api/v1/payment", payment_route_1.default);
+app.use("/api/v1/payments", payment_route_1.default);
 app.use("/api/v1/analytics", analytic_route_1.default);
 app.use("/api/v1/messages", messages_route_1.default);
 app.use("/api/v1/contacts", contact_route_1.default);

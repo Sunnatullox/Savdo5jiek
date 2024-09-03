@@ -97,7 +97,7 @@
 /**
  * @swagger
  * /api/v1/contacts/delete-contact-by-admin/{id}:
- *  put:
+ *  delete:
  *    summary: Delete contact message
  *    tags: [Contacts]
  *    description: Delete contact message

@@ -16,22 +16,20 @@ export async function getContractsByAdminService() {
         include: {
           legal_info: true,
         },
-      },
-      Payment: true,
+      }
     },
   });
 }
 
-export async function getContractsByIdService(id: string, is_LLC: boolean) {
+export async function getContractsByIdService(id: string, is_LLC?: boolean) {
   return await prisma.contract.findMany({
-    where: { userId: id, is_LLC: is_LLC },
+    where:  { userId: id ,is_LLC},
     include: {
       User: {
         include: {
-          legal_info: true,
+          legal_info: is_LLC,
         },
-      },
-      Payment: true,
+      }
     },
   });
 }

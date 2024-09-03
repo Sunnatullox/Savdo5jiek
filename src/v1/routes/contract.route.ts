@@ -51,7 +51,8 @@ router.put(
 
 router.post(
   "/upload-contract-delivery-doc/:id",
-  isAuthenticatedUser,
+  isAuthenticatedAdminstrator,
+  isAdministrator(Role.ADMIN),
   docUpload.array("contract_delivery_doc", 2),
   contractController.uploadContractDeliveryDoc
 );

@@ -1,10 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import ErrorHandler from "../middleware/ErrorHandler";
-import axios from "axios";
-import prisma from "../config/db";
 import { sendToken } from "../utils/createToken";
-import { IDevice, ILegalInfo, IUser } from "../types/user.type";
+import { ILegalInfo, IUser } from "../types/user.type";
 import requestIp from "request-ip";
 import useragent from "express-useragent";
 import {
@@ -22,7 +20,7 @@ import {
 export const login = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const code = req.headers["x_code"] as string;
-    const redirect_uri = req.headers["x_redirect_uri"] as string;
+    const redirect_uri = process.env.ONE_ID_REDIRECT_URI as string;
     const ip = requestIp.getClientIp(req);
     const ua = useragent.parse(req.headers["user-agent"] as string);
 

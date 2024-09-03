@@ -51,6 +51,7 @@ export const sendMessageAdmin = asyncHandler(
         data: result,
       });
     } catch (error: any) {
+      console.log("Message Admin Error", error);
       next(new ErrorHandler(`Error sending message: ${error.message}`, error.statusCode || 500));
     }
   }

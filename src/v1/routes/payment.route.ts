@@ -29,23 +29,23 @@ router.post(
   createPaymentUser
 );
 
-router.get("/get-payments-by-user/:id", isAuthenticatedUser, getPaymentById);
+router.get("/get-payment-by-user/:id", isAuthenticatedUser, getPaymentById);
 
 router.get(
-  "/get-payments-by-contract/:id",
+  "/get-contractid-by-payments-user/:id",
   isAuthenticatedUser,
   getPaymentsByContractId
 );
 
 router.get(
-  "/get-payments-by-admin/:id",
+  "/get-payment-by-admin/:id",
   isAuthenticatedAdminstrator,
   isAdministrator(Role.ADMIN),
   getPaymentByAdmin
 );
 
 router.get(
-  "/get-payments-by-contract-admin/:id",
+  "/get-contractid-by-payment-admin/:id",
   isAuthenticatedAdminstrator,
   isAdministrator(Role.ADMIN),
   getPaymentsByContractIdAdmin

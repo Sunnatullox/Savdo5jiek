@@ -13,7 +13,6 @@ exports.default = UzFqContractHtml;
 const numberToWords_1 = require("../../../utils/numberToWords");
 function UzFqContractHtml(admin, user, products, isDelivery, data) {
     return __awaiter(this, void 0, void 0, function* () {
-        // console.log(admin, user, products, isDelivery, data)
         return `
    <!DOCTYPE html>
 <html lang="ru-RU">
@@ -204,8 +203,7 @@ function UzFqContractHtml(admin, user, products, isDelivery, data) {
 			<strong><span style="font-family:Cambria; ">2. MAHSULOTNING NARXI VA TOʻLASH TARTIBI</span></strong>
 		</p>
 		<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
-			<span style="font-family:Cambria">2.1 Maxsulot aniq markasi,</span><span style="font-family:Cambria">&#xa0;
-			</span><span style="font-family:Cambria">miqdori, yetkazib berish xizmati yokida yetkazib berish xizmatisiz
+			<span style="font-family:Cambria">2.1 Maxsulot aniq markasi, miqdori, yetkazib berish xizmati yokida yetkazib berish xizmatisiz
 				va narxi qiymatining summasi quyidagi spesifikasiyada aniqlanadi:</span>
 		</p>
 		<table style="
@@ -514,7 +512,7 @@ function UzFqContractHtml(admin, user, products, isDelivery, data) {
 				</td>
 			</tr>
 				`;
-        })}
+        }).join("")}
 			<tr style="height: 21.6pt">
 				<td style="
               width: 19.5pt;
