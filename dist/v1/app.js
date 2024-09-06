@@ -100,16 +100,17 @@ app.use((req, res, next) => {
         });
     }
 });
-app.use((0, helmet_1.default)());
+app.use(helmet_1.default.frameguard({ action: 'sameorigin' }));
 app.set('trust proxy', true);
 app.use(checkVPN_1.default);
 app.use(express_useragent_1.default.express());
 app.use(request_ip_1.default.mw());
 app.use((0, compression_1.default)());
 app.use((0, cookie_parser_1.default)(process.env.COOKIE_SECRET));
-app.use(express_1.default.json({ limit: "10mb" }));
-app.use(express_1.default.urlencoded({ extended: true, limit: "10mb" }));
+app.use(express_1.default.json({ limit: "15mb" }));
+app.use(express_1.default.urlencoded({ extended: true, limit: "15mb" }));
 app.use((0, morgan_1.default)(process.env.NODE_ENV === "production" ? "combined" : "dev"));
+app.disable('x-powered-by');
 // static files
 app.use("/public", (req, res, next) => {
     res.header("Cross-Origin-Resource-Policy", "cross-origin");

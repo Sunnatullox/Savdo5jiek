@@ -67,7 +67,7 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
         if (!findUser) {
             return next(new ErrorHandler_1.default("User not found", 404));
         }
-        const contract_id = (0, uniqid_1.default)("", "UZ");
+        const contract_id = uniqid_1.default.time() + "-uz";
         const now = new Date();
         const formattedDate = now
             .toLocaleDateString("en-GB")

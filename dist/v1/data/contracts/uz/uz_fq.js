@@ -161,9 +161,8 @@ function UzFqContractHtml(admin, user, products, isDelivery, data) {
 			<span style="font-family:Cambria">Bundan buyon matnda «MAHSULOT YETKAZIB BERUVCHI» deb nomlanuvchi, o‘z
 				Nizomi asosida faoliyat ko‘rsatuvchi 5-son Jazoni ijro etish koloniyasi (keying o’rinlarda
 			</span><strong><span style="font-family:Cambria; ">JIEK</span></strong><span style="font-family:Cambria">
-				deb yuritiladi) rahbari </span><strong><span style="font-family:Cambria; ">MAMATNAZAROV LAZIZBEK
-					TURAQULIYEVICH</span></strong><span style="font-family:Cambria"> bir tomondan, bundan buyon matnda
-				«BUYURTMACHI» deb nomlanuvchi </span><u><span style="font-family:Cambria; ">jismoniy </span></u><span
+				deb yuritiladi) rahbari </span><strong><span style="font-family:Cambria; "></span></strong><span style="font-family:Cambria"> bir tomondan, bundan buyon matnda
+				«BUYURTMACHI» deb nomla${admin.AdminInfo.middle_name} ${admin.AdminInfo.first_name} ${admin.AdminInfo.sur_name}nuvchi </span><u><span style="font-family:Cambria; ">jismoniy </span></u><span
 				style="font-family:Cambria">shaxs (keying o’rinlarda </span><strong><span
 					style="font-family:Cambria; ">FUQARO</span></strong><span style="font-family:Cambria"> deb
 				yuritiladi)</span><u><span style="font-family:Cambria; "> </span></u><strong><span
@@ -336,7 +335,8 @@ function UzFqContractHtml(admin, user, products, isDelivery, data) {
                 ">(qqs siz)</span>
 					</h1>
 				</td>
-				${isDelivery ? (`<td style="
+				${isDelivery
+            ? `<td style="
 				  width: 53pt;
 				  border-right: 0.75pt solid #000000;
 				  border-left: 0.75pt solid #000000;
@@ -358,7 +358,8 @@ function UzFqContractHtml(admin, user, products, isDelivery, data) {
 					">Yetkazib berish xizmati bilan</span>
 						</h1>
 					</td>
-					`) : ""}
+					`
+            : ""}
 				<td style="
               width: 60.1pt;
               border-right: 0.75pt solid #000000;
@@ -407,7 +408,8 @@ function UzFqContractHtml(admin, user, products, isDelivery, data) {
 				</td>
 			</tr>
 			
-			${products.map((product, index) => {
+			${products
+            .map((product, index) => {
             return `
 					<tr style="height: 14.65pt">
 				<td style="
@@ -465,12 +467,11 @@ function UzFqContractHtml(admin, user, products, isDelivery, data) {
               vertical-align: top;
             ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
-						<span style="font-family: Cambria;">${(0, numberToWords_1.formatNumber)(product.discount !== 0
-                ? product.discount
-                : product.price) || "_?_"}</span>
+						<span style="font-family: Cambria;">${(0, numberToWords_1.formatNumber)(product.discount !== 0 ? product.discount : product.price) || "_?_"}</span>
 					</p>
 				</td>
-				${isDelivery ? (`
+				${isDelivery
+                ? `
 				<td style="
               width: 53pt;
               border: 0.75pt solid #000000;
@@ -482,7 +483,8 @@ function UzFqContractHtml(admin, user, products, isDelivery, data) {
 						<span style="font-family: Cambria;">Kalkulyatsiya hisobi qo’shimcha ilova qilinadi</span>
 					</p>
 				</td>
-				`) : ""}
+				`
+                : ""}
 				<td style="
               width: 60.1pt;
               border: 0.75pt solid #000000;
@@ -492,9 +494,7 @@ function UzFqContractHtml(admin, user, products, isDelivery, data) {
             ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
 						<span style="font-family: Cambria;">${(0, numberToWords_1.formatNumber)(product.qty *
-                (product.discount !== 0
-                    ? product.discount
-                    : product.price))}</span>
+                (product.discount !== 0 ? product.discount : product.price))}</span>
 					</p>
 				</td>
 				<td style="
@@ -512,7 +512,8 @@ function UzFqContractHtml(admin, user, products, isDelivery, data) {
 				</td>
 			</tr>
 				`;
-        }).join("")}
+        })
+            .join("")}
 			<tr style="height: 21.6pt">
 				<td style="
               width: 19.5pt;
@@ -579,7 +580,8 @@ function UzFqContractHtml(admin, user, products, isDelivery, data) {
 						<span style="font-family: Cambria">&#xa0;</span>
 					</p>
 				</td>
-				${isDelivery ? (`
+				${isDelivery
+            ? `
 				<td style="
               width: 53pt;
               border-top: 0.75pt solid #000000;
@@ -593,7 +595,8 @@ function UzFqContractHtml(admin, user, products, isDelivery, data) {
 						<span style="font-family: Cambria">&#xa0;</span>
 					</p>
 				</td>
-				`) : ""}
+				`
+            : ""}
 				<td style="
               width: 60.1pt;
               border-top: 0.75pt solid #000000;
@@ -754,14 +757,16 @@ function UzFqContractHtml(admin, user, products, isDelivery, data) {
 			<span style="font-family:Cambria">4.1.2. «MAHSULOT YETKAZIB BERUVCHI»ning omborida Mahsulot yetarli
 				bo’lganligi xaqida «BUYURTMACHI”ni telefon orqali xabardor qilish, elektron pochta, va boshqa usullar
 				orqali xabar yuborishi hamda </span>
-				${!isDelivery ? (`<span style="font-family:Cambria;">«BUYURTMACHI”
-				tomonida mahsulotni o’zi tomonidan olib ketilishi majburiyatini oladi. </span>`) : (`<span
+				${!isDelivery
+            ? `<span style="font-family:Cambria;">«BUYURTMACHI”
+				tomonida mahsulotni o’zi tomonidan olib ketilishi majburiyatini oladi. </span>`
+            : `<span
 				style="font-family:Cambria;">Shartnomada keltirilgan spesifikatsiyadagi hisoblangan
 				kalkulyatsiya asosidagi to’lovni amalga oshirgan holda</span><span
 				style="font-family:Cambria;">&#xa0; </span><span
 				style="font-family:Cambria;">holda «MAHSULOT YETKAZIB BERUVCHI»ning avtomashinasida
 				yetkazib berish amaliyotiga yo’l qo’yiladi (shartnomaga kalkulyatsiya hisobi ilova qilinadi)</span>
-				`)}
+				`}
 		</p>
 		<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
 			<span style="font-family:Cambria">&#xa0;</span><span style="font-family:Cambria">4.1.3. Mazkur shartnomaning
@@ -984,8 +989,7 @@ function UzFqContractHtml(admin, user, products, isDelivery, data) {
 				<p> <strong style="font-family:Cambria;">Tel:</strong> ${user.phone_number || "_?_"}</p>
 				<p class="noSpacing_indent"><strong style="font-family:Cambria;">Fuqaro:</strong> ${user.first_name
             .charAt(0)
-            .toUpperCase()}.${user.middle_name.charAt(0).toUpperCase()}.${user.sur_name.charAt(0).toUpperCase() +
-            user.sur_name.slice(1).toLowerCase()}</p>
+            .toUpperCase()}.${user.middle_name.charAt(0).toUpperCase()}.${user.sur_name.charAt(0).toUpperCase() + user.sur_name.slice(1).toLowerCase()}</p>
 			</div>
 		</div>
 		<p>
