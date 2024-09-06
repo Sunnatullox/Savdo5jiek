@@ -118,7 +118,7 @@ app.use("/public", (req, res, next) => {
 }, (0, express_static_cache_1.default)(path_1.default.join(__dirname, '../../public'), {
     maxAge: 86400, // Cache duration in seconds (e.g., one day)
     cacheControl: true
-}), express_1.default.static(path_1.default.join(__dirname, "../../public")));
+}), express_1.default.static(path_1.default.join(__dirname, "../../public"))); // Check this path
 // routes
 app.use("/api/v1/adminstrator", adminstrator_route_1.default);
 app.use("/api/v1/categorie", categorie_route_1.default);

@@ -92,10 +92,10 @@ app.disable('x-powered-by');
 app.use("/public",(req, res, next) => {
   res.header("Cross-Origin-Resource-Policy", "cross-origin");
   next();
-}, expressStaticCache(path.join(__dirname, '../../public'), {
+}, expressStaticCache(path.join(__dirname, '../../public'), { // Check this path
   maxAge: 86400,  // Cache duration in seconds (e.g., one day)
   cacheControl: true
-}), express.static(path.join(__dirname, "../../public")));
+}), express.static(path.join(__dirname, "../../public"))); // Check this path
 
 // routes
 app.use("/api/v1/adminstrator", adminstratorRoutes);
