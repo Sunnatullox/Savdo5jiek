@@ -127,6 +127,8 @@ export default async function UzTshContractHtml(
 		.noSpacing_indent {
 			margin-top: 70pt;
 		}
+
+		
 	</style>
 </head>
 
@@ -159,8 +161,7 @@ export default async function UzTshContractHtml(
 			<span style="font-family:Cambria">Bundan buyon matnda «MAHSULOT YETKAZIB BERUVCHI» deb nomlanuvchi, o‘z
 				Nizomi asosida faoliyat ko‘rsatuvchi 5-son Jazoni ijro etish koloniyasi (keying o’rinlarda
 			</span><strong><span style="font-family:Cambria; ">JIEK</span></strong><span style="font-family:Cambria">
-				deb yuritiladi) rahbari </span><strong><span style="font-family:Cambria; ">MAMATNAZAROV LAZIZBEK
-					TURAQULIYEVICH</span></strong><span style="font-family:Cambria"> bir tomondan, bundan buyon matnda
+				deb yuritiladi) rahbari </span><strong><span style="font-family:Cambria; ">${admin.AdminInfo.middle_name} ${admin.AdminInfo.first_name} ${admin.AdminInfo.sur_name}</span></strong><span style="font-family:Cambria"> bir tomondan, bundan buyon matnda
 				«BUYURTMACHI» deb nomlanuvchi o‘z nizomi asosida faoliyat ko‘rsatuvchi yuridik shaxs</span><span
 				style="font-family:Cambria">&#xa0; </span><strong><span
 					style="font-family:Cambria;"> ${user.legal_info.name} </span></strong><span

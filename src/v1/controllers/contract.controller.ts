@@ -79,7 +79,7 @@ export const createContractByUser = asyncHandler(
         return next(new ErrorHandler("User not found", 404));
       }
 
-      const contract_id = uniqid("", "UZ");
+      const contract_id = uniqid.time() + "-uz";
       const now = new Date();
       const formattedDate = now
         .toLocaleDateString("en-GB")

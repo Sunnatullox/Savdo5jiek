@@ -3,11 +3,11 @@ import { AdminInfo, Administrator } from "../../../types/adminstrator.type";
 import { IUser } from "../../../types/user.type";
 
 export default async function UzFqContractHtml(
-  admin: Administrator & {AdminInfo: AdminInfo},
+  admin: Administrator & { AdminInfo: AdminInfo },
   user: IUser,
   products: any,
   isDelivery: boolean,
-  data: any,
+  data: any
 ) {
   return `
    <!DOCTYPE html>
@@ -141,9 +141,7 @@ export default async function UzFqContractHtml(
 		</p>
 		<p class="NoSpacing" style="text-align:center; font-size:8pt">
 			<strong><span style="font-family:Cambria; ">№</span></strong><strong><span
-					style="font-family:Cambria;"> ${
-            data.contractId || "_?_"
-          }</span></strong>
+					style="font-family:Cambria;"> ${data.contractId || "_?_"}</span></strong>
 		</p>
 		<p class="NoSpacing" style="text-align:center; font-size:8pt">
 			<strong><span style="font-family:Cambria; ">&#xa0;</span></strong>
@@ -161,15 +159,16 @@ export default async function UzFqContractHtml(
 			<span style="font-family:Cambria">Bundan buyon matnda «MAHSULOT YETKAZIB BERUVCHI» deb nomlanuvchi, o‘z
 				Nizomi asosida faoliyat ko‘rsatuvchi 5-son Jazoni ijro etish koloniyasi (keying o’rinlarda
 			</span><strong><span style="font-family:Cambria; ">JIEK</span></strong><span style="font-family:Cambria">
-				deb yuritiladi) rahbari </span><strong><span style="font-family:Cambria; ">MAMATNAZAROV LAZIZBEK
-					TURAQULIYEVICH</span></strong><span style="font-family:Cambria"> bir tomondan, bundan buyon matnda
-				«BUYURTMACHI» deb nomlanuvchi </span><u><span style="font-family:Cambria; ">jismoniy </span></u><span
+				deb yuritiladi) rahbari </span><strong><span style="font-family:Cambria; "></span></strong><span style="font-family:Cambria"> bir tomondan, bundan buyon matnda
+				«BUYURTMACHI» deb nomla${admin.AdminInfo.middle_name} ${
+    admin.AdminInfo.first_name
+  } ${
+    admin.AdminInfo.sur_name
+  }nuvchi </span><u><span style="font-family:Cambria; ">jismoniy </span></u><span
 				style="font-family:Cambria">shaxs (keying o’rinlarda </span><strong><span
 					style="font-family:Cambria; ">FUQARO</span></strong><span style="font-family:Cambria"> deb
 				yuritiladi)</span><u><span style="font-family:Cambria; "> </span></u><strong><span
-					style="font-family:Cambria;"> ${
-            user.full_name || "_?_"
-          }</span></strong><u><span
+					style="font-family:Cambria;"> ${user.full_name || "_?_"}</span></strong><u><span
 					style="font-family:Cambria;"> </span></u><span style="font-family:Cambria">ikkinchi
 				tomondan quyidagilar to‘g‘risida ushbu shartnomani tuzdilar:</span>
 		</p>
@@ -340,8 +339,9 @@ export default async function UzFqContractHtml(
                 ">(qqs siz)</span>
 					</h1>
 				</td>
-				${isDelivery ? (
-					`<td style="
+				${
+          isDelivery
+            ? `<td style="
 				  width: 53pt;
 				  border-right: 0.75pt solid #000000;
 				  border-left: 0.75pt solid #000000;
@@ -364,7 +364,8 @@ export default async function UzFqContractHtml(
 						</h1>
 					</td>
 					`
-				): ""}
+            : ""
+        }
 				<td style="
               width: 60.1pt;
               border-right: 0.75pt solid #000000;
@@ -413,8 +414,9 @@ export default async function UzFqContractHtml(
 				</td>
 			</tr>
 			
-			${products.map((product: any, index: number) => {
-        return `
+			${products
+        .map((product: any, index: number) => {
+          return `
 					<tr style="height: 14.65pt">
 				<td style="
               width: 19.5pt;
@@ -437,9 +439,7 @@ export default async function UzFqContractHtml(
               vertical-align: top;
             ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
-						<span style="font-family: Cambria;">${
-              product.name_uz || "_?_"
-            }</span>
+						<span style="font-family: Cambria;">${product.name_uz || "_?_"}</span>
 					</p>
 				</td>
 				<td style="
@@ -451,9 +451,7 @@ export default async function UzFqContractHtml(
             ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
 						<span
-								style="font-family: Cambria;">${
-                  product.unit_uz || "_?_"
-                }</span>
+								style="font-family: Cambria;">${product.unit_uz || "_?_"}</span>
 					</p>
 				</td>
 				<td style="
@@ -464,9 +462,7 @@ export default async function UzFqContractHtml(
               vertical-align: top;
             ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
-						<span style="font-family: Cambria;">${
-              product.qty || "_?_"
-            }</span>
+						<span style="font-family: Cambria;">${product.qty || "_?_"}</span>
 					</p>
 				</td>
 				<td style="
@@ -479,16 +475,14 @@ export default async function UzFqContractHtml(
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
 						<span style="font-family: Cambria;">${
               formatNumber(
-                product.discount !== 0
-                  ? product.discount
-                  : product.price
+                product.discount !== 0 ? product.discount : product.price
               ) || "_?_"
             }</span>
 					</p>
 				</td>
 				${
-          isDelivery ? (
-          `
+          isDelivery
+            ? `
 				<td style="
               width: 53pt;
               border: 0.75pt solid #000000;
@@ -501,7 +495,8 @@ export default async function UzFqContractHtml(
 					</p>
 				</td>
 				`
-        ): ""}
+            : ""
+        }
 				<td style="
               width: 60.1pt;
               border: 0.75pt solid #000000;
@@ -512,9 +507,7 @@ export default async function UzFqContractHtml(
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
 						<span style="font-family: Cambria;">${formatNumber(
               product.qty *
-                (product.discount !== 0
-                  ? product.discount
-                  : product.price)
+                (product.discount !== 0 ? product.discount : product.price)
             )}</span>
 					</p>
 				</td>
@@ -535,7 +528,8 @@ export default async function UzFqContractHtml(
 				</td>
 			</tr>
 				`;
-      }).join("")}
+        })
+        .join("")}
 			<tr style="height: 21.6pt">
 				<td style="
               width: 19.5pt;
@@ -602,8 +596,9 @@ export default async function UzFqContractHtml(
 						<span style="font-family: Cambria">&#xa0;</span>
 					</p>
 				</td>
-				${isDelivery ? (
-					`
+				${
+          isDelivery
+            ? `
 				<td style="
               width: 53pt;
               border-top: 0.75pt solid #000000;
@@ -617,7 +612,9 @@ export default async function UzFqContractHtml(
 						<span style="font-family: Cambria">&#xa0;</span>
 					</p>
 				</td>
-				`): ""}
+				`
+            : ""
+        }
 				<td style="
               width: 60.1pt;
               border-top: 0.75pt solid #000000;
@@ -650,9 +647,7 @@ export default async function UzFqContractHtml(
 		<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
 			<span style="font-family:Cambria">Mahsulotning umumiy narxi (QQS hisobga olinmaganda): </span>
 			<strong>
-			<span style="font-family:Cambria;">${
-        data.writtenTotalPriceUz || "_?_"
-      }</span>
+			<span style="font-family:Cambria;">${data.writtenTotalPriceUz || "_?_"}</span>
 			</strong>
 		</p>
 		<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
@@ -785,16 +780,17 @@ export default async function UzFqContractHtml(
 				bo’lganligi xaqida «BUYURTMACHI”ni telefon orqali xabardor qilish, elektron pochta, va boshqa usullar
 				orqali xabar yuborishi hamda </span>
 				${
-          !isDelivery ? (
-            `<span style="font-family:Cambria;">«BUYURTMACHI”
+          !isDelivery
+            ? `<span style="font-family:Cambria;">«BUYURTMACHI”
 				tomonida mahsulotni o’zi tomonidan olib ketilishi majburiyatini oladi. </span>`
-		  ):( `<span
+            : `<span
 				style="font-family:Cambria;">Shartnomada keltirilgan spesifikatsiyadagi hisoblangan
 				kalkulyatsiya asosidagi to’lovni amalga oshirgan holda</span><span
 				style="font-family:Cambria;">&#xa0; </span><span
 				style="font-family:Cambria;">holda «MAHSULOT YETKAZIB BERUVCHI»ning avtomashinasida
 				yetkazib berish amaliyotiga yo’l qo’yiladi (shartnomaga kalkulyatsiya hisobi ilova qilinadi)</span>
-				`)}
+				`
+        }
 		</p>
 		<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
 			<span style="font-family:Cambria">&#xa0;</span><span style="font-family:Cambria">4.1.3. Mazkur shartnomaning
@@ -998,30 +994,55 @@ export default async function UzFqContractHtml(
 		<div class="container">
 			<div class="column">
 				<h2>MAHSULOT YETKAZIB BERUVCHI</h2>
-				<p><strong style="font-family:Cambria;">Nomi:</strong> “${admin.AdminInfo.company_name || "_?_"}”</p>
-				<p><strong style="font-family:Cambria;">Manzili:</strong> ${admin.AdminInfo.address || "_?_"}</p>
-				<p><strong style="font-family:Cambria;">Tel:</strong> ${admin.AdminInfo.tel || "_?_"}</p>
-				<p><strong style="font-family:Cambria;">STIR:</strong> ${admin.AdminInfo.inn || "_?_"}</p>
-				<p><strong style="font-family:Cambria;">OKED:</strong> ${admin.AdminInfo.oked || "_?_"}</p>
-				<p><strong style="font-family:Cambria;">X/r:</strong> ${admin.AdminInfo.x_r || "_?_"}</p>
-				<p><strong style="font-family:Cambria;">Bank:</strong> ${admin.AdminInfo.bank || "_?_"}</p>
-				<p><strong style="font-family:Cambria;">MFO:</strong> ${admin.AdminInfo.mfo || "_?_"}</p>
+				<p><strong style="font-family:Cambria;">Nomi:</strong> “${
+          admin.AdminInfo.company_name || "_?_"
+        }”</p>
+				<p><strong style="font-family:Cambria;">Manzili:</strong> ${
+          admin.AdminInfo.address || "_?_"
+        }</p>
+				<p><strong style="font-family:Cambria;">Tel:</strong> ${
+          admin.AdminInfo.tel || "_?_"
+        }</p>
+				<p><strong style="font-family:Cambria;">STIR:</strong> ${
+          admin.AdminInfo.inn || "_?_"
+        }</p>
+				<p><strong style="font-family:Cambria;">OKED:</strong> ${
+          admin.AdminInfo.oked || "_?_"
+        }</p>
+				<p><strong style="font-family:Cambria;">X/r:</strong> ${
+          admin.AdminInfo.x_r || "_?_"
+        }</p>
+				<p><strong style="font-family:Cambria;">Bank:</strong> ${
+          admin.AdminInfo.bank || "_?_"
+        }</p>
+				<p><strong style="font-family:Cambria;">MFO:</strong> ${
+          admin.AdminInfo.mfo || "_?_"
+        }</p>
 				<p class="noSpacing"><strong style="font-family:Cambria;">Rahbar:</strong> ${
           admin.AdminInfo.organizationLeader || "_?_"
         }</p>
 			</div>
 			<div class="column">
 				<h2>BUYURTMACHI</h2>
-				<p> <strong style="font-family:Cambria;">Fuqaro:</strong> “${user.full_name}”</p>
-				<p> <strong style="font-family:Cambria;">Passport seriya:</strong> ${user.passport_no || "_?_"}</p>
-				<p> <strong style="font-family:Cambria;">JSHIR:</strong> ${user.pin_jshshir || "_?_"}</p>
-				<p> <strong style="font-family:Cambria;">Manzili:</strong> ${user.address || "_?_"}</p>
-				<p> <strong style="font-family:Cambria;">Tel:</strong> ${user.phone_number || "_?_"}</p>
+				<p> <strong style="font-family:Cambria;">Fuqaro:</strong> “${
+          user.full_name
+        }”</p>
+				<p> <strong style="font-family:Cambria;">Passport seriya:</strong> ${
+          user.passport_no || "_?_"
+        }</p>
+				<p> <strong style="font-family:Cambria;">JSHIR:</strong> ${
+          user.pin_jshshir || "_?_"
+        }</p>
+				<p> <strong style="font-family:Cambria;">Manzili:</strong> ${
+          user.address || "_?_"
+        }</p>
+				<p> <strong style="font-family:Cambria;">Tel:</strong> ${
+          user.phone_number || "_?_"
+        }</p>
 				<p class="noSpacing_indent"><strong style="font-family:Cambria;">Fuqaro:</strong> ${user.first_name
           .charAt(0)
           .toUpperCase()}.${user.middle_name.charAt(0).toUpperCase()}.${
-    user.sur_name.charAt(0).toUpperCase() +
-    user.sur_name.slice(1).toLowerCase()
+    user.sur_name.charAt(0).toUpperCase() + user.sur_name.slice(1).toLowerCase()
   }</p>
 			</div>
 		</div>

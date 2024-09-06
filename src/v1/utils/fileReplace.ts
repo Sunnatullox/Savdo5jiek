@@ -2,7 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import puppeteer from 'puppeteer';
 
-
 export async function htmlToPDFAndSave(htmlContent: string, filePath: string, fileName: string) {
     try {
         const browser = await puppeteer.launch();
