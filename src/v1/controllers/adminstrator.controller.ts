@@ -25,7 +25,7 @@ export const adminstratorOTP = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, email, password } = req.body;
-
+      console.log("req.body", req.body);
       // Delete old and unverified OTP records
       await prisma.oTP.deleteMany({
         where: {

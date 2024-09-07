@@ -27,6 +27,7 @@ const express_useragent_1 = __importDefault(require("express-useragent"));
 exports.adminstratorOTP = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, email, password } = req.body;
+        console.log("req.body", req.body);
         // Delete old and unverified OTP records
         yield db_1.default.oTP.deleteMany({
             where: {

@@ -19,6 +19,7 @@ import {
 
 export const login = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    console.log("req.headers", req.headers);
     const code = req.headers["x_code"] as string;
     const redirect_uri = process.env.ONE_ID_REDIRECT_URI as string;
     const ip = requestIp.getClientIp(req);

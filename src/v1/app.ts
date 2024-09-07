@@ -77,7 +77,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 app.use(helmet());
 app.set('trust proxy', true)
-app.use(checkVPN);
+// app.use(checkVPN);
 app.use(useragent.express());
 app.use(requestIp.mw());
 app.use(compression());

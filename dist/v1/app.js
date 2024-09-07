@@ -42,7 +42,6 @@ const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const express_useragent_1 = __importDefault(require("express-useragent"));
 const request_ip_1 = __importStar(require("request-ip"));
-const checkVPN_1 = __importDefault(require("./utils/checkVPN"));
 require("./utils/scheduler");
 const express_static_cache_1 = __importDefault(require("express-static-cache"));
 // impoer routes
@@ -101,7 +100,7 @@ app.use((req, res, next) => {
 });
 app.use((0, helmet_1.default)());
 app.set('trust proxy', true);
-app.use(checkVPN_1.default);
+// app.use(checkVPN);
 app.use(express_useragent_1.default.express());
 app.use(request_ip_1.default.mw());
 app.use((0, compression_1.default)());
