@@ -25,6 +25,7 @@ export const login = asyncHandler(
     const ua = useragent.parse(req.headers["user-agent"] as string);
 
     try {
+      console.log("code", code);
       const accessTokenData = await getAccessToken(code, redirect_uri);
       const userData = await getUserData(accessTokenData.access_token);
       const user = await findOrCreateUser(userData) as IUser;

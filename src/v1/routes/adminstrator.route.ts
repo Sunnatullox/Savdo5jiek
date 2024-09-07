@@ -6,7 +6,6 @@ import {
 } from "../middleware/auth";
 import { Role } from "../types/adminstrator.type";
 
-
 const router = Router();
 
 router.post("/adminstrator-otp", adminstratorController.adminstratorOTP);
@@ -29,9 +28,18 @@ router.post(
   adminstratorController.adminstratorTwoFactorAuthUpdateAndCreate
 );
 
-router.get("/get-me-adminstrator", isAuthenticatedAdminstrator, adminstratorController.getAdminstratorInfo);
+router.get(
+  "/get-me-adminstrator",
+  isAuthenticatedAdminstrator,
+  isAdministrator(Role.ADMIN),
+  adminstratorController.getAdminstratorInfo
+);
 
-
-
+router.delete(
+  "/delete-admin-profile",
+  isAuthenticatedAdminstrator,
+  isAdministrator(Role.ADMIN),
+  adminstratorController.deleteAdminProfile
+);
 
 export default router;

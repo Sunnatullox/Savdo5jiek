@@ -1,4 +1,4 @@
-const emailForgotTemplate = (otp: string, name: string) => {
+const emailForgotTemplate = (otp: string, name: string, role:string) => {
   return `<!DOCTYPE html>
     <html>
     
@@ -70,8 +70,8 @@ const emailForgotTemplate = (otp: string, name: string) => {
                     src="https://i.ibb.co/0mGsMPn/book-posts-logo.png" alt="Book Posts Logo"></a>
                     <div class="message">OTP Tasdiqlash Emaili</div>
                     <div class="body">
-                            <p>Hurmatli Adminstrator</p>
-                            <p>Sizga Savdo5jiek.uz saytida Adminstrator yokiy Soliq agent sifatida. Ro'yxatdan o'tishni yakunlash uchun, iltimos, quyidagi OTP
+                            <p>Hurmatli ${name}</p>
+                            <p>Sizga Savdo5jiek.uz saytida ${role} sifatida. Ro'yxatdan o'tishni yakunlash uchun, iltimos, quyidagi OTP
                                     (Bir martalik parol) dan foydalanib hisobini tasdiqlang:</p>
                             <h2 class="highlight">${otp}</h2>
                             <p>Ushbu OTP 5 daqiqa davomida amal qiladi. Agar siz bu tasdiqlashni so'ramagan bo'lsangiz, iltimos, ushbu emailni e'tiborsiz qoldiring.

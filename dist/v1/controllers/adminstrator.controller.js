@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteAdminDevice = exports.getAdminstratorInfo = exports.adminstratorTwoFactorAuthUpdateAndCreate = exports.adminstratorAddAndUpdateInfo = exports.adminstratorLogin = exports.adminstratorOTPVerify = exports.adminstratorOTP = void 0;
+exports.deleteAdminProfile = exports.deleteAdminDevice = exports.getAdminstratorInfo = exports.adminstratorTwoFactorAuthUpdateAndCreate = exports.adminstratorAddAndUpdateInfo = exports.adminstratorLogin = exports.adminstratorOTPVerify = exports.adminstratorOTP = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const ErrorHandler_1 = __importDefault(require("../middleware/ErrorHandler"));
 const db_1 = __importDefault(require("../config/db"));
@@ -39,10 +39,10 @@ exports.adminstratorOTP = (0, express_async_handler_1.default)((req, res, next) 
             where: { email, role },
         });
         if (req.query.type === "admin") {
-            const checkAdmin = yield db_1.default.administration.findMany({
-                where: { role: "ADMIN" },
+            const checkAdmin = yield db_1.default.administration.findFirst({
+                where: { role: "ADMIN", email },
             });
-            if (checkAdmin.length > 0) {
+            if (checkAdmin) {
                 return next(new ErrorHandler_1.default("Admin already exists", 400));
             }
         }
@@ -57,7 +57,7 @@ exports.adminstratorOTP = (0, express_async_handler_1.default)((req, res, next) 
             lowerCaseAlphabets: false,
             specialChars: false,
         });
-        yield (0, emailSender_1.mailSender)(process.env.SENDER_EMAIL, "OTP Email Verification", (0, emailAdminstratorTemp_1.default)(otp, name));
+        yield (0, emailSender_1.mailSender)(process.env.SENDER_EMAIL, "OTP Email Verification", (0, emailAdminstratorTemp_1.default)(otp, name, role));
         yield db_1.default.oTP.create({
             data: {
                 email,
@@ -273,5 +273,22 @@ exports.deleteAdminDevice = (0, express_async_handler_1.default)((req, res, next
     }
     catch (error) {
         return next(new ErrorHandler_1.default(error.message, 500));
+    }
+}));
+exports.deleteAdminProfile = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.adminstrator;
+        const findAdmin = yield (0, adminstration_service_1.administrationFind)(id);
+        if (!findAdmin) {
+            return next(new ErrorHandler_1.default("Admin not found", 400));
+        }
+        yield db_1.default.administration.delete({ where: { id } });
+        res.status(200).json({
+            success: true,
+            message: "Admin deleted successfully"
+        });
+    }
+    catch (error) {
+        return next(new ErrorHandler_1.default("Please login to delete profile", 500));
     }
 }));

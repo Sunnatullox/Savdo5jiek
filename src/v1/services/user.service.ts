@@ -49,6 +49,7 @@ export async function deleteUserDeviceService(
 }
 
 export const getAccessToken = async (code: string, redirect_uri: string) => {
+  console.log("code service", code);
   const clientId = process.env.ONE_ID_CLIENT_ID;
   const clientSecret = process.env.ONE_ID_CLIENT_SECRET;
 

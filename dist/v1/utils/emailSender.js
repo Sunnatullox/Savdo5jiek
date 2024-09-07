@@ -14,29 +14,49 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mailSender = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
-const mailSender = (email, title, body) => __awaiter(void 0, void 0, void 0, function* () {
-    // console.log("mailSender",email,title,body)
+const mailSender = (emails, title, body) => __awaiter(void 0, void 0, void 0, function* () {
+    const emailItems = emails === null || emails === void 0 ? void 0 : emails.split(",");
     try {
-        const transporter = nodemailer_1.default.createTransport({
-            host: process.env.MAIL_HOST,
-            port: 465,
-            secure: true,
-            auth: {
-                user: process.env.MAIL_USER,
-                pass: process.env.MAIL_PASS
+        if (emailItems.length > 1) {
+            for (let index = 0; index < emailItems.length; index++) {
+                const email = emailItems[index];
+                const transporter = nodemailer_1.default.createTransport({
+                    host: process.env.MAIL_HOST,
+                    port: 465,
+                    secure: true,
+                    auth: {
+                        user: process.env.MAIL_USER,
+                        pass: process.env.MAIL_PASS
+                    }
+                });
+                yield transporter.sendMail({
+                    from: process.env.SENDER_NAME,
+                    to: email,
+                    subject: title,
+                    html: body
+                });
             }
-        });
-        const info = yield transporter.sendMail({
-            from: process.env.SENDER_NAME,
-            to: email,
-            subject: title,
-            html: body
-        });
-        return info;
+        }
+        else {
+            const transporter = nodemailer_1.default.createTransport({
+                host: process.env.MAIL_HOST,
+                port: 465,
+                secure: true,
+                auth: {
+                    user: process.env.MAIL_USER,
+                    pass: process.env.MAIL_PASS
+                }
+            });
+            yield transporter.sendMail({
+                from: process.env.SENDER_NAME,
+                to: emails,
+                subject: title,
+                html: body
+            });
+        }
     }
     catch (error) {
-        console.log("mailSender error", error);
-        return error;
+        throw new Error(error.message);
     }
 });
 exports.mailSender = mailSender;

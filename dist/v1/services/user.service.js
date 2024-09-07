@@ -55,6 +55,7 @@ function deleteUserDeviceService(device_id, user_id) {
     });
 }
 const getAccessToken = (code, redirect_uri) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("code service", code);
     const clientId = process.env.ONE_ID_CLIENT_ID;
     const clientSecret = process.env.ONE_ID_CLIENT_SECRET;
     const response = yield axios_1.default.post("https://sso.egov.uz/sso/oauth/Authorization.do", null, {

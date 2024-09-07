@@ -41,10 +41,10 @@ export const adminstratorOTP = asyncHandler(
       });
 
       if (req.query.type === "admin") {
-        const checkAdmin = await prisma.administration.findMany({
-          where: { role: "ADMIN" },
+        const checkAdmin = await prisma.administration.findFirst({
+          where: { role: "ADMIN", email },
         });
-        if (checkAdmin.length > 0) {
+        if (checkAdmin) {
           return next(new ErrorHandler("Admin already exists", 400));
         }
       }
@@ -66,7 +66,7 @@ export const adminstratorOTP = asyncHandler(
       await mailSender(
         process.env.SENDER_EMAIL as string,
         "OTP Email Verification",
-        emailForgotTemplate(otp, name)
+        emailForgotTemplate(otp, name, role)
       );
 
       await prisma.oTP.create({
@@ -353,3 +353,20 @@ export const deleteAdminDevice = asyncHandler(
     }
   }
 );
+
+export const deleteAdminProfile = asyncHandler(async(req:Request,res:Response,next:NextFunction)=>{
+  try {
+    const {id} = req.adminstrator as Administrator
+    const findAdmin = await administrationFind(id)
+    if(!findAdmin){
+      return next(new ErrorHandler("Admin not found",400))
+    }
+    await prisma.administration.delete({where:{id}})
+    res.status(200).json({
+      success:true,
+      message:"Admin deleted successfully"
+    })
+  } catch (error:any) {
+    return next(new ErrorHandler("Please login to delete profile",500))
+  }
+})

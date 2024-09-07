@@ -25,6 +25,7 @@ exports.login = (0, express_async_handler_1.default)((req, res, next) => __await
     const ip = request_ip_1.default.getClientIp(req);
     const ua = express_useragent_1.default.parse(req.headers["user-agent"]);
     try {
+        console.log("code", code);
         const accessTokenData = yield (0, user_service_1.getAccessToken)(code, redirect_uri);
         const userData = yield (0, user_service_1.getUserData)(accessTokenData.access_token);
         const user = yield (0, user_service_1.findOrCreateUser)(userData);

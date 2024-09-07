@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  app:
+    build: .
+    container_name: record_book_api
+    ports:
+      - "5500:5500"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    container_name: record_book_db
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
