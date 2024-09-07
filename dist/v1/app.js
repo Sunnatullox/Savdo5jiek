@@ -78,8 +78,7 @@ app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.de
 // middlewars
 app.use((0, cors_1.default)({
     origin: (_a = process.env.CLIENT_URL) === null || _a === void 0 ? void 0 : _a.split(","),
-    credentials: true,
-    optionsSuccessStatus: 200,
+    credentials: true
 }));
 const rateLimiter = new rate_limiter_flexible_1.RateLimiterMemory({
     points: 100, // 100 requests
@@ -100,17 +99,17 @@ app.use((req, res, next) => {
         });
     }
 });
-app.use(helmet_1.default.frameguard({ action: 'sameorigin' }));
+app.use((0, helmet_1.default)());
 app.set('trust proxy', true);
 app.use(checkVPN_1.default);
 app.use(express_useragent_1.default.express());
 app.use(request_ip_1.default.mw());
 app.use((0, compression_1.default)());
 app.use((0, cookie_parser_1.default)(process.env.COOKIE_SECRET));
-app.use(express_1.default.json({ limit: "15mb" }));
-app.use(express_1.default.urlencoded({ extended: true, limit: "15mb" }));
+app.use(express_1.default.json({ limit: "10mb" }));
+app.use(express_1.default.urlencoded({ extended: true, limit: "10mb" }));
 app.use((0, morgan_1.default)(process.env.NODE_ENV === "production" ? "combined" : "dev"));
-app.disable('x-powered-by');
+// app.disable('x-powered-by');
 // static files
 app.use("/public", (req, res, next) => {
     res.header("Cross-Origin-Resource-Policy", "cross-origin");
