@@ -39,8 +39,16 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: process.env.SERVER_URL || "http://localhost:5500",
-        description: "API URL",
+        url: "http://localhost:5500",
+        description: "Local server",
+      },
+      {
+        url: "https://5jiek.uz",
+        description: "Production server",
+      },
+      {
+        url: "http://176.124.210.180",
+        description: "Server",
       },
     ],
   },
@@ -77,7 +85,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 app.use(helmet());
 app.set('trust proxy', true)
-// app.use(checkVPN);
+app.use(checkVPN);
 app.use(useragent.express());
 app.use(requestIp.mw());
 app.use(compression());

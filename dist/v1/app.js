@@ -42,6 +42,7 @@ const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const express_useragent_1 = __importDefault(require("express-useragent"));
 const request_ip_1 = __importStar(require("request-ip"));
+const checkVPN_1 = __importDefault(require("./utils/checkVPN"));
 require("./utils/scheduler");
 const express_static_cache_1 = __importDefault(require("express-static-cache"));
 // impoer routes
@@ -65,8 +66,16 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: process.env.SERVER_URL || "http://localhost:5500",
-                description: "API URL",
+                url: "http://localhost:5500",
+                description: "Local server",
+            },
+            {
+                url: "https://5jiek.uz",
+                description: "Production server",
+            },
+            {
+                url: "http://176.124.210.180",
+                description: "Server",
             },
         ],
     },
@@ -100,7 +109,7 @@ app.use((req, res, next) => {
 });
 app.use((0, helmet_1.default)());
 app.set('trust proxy', true);
-// app.use(checkVPN);
+app.use(checkVPN_1.default);
 app.use(express_useragent_1.default.express());
 app.use(request_ip_1.default.mw());
 app.use((0, compression_1.default)());
