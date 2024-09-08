@@ -43,6 +43,7 @@
  *       '500':
  *         description: Internal server error
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 // Get payment by user
 /**
  * @swagger

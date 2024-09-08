@@ -88,6 +88,7 @@
  *      '500':
  *        description: Internal server error
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 // get products
 /**
  * @swagger

@@ -14,6 +14,7 @@
  *      '500':
  *        description: Internal server error
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @swagger
  * /api/v1/analytics/get-12-month-user-registration-analytics:

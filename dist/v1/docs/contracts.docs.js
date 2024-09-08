@@ -39,6 +39,7 @@
  *      500:
  *        description: Internal server error
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @swagger
  * /api/v1/contract/get-contracts-list-by-user:

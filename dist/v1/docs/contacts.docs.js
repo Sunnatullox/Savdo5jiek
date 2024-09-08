@@ -36,6 +36,7 @@
  *       500:
  *         description: Internal server error
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 // Get All Contact Us Notification
 /**
  * @swagger

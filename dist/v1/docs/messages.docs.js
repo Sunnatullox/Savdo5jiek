@@ -29,6 +29,7 @@
  *        description: Internal server error
  *
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @swagger
  * /api/v1/messages/send-message-admin:

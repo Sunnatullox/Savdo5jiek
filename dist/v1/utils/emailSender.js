@@ -8,29 +8,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mailSender = void 0;
-const nodemailer_1 = __importDefault(require("nodemailer"));
 const mailSender = (email, title, body) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const transporter = nodemailer_1.default.createTransport({
-            service: "Gmail",
-            auth: {
-                user: process.env.MAIL_USER,
-                pass: process.env.MAIL_PASS,
-            },
+        const { SMTPClient } = yield import('emailjs');
+        const client = new SMTPClient({
+            user: process.env.MAIL_USER, // Sizning Gmail manzilingiz
+            password: process.env.MAIL_PASS, // Yaratilgan app parol
+            host: 'smtp.gmail.com', // Gmail SMTP server
+            ssl: true // SSL orqali ulanish
         });
-        const info = yield transporter.sendMail({
-            from: process.env.SENDER_EMAIL,
-            to: email,
-            subject: title,
+        const message = yield client.sendAsync({
+            from: process.env.MAIL_USER, // Kimdan
+            to: email, // Kimga
+            subject: title, // Xat mavzusi
+            text: body,
             html: body,
+            attachment: [{
+                    data: body,
+                    alternative: true,
+                }], // Xat matni
         });
-        console.log("Mail sent successfully", info);
-        return info;
+        console.log(message);
+        return message;
     }
     catch (error) {
         console.error("Failed to send mail", error);
@@ -38,3 +39,18 @@ const mailSender = (email, title, body) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.mailSender = mailSender;
+// const transporter = nodemailer.createTransport({
+//   service: "Gmail", 
+//   auth: {
+//     user: process.env.MAIL_USER,
+//     pass: process.env.MAIL_PASS,
+//   },
+// });
+// const info = await transporter.sendMail({
+//   from: process.env.SENDER_EMAIL,
+//   to: email,
+//   subject: title,
+//   html: body,
+// });
+// console.log("Mail sent successfully", info);
+// return info;
