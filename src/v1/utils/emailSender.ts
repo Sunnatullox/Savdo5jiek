@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-export const mailSender = async (emails:string,title:string,body:string):Promise<void> => {
+export const mailSender = async (emails:string,title:string,body:string) => {
     const emailItems = emails?.split(",")
     try {
         if (emailItems.length > 1) {
@@ -16,12 +16,13 @@ export const mailSender = async (emails:string,title:string,body:string):Promise
                     }
                 });
             
-                await transporter.sendMail({
+             const info =    await transporter.sendMail({
                     from: process.env.SENDER_NAME,
                     to: email,
                     subject: title,
                     html:body
                 });
+             return info
             }
         }else{
             const transporter = nodemailer.createTransport({
@@ -34,12 +35,13 @@ export const mailSender = async (emails:string,title:string,body:string):Promise
                 }
             });
         
-            await transporter.sendMail({
+            const info = await transporter.sendMail({
                 from: process.env.SENDER_NAME,
                 to: emails,
                 subject: title,
                 html:body
             });
+            return info
         }
     } catch (error:any) {
       throw new Error(error.message)

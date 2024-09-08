@@ -25,7 +25,7 @@ export const adminstratorOTP = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, email, password } = req.body;
-      console.log("req.body", req.body, req.query);
+      
       // Delete old and unverified OTP records
       await prisma.oTP.deleteMany({
         where: {
@@ -43,7 +43,6 @@ export const adminstratorOTP = asyncHandler(
         where: { role, email },
       });
 
-      console.log("checkAdmin", checkAdmin);
       if (checkAdmin) {
         return next(new ErrorHandler("Admin already exists", 400));
       }
@@ -58,7 +57,8 @@ export const adminstratorOTP = asyncHandler(
         "OTP Email Verification",
         emailForgotTemplate(otp, name, role)
       );
-
+      
+      console.log("otp", otp);
       await prisma.oTP.create({
         data: {
           email,
