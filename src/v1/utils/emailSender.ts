@@ -7,8 +7,7 @@ export const mailSender = async (
 ): Promise<any> => {
   try {
     const transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: 465, // use SSL
+      service: "Gmail", 
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
