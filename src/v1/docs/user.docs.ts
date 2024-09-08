@@ -7,12 +7,15 @@
  *    summary: Login
  *    tags: [Auth]
  *    description: Login with one id
- *    parameters:
- *       - in: header
- *         name: x_code
- *         required: true
- *         schema:
- *           type: string
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              code:
+ *                type: string
  *    responses:
  *      '200':
  *        description: A successful response
