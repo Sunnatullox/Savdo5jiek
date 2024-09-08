@@ -1,5 +1,3 @@
-
-
 /**
  * @swagger
  * /api/v1/user/login:
