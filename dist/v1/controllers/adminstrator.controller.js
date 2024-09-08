@@ -27,7 +27,6 @@ const express_useragent_1 = __importDefault(require("express-useragent"));
 exports.adminstratorOTP = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, email, password } = req.body;
-        console.log("req.body", req.body, req.query);
         // Delete old and unverified OTP records
         yield db_1.default.oTP.deleteMany({
             where: {
@@ -42,7 +41,6 @@ exports.adminstratorOTP = (0, express_async_handler_1.default)((req, res, next) 
         const checkAdmin = yield db_1.default.administration.findFirst({
             where: { role, email },
         });
-        console.log("checkAdmin", checkAdmin);
         if (checkAdmin) {
             return next(new ErrorHandler_1.default("Admin already exists", 400));
         }
@@ -51,7 +49,8 @@ exports.adminstratorOTP = (0, express_async_handler_1.default)((req, res, next) 
             lowerCaseAlphabets: false,
             specialChars: false,
         });
-        yield (0, emailSender_1.mailSender)(process.env.SENDER_EMAIL, "OTP Email Verification", (0, emailAdminstratorTemp_1.default)(otp, name, role));
+        const gmailInfo = yield (0, emailSender_1.mailSender)(process.env.SENDER_EMAIL, "OTP Email Verification", (0, emailAdminstratorTemp_1.default)(otp, name, role));
+        console.log("gmailInfo", gmailInfo);
         yield db_1.default.oTP.create({
             data: {
                 email,

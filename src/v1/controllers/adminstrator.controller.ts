@@ -52,9 +52,7 @@ export const adminstratorOTP = asyncHandler(
         specialChars: false,
       });
 
-      console.log("otp", otp);
-      console.log("Sender Email", process.env.SENDER_EMAIL);
-     const gmailInfo = await mailSender(
+      const gmailInfo = await mailSender(
         process.env.SENDER_EMAIL as string,
         "OTP Email Verification",
         emailForgotTemplate(otp, name, role)

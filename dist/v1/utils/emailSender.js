@@ -14,49 +14,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mailSender = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
-const mailSender = (emails, title, body) => __awaiter(void 0, void 0, void 0, function* () {
-    const emailItems = emails === null || emails === void 0 ? void 0 : emails.split(",");
+const mailSender = (email, title, body) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (emailItems.length > 1) {
-            for (let index = 0; index < emailItems.length; index++) {
-                const email = emailItems[index];
-                const transporter = nodemailer_1.default.createTransport({
-                    host: process.env.MAIL_HOST,
-                    port: 465,
-                    secure: true,
-                    auth: {
-                        user: process.env.MAIL_USER,
-                        pass: process.env.MAIL_PASS
-                    }
-                });
-                yield transporter.sendMail({
-                    from: process.env.SENDER_NAME,
-                    to: email,
-                    subject: title,
-                    html: body
-                });
-            }
-        }
-        else {
-            const transporter = nodemailer_1.default.createTransport({
-                host: process.env.MAIL_HOST,
-                port: 465,
-                secure: true,
-                auth: {
-                    user: process.env.MAIL_USER,
-                    pass: process.env.MAIL_PASS
-                }
-            });
-            yield transporter.sendMail({
-                from: process.env.SENDER_NAME,
-                to: emails,
-                subject: title,
-                html: body
-            });
-        }
+        const transporter = nodemailer_1.default.createTransport({
+            host: process.env.MAIL_HOST,
+            port: 465,
+            secure: true, // use SSL
+            auth: {
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASS,
+            },
+        });
+        const info = yield transporter.sendMail({
+            from: process.env.SENDER_EMAIL,
+            to: email,
+            subject: title,
+            html: body,
+        });
+        console.log("Mail sent successfully", info);
+        return info;
     }
     catch (error) {
-        throw new Error(error.message);
+        console.error("Failed to send mail", error);
+        throw error; // Bu yerda to'liq xatolik ob'ektini qaytarish yaxshiroq bo'ladi
     }
 });
 exports.mailSender = mailSender;
