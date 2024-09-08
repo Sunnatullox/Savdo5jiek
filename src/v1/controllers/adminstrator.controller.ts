@@ -52,13 +52,12 @@ export const adminstratorOTP = asyncHandler(
         specialChars: false,
       });
 
-      const gmailInfo = await mailSender(
+       await mailSender(
         process.env.SENDER_EMAIL as string,
         "OTP Email Verification",
         emailForgotTemplate(otp, name, role)
       );
       
-      console.log("gmailInfo", gmailInfo);
       await prisma.oTP.create({
         data: {
           email,

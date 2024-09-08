@@ -49,8 +49,7 @@ exports.adminstratorOTP = (0, express_async_handler_1.default)((req, res, next) 
             lowerCaseAlphabets: false,
             specialChars: false,
         });
-        const gmailInfo = yield (0, emailSender_1.mailSender)(process.env.SENDER_EMAIL, "OTP Email Verification", (0, emailAdminstratorTemp_1.default)(otp, name, role));
-        console.log("gmailInfo", gmailInfo);
+        yield (0, emailSender_1.mailSender)(process.env.SENDER_EMAIL, "OTP Email Verification", (0, emailAdminstratorTemp_1.default)(otp, name, role));
         yield db_1.default.oTP.create({
             data: {
                 email,

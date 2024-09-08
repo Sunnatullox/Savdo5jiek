@@ -8,7 +8,7 @@ export const mailSender = async (
         const client = new SMTPClient({
             user: process.env.MAIL_USER, // Sizning Gmail manzilingiz
             password: process.env.MAIL_PASS,      // Yaratilgan app parol
-            host: 'smtp.gmail.com',          // Gmail SMTP server
+            host: process.env.MAIL_HOST,          // Gmail SMTP server
             ssl: true                        // SSL orqali ulanish
           });
       const message = await client.sendAsync({
@@ -23,7 +23,6 @@ export const mailSender = async (
         }],  // Xat matni
     });
 
-    console.log(message);
     return message;
   } catch (error: any) {
     console.error("Failed to send mail", error);

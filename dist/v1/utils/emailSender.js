@@ -16,7 +16,7 @@ const mailSender = (email, title, body) => __awaiter(void 0, void 0, void 0, fun
         const client = new SMTPClient({
             user: process.env.MAIL_USER, // Sizning Gmail manzilingiz
             password: process.env.MAIL_PASS, // Yaratilgan app parol
-            host: 'smtp.gmail.com', // Gmail SMTP server
+            host: process.env.MAIL_HOST, // Gmail SMTP server
             ssl: true // SSL orqali ulanish
         });
         const message = yield client.sendAsync({
@@ -30,7 +30,6 @@ const mailSender = (email, title, body) => __awaiter(void 0, void 0, void 0, fun
                     alternative: true,
                 }], // Xat matni
         });
-        console.log(message);
         return message;
     }
     catch (error) {

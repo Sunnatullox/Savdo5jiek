@@ -19,14 +19,12 @@ import {
 
 export const login = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    console.log("req.headers", req.headers);
     const code = req.body.code as string;
     const redirect_uri = process.env.ONE_ID_REDIRECT_URI as string;
     const ip = requestIp.getClientIp(req);
     const ua = useragent.parse(req.headers["user-agent"] as string);
 
     try {
-      console.log("code", code);
       const accessTokenData = await getAccessToken(code, redirect_uri);
       const userData = await getUserData(accessTokenData.access_token);
       const user = await findOrCreateUser(userData) as IUser;

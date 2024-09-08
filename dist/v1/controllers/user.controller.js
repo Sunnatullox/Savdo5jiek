@@ -20,13 +20,11 @@ const request_ip_1 = __importDefault(require("request-ip"));
 const express_useragent_1 = __importDefault(require("express-useragent"));
 const user_service_1 = require("../services/user.service");
 exports.login = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("req.headers", req.headers);
     const code = req.body.code;
     const redirect_uri = process.env.ONE_ID_REDIRECT_URI;
     const ip = request_ip_1.default.getClientIp(req);
     const ua = express_useragent_1.default.parse(req.headers["user-agent"]);
     try {
-        console.log("code", code);
         const accessTokenData = yield (0, user_service_1.getAccessToken)(code, redirect_uri);
         const userData = yield (0, user_service_1.getUserData)(accessTokenData.access_token);
         const user = yield (0, user_service_1.findOrCreateUser)(userData);
