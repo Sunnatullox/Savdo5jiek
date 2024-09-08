@@ -19,7 +19,12 @@ const puppeteer_1 = __importDefault(require("puppeteer"));
 function htmlToPDFAndSave(htmlContent, filePath, fileName) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const browser = yield puppeteer_1.default.launch();
+            if (!htmlContent)
+                throw new Error("Html content is required");
+            const browser = yield puppeteer_1.default.launch({
+                headless: true,
+                args: ['--no-sandbox', '--disable-setuid-sandbox']
+            });
             const page = yield browser.newPage();
             // HTML contentni sahifaga yuklash
             yield page.setContent(htmlContent);

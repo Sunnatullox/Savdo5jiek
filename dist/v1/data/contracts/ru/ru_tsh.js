@@ -129,7 +129,7 @@ function RuTshContractHtml(admin, user, products, isDelivery, data) {
 		}
 
 		.noSpacing_indent {
-			margin-top: 60pt;
+			margin-top: 50pt;
 		}
 	</style>
 </head>

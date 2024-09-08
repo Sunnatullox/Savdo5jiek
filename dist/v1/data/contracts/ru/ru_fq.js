@@ -129,7 +129,7 @@ function RuFqContractHtml(admin, user, products, isDelivery, data) {
 		}
 
 		.noSpacing_indent {
-			margin-top: 50pt;
+			margin-top: 40pt;
 		}
 	</style>
 </head>
@@ -159,7 +159,7 @@ function RuFqContractHtml(admin, user, products, isDelivery, data) {
 	</p>
 	<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
 		<span style="font-family:Cambria">именуемый в тексте «ПОСТАВЩИК ПРОДУКЦИИ», начальник исправительной колонии № 5
-			(далее – КИН), действующей на основании ее Положения, </span><strong><span style="font-family:Cambria; ">${admin.AdminInfo.middle_name} ${admin.AdminInfo.first_name} ${admin.AdminInfo.sur_name}</span></strong><span style="font-family:Cambria">, с одной стороны,
+			(далее – КИН), действующей на основании ее Положения, </span><strong><span style="font-family:Cambria; ">${admin.AdminInfo.first_name.toUpperCase()} ${admin.AdminInfo.middle_name.toUpperCase()} ${admin.AdminInfo.sur_name.toUpperCase()}</span></strong><span style="font-family:Cambria">, с одной стороны,
 			именуемый в дальнейшем «ЗАКАЗЧИК». "в тексте известно</span><u><span
 				style="font-family:Cambria; ">физический</span></u><span style="font-family:Cambria">лицо (далее -
 			ГРАЖДАНИН)</span><strong><span style="font-family:Cambria;"> ${user.full_name}</span></strong><u><span style="font-family:Cambria;"> </span></u><span

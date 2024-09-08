@@ -66,9 +66,21 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: process.env.CLIENT_URL || "http://176.124.210.180",
+                url: "http://localhost:5500",
                 description: "Local server",
-            }
+            },
+            {
+                url: "https://5jiek.uz",
+                description: "Production server",
+            },
+            {
+                url: "http://176.124.210.180",
+                description: "Server",
+            },
+            {
+                url: "https://savdo5jiek.onrender.com/",
+                description: "Server",
+            },
         ],
     },
     apis: ['./src/v1/docs/*.docs.ts'], // Correct path to the docs folder

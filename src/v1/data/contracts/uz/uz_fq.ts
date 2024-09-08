@@ -125,7 +125,7 @@ export default async function UzFqContractHtml(
 		}
 
 		.noSpacing_indent {
-			margin-top: 60pt;
+			margin-top: 40pt;
 		}
 	</style>
 </head>
@@ -159,12 +159,8 @@ export default async function UzFqContractHtml(
 			<span style="font-family:Cambria">Bundan buyon matnda «MAHSULOT YETKAZIB BERUVCHI» deb nomlanuvchi, o‘z
 				Nizomi asosida faoliyat ko‘rsatuvchi 5-son Jazoni ijro etish koloniyasi (keying o’rinlarda
 			</span><strong><span style="font-family:Cambria; ">JIEK</span></strong><span style="font-family:Cambria">
-				deb yuritiladi) rahbari </span><strong><span style="font-family:Cambria; "></span></strong><span style="font-family:Cambria"> bir tomondan, bundan buyon matnda
-				«BUYURTMACHI» deb nomla${admin.AdminInfo.middle_name} ${
-    admin.AdminInfo.first_name
-  } ${
-    admin.AdminInfo.sur_name
-  }nuvchi </span><u><span style="font-family:Cambria; ">jismoniy </span></u><span
+				deb yuritiladi) rahbari </span><strong><span style="font-family:Cambria; ">${admin.AdminInfo.middle_name} ${admin.AdminInfo.first_name} ${admin.AdminInfo.sur_name}</span></strong><span style="font-family:Cambria"> bir tomondan, bundan buyon matnda
+				«BUYURTMACHI» deb nomlanuvchi </span><u><span style="font-family:Cambria; ">jismoniy </span></u><span
 				style="font-family:Cambria">shaxs (keying o’rinlarda </span><strong><span
 					style="font-family:Cambria; ">FUQARO</span></strong><span style="font-family:Cambria"> deb
 				yuritiladi)</span><u><span style="font-family:Cambria; "> </span></u><strong><span

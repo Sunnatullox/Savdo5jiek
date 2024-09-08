@@ -129,7 +129,7 @@ function UzTshContractHtml(admin, user, products, isDelivery, data) {
 		}
 
 		.noSpacing_indent {
-			margin-top: 70pt;
+			margin-top: 50pt;
 		}
 
 		

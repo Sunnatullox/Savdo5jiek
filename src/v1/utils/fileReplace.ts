@@ -4,7 +4,11 @@ import puppeteer from 'puppeteer';
 
 export async function htmlToPDFAndSave(htmlContent: string, filePath: string, fileName: string) {
     try {
-        const browser = await puppeteer.launch();
+        if(!htmlContent) throw new Error("Html content is required");
+        const browser = await puppeteer.launch({
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
         const page = await browser.newPage();
     
         // HTML contentni sahifaga yuklash

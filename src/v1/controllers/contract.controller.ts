@@ -42,7 +42,7 @@ export const createContractByUser = asyncHandler(
       if (!products.length || !totalPrice) {
         return next(new ErrorHandler("All fields are required", 400));
       }
-
+      
       const findsProducts = await prisma.product.findMany({
         where: { id: { in: products.map((product) => product.id) } },
         include: { category: true },
