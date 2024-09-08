@@ -21,7 +21,7 @@ const express_useragent_1 = __importDefault(require("express-useragent"));
 const user_service_1 = require("../services/user.service");
 exports.login = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("req.headers", req.headers);
-    const code = req.headers["x_code"];
+    const code = req.body.code;
     const redirect_uri = process.env.ONE_ID_REDIRECT_URI;
     const ip = request_ip_1.default.getClientIp(req);
     const ua = express_useragent_1.default.parse(req.headers["user-agent"]);
