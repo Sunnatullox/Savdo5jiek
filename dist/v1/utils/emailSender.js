@@ -17,9 +17,7 @@ const nodemailer_1 = __importDefault(require("nodemailer"));
 const mailSender = (email, title, body) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const transporter = nodemailer_1.default.createTransport({
-            host: process.env.MAIL_HOST,
-            port: 465,
-            secure: true, // use SSL
+            service: "Gmail",
             auth: {
                 user: process.env.MAIL_USER,
                 pass: process.env.MAIL_PASS,

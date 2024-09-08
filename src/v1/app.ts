@@ -50,6 +50,11 @@ const swaggerOptions = {
         url: "http://176.124.210.180",
         description: "Server",
       },
+      {
+        url: "https://savdo5jiek.onrender.com",
+        description: "Server",
+      },
+
     ],
   },
   apis: ['./src/v1/docs/*.docs.ts'], // Correct path to the docs folder
