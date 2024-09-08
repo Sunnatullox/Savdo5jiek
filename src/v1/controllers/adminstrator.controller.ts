@@ -25,7 +25,7 @@ export const adminstratorOTP = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, email, password } = req.body;
-      
+
       // Delete old and unverified OTP records
       await prisma.oTP.deleteMany({
         where: {
@@ -52,13 +52,15 @@ export const adminstratorOTP = asyncHandler(
         specialChars: false,
       });
 
-      await mailSender(
+      console.log("otp", otp);
+      console.log("Sender Email", process.env.SENDER_EMAIL);
+     const gmailInfo = await mailSender(
         process.env.SENDER_EMAIL as string,
         "OTP Email Verification",
         emailForgotTemplate(otp, name, role)
       );
       
-      console.log("otp", otp);
+      console.log("gmailInfo", gmailInfo);
       await prisma.oTP.create({
         data: {
           email,
