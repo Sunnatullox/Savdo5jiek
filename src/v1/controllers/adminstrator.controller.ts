@@ -25,7 +25,7 @@ export const adminstratorOTP = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, email, password } = req.body;
-      console.log("req.body", req.body);
+      console.log("req.body", req.body, req.query);
       // Delete old and unverified OTP records
       await prisma.oTP.deleteMany({
         where: {
@@ -34,29 +34,19 @@ export const adminstratorOTP = asyncHandler(
         },
       });
 
-      const role = req.query.type === "admin" ? "ADMIN" : "TAX_AGENT";
-
-      const checkUser = await prisma.administration.findUnique({
-        where: { email, role },
-      });
-
-      if (req.query.type === "admin") {
-        const checkAdmin = await prisma.administration.findFirst({
-          where: { role: "ADMIN", email },
-        });
-        if (checkAdmin) {
-          return next(new ErrorHandler("Admin already exists", 400));
-        }
-      }
-
       if (!["admin", "tax_agent"].includes(req.query.type as string)) {
         return next(new ErrorHandler("Invalid type", 400));
       }
+      const role = req.query.type === "admin" ? "ADMIN" : "TAX_AGENT";
 
-      if (checkUser) {
-        return next(new ErrorHandler("User already exists", 400));
+      const checkAdmin = await prisma.administration.findFirst({
+        where: { role, email },
+      });
+
+      console.log("checkAdmin", checkAdmin);
+      if (checkAdmin) {
+        return next(new ErrorHandler("Admin already exists", 400));
       }
-
       const otp = otpGenerator.generate(5, {
         upperCaseAlphabets: false,
         lowerCaseAlphabets: false,
@@ -354,19 +344,21 @@ export const deleteAdminDevice = asyncHandler(
   }
 );
 
-export const deleteAdminProfile = asyncHandler(async(req:Request,res:Response,next:NextFunction)=>{
-  try {
-    const {id} = req.adminstrator as Administrator
-    const findAdmin = await administrationFind(id)
-    if(!findAdmin){
-      return next(new ErrorHandler("Admin not found",400))
+export const deleteAdminProfile = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.adminstrator as Administrator;
+      const findAdmin = await administrationFind(id);
+      if (!findAdmin) {
+        return next(new ErrorHandler("Admin not found", 400));
+      }
+      await prisma.administration.delete({ where: { id } });
+      res.status(200).json({
+        success: true,
+        message: "Admin deleted successfully",
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler("Please login to delete profile", 500));
     }
-    await prisma.administration.delete({where:{id}})
-    res.status(200).json({
-      success:true,
-      message:"Admin deleted successfully"
-    })
-  } catch (error:any) {
-    return next(new ErrorHandler("Please login to delete profile",500))
   }
-})
+);

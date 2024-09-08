@@ -27,7 +27,7 @@ const express_useragent_1 = __importDefault(require("express-useragent"));
 exports.adminstratorOTP = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, email, password } = req.body;
-        console.log("req.body", req.body);
+        console.log("req.body", req.body, req.query);
         // Delete old and unverified OTP records
         yield db_1.default.oTP.deleteMany({
             where: {
@@ -35,23 +35,16 @@ exports.adminstratorOTP = (0, express_async_handler_1.default)((req, res, next) 
                 verified: false,
             },
         });
-        const role = req.query.type === "admin" ? "ADMIN" : "TAX_AGENT";
-        const checkUser = yield db_1.default.administration.findUnique({
-            where: { email, role },
-        });
-        if (req.query.type === "admin") {
-            const checkAdmin = yield db_1.default.administration.findFirst({
-                where: { role: "ADMIN", email },
-            });
-            if (checkAdmin) {
-                return next(new ErrorHandler_1.default("Admin already exists", 400));
-            }
-        }
         if (!["admin", "tax_agent"].includes(req.query.type)) {
             return next(new ErrorHandler_1.default("Invalid type", 400));
         }
-        if (checkUser) {
-            return next(new ErrorHandler_1.default("User already exists", 400));
+        const role = req.query.type === "admin" ? "ADMIN" : "TAX_AGENT";
+        const checkAdmin = yield db_1.default.administration.findFirst({
+            where: { role, email },
+        });
+        console.log("checkAdmin", checkAdmin);
+        if (checkAdmin) {
+            return next(new ErrorHandler_1.default("Admin already exists", 400));
         }
         const otp = otp_generator_1.default.generate(5, {
             upperCaseAlphabets: false,
@@ -286,7 +279,7 @@ exports.deleteAdminProfile = (0, express_async_handler_1.default)((req, res, nex
         yield db_1.default.administration.delete({ where: { id } });
         res.status(200).json({
             success: true,
-            message: "Admin deleted successfully"
+            message: "Admin deleted successfully",
         });
     }
     catch (error) {
