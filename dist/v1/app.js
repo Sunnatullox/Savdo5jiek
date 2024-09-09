@@ -27,11 +27,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
 const helmet_1 = __importDefault(require("helmet"));
 const cors_1 = __importDefault(require("cors"));
-const rate_limiter_flexible_1 = require("rate-limiter-flexible");
 const compression_1 = __importDefault(require("compression"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const error_1 = __importDefault(require("./middleware/error"));
@@ -92,25 +93,6 @@ app.use((0, cors_1.default)({
     origin: (_a = process.env.CLIENT_URL) === null || _a === void 0 ? void 0 : _a.split(","),
     credentials: true
 }));
-const rateLimiter = new rate_limiter_flexible_1.RateLimiterMemory({
-    points: 100, // 100 requests
-    duration: 60, // per 1 second by IP
-});
-app.use((req, res, next) => {
-    if (req.path.startsWith('/public')) {
-        next();
-    }
-    else {
-        rateLimiter
-            .consume(req.ip)
-            .then(() => {
-            next();
-        })
-            .catch(() => {
-            res.status(429).send("Too Many Requests");
-        });
-    }
-});
 app.use((0, helmet_1.default)());
 app.set('trust proxy', true);
 app.use(checkVPN_1.default);

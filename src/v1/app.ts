@@ -1,8 +1,9 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express, { Request, Response, Application, NextFunction } from "express";
 const app: Application = express();
 import helmet from "helmet";
 import cors from "cors";
-import { RateLimiterMemory } from "rate-limiter-flexible";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import ErrorHandlerMiddleware from "./middleware/error";
@@ -70,24 +71,7 @@ app.use(
     credentials: true
   })
 );
-const rateLimiter = new RateLimiterMemory({
-  points: 100, // 100 requests
-  duration: 60, // per 1 second by IP
-});
-app.use((req: Request, res: Response, next: NextFunction) => {
-  if (req.path.startsWith('/public')) {
-    next(); 
-  } else {
-    rateLimiter
-      .consume(req.ip as string)
-      .then(() => {
-        next();
-      })
-      .catch(() => {
-        res.status(429).send("Too Many Requests");
-      });
-  }
-});
+
 app.use(helmet());
 app.set('trust proxy', true)
 app.use(checkVPN);
