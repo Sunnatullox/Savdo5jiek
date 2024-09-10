@@ -16,24 +16,7 @@ exports.updateUser = exports.updateUserLegalInfo = exports.getUserById = exports
 exports.findUserDeviceService = findUserDeviceService;
 exports.deleteUserDeviceService = deleteUserDeviceService;
 const db_1 = __importDefault(require("../config/db"));
-const axios_1 = __importDefault(require("axios"));
 const ErrorHandler_1 = __importDefault(require("../middleware/ErrorHandler"));
-// export async function signAccessToken(userId: string) {
-//   return jwt.sign({ id: userId }, process.env.ACCESS_TOKEN_SECRET as string, {
-//     expiresIn: "5m",
-//   });
-// }
-// export async function signRefreshToken(userId: string) {
-//   return jwt.sign({ id: userId }, process.env.REFRESH_TOKEN_SECRET as string, {
-//     expiresIn: "3d",
-//   });
-// }
-// export async function comparePassword(
-//   plainPassword: string,
-//   hashedPassword: string
-// ): Promise<boolean> {
-//   return bcrypt.compare(plainPassword, hashedPassword);
-// }
 function findUserDeviceService(device_id, user_id) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield db_1.default.device.findFirst({
@@ -58,38 +41,48 @@ const getAccessToken = (code, redirect_uri) => __awaiter(void 0, void 0, void 0,
     console.log("code service", code);
     const clientId = process.env.ONE_ID_CLIENT_ID;
     const clientSecret = process.env.ONE_ID_CLIENT_SECRET;
-    const response = yield axios_1.default.post("https://sso.egov.uz/sso/oauth/Authorization.do", null, {
-        params: {
+    const response = yield fetch("https://sso.egov.uz/sso/oauth/Authorization.do", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
             grant_type: "one_authorization_code",
             client_id: clientId,
             client_secret: clientSecret,
             code: code,
-            redirect_uri: redirect_uri,
-        },
+            redirect_uri: redirect_uri
+        })
     });
-    if (response.data.error) {
-        throw new ErrorHandler_1.default(response.data.message, 400);
+    const data = yield response.json();
+    if (data.error) {
+        throw new ErrorHandler_1.default(data.message, 400);
     }
-    return response.data;
+    return data;
 });
 exports.getAccessToken = getAccessToken;
 const getUserData = (accessToken) => __awaiter(void 0, void 0, void 0, function* () {
     const clientId = process.env.ONE_ID_CLIENT_ID;
     const clientSecret = process.env.ONE_ID_CLIENT_SECRET;
     const scope = process.env.ONE_ID_SCOPE;
-    const response = yield axios_1.default.post("https://sso.egov.uz/sso/oauth/Authorization.do", null, {
-        params: {
+    const response = yield fetch("https://sso.egov.uz/sso/oauth/Authorization.do", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
             grant_type: "one_access_token_identify",
             client_id: clientId,
             client_secret: clientSecret,
             access_token: accessToken,
-            scope: scope,
-        },
+            scope: scope
+        })
     });
-    if (response.data.error) {
-        throw new ErrorHandler_1.default(response.data.error.message, 400);
+    const data = yield response.json();
+    if (data.error) {
+        throw new ErrorHandler_1.default(data.error.message, 400);
     }
-    return response.data;
+    return data;
 });
 exports.getUserData = getUserData;
 const findOrCreateUser = (data) => __awaiter(void 0, void 0, void 0, function* () {

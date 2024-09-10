@@ -2,28 +2,8 @@ import { User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import prisma from "../config/db";
-import axios from "axios";
 import ErrorHandler from "../middleware/ErrorHandler";
 import { ILegalInfo, IUser } from "../types/user.type";
-
-// export async function signAccessToken(userId: string) {
-//   return jwt.sign({ id: userId }, process.env.ACCESS_TOKEN_SECRET as string, {
-//     expiresIn: "5m",
-//   });
-// }
-
-// export async function signRefreshToken(userId: string) {
-//   return jwt.sign({ id: userId }, process.env.REFRESH_TOKEN_SECRET as string, {
-//     expiresIn: "3d",
-//   });
-// }
-
-// export async function comparePassword(
-//   plainPassword: string,
-//   hashedPassword: string
-// ): Promise<boolean> {
-//   return bcrypt.compare(plainPassword, hashedPassword);
-// }
 
 export async function findUserDeviceService(
   device_id: string,
@@ -53,25 +33,27 @@ export const getAccessToken = async (code: string, redirect_uri: string) => {
   const clientId = process.env.ONE_ID_CLIENT_ID;
   const clientSecret = process.env.ONE_ID_CLIENT_SECRET;
 
-  const response = await axios.post(
-    "https://sso.egov.uz/sso/oauth/Authorization.do",
-    null,
-    {
-      params: {
-        grant_type: "one_authorization_code",
-        client_id: clientId,
-        client_secret: clientSecret,
-        code: code,
-        redirect_uri: redirect_uri,
-      },
-    }
-  );
+  const response = await fetch("https://sso.egov.uz/sso/oauth/Authorization.do", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: new URLSearchParams({
+      grant_type: "one_authorization_code" as string,
+      client_id: clientId as string,
+      client_secret: clientSecret as string,
+      code: code,
+      redirect_uri: redirect_uri
+    })
+  });
 
-  if (response.data.error) {
-    throw new ErrorHandler(response.data.message, 400);
+  const data = await response.json();
+
+  if (data.error) {
+    throw new ErrorHandler(data.message, 400);
   }
 
-  return response.data;
+  return data;
 };
 
 export const getUserData = async (accessToken: string) => {
@@ -79,25 +61,27 @@ export const getUserData = async (accessToken: string) => {
   const clientSecret = process.env.ONE_ID_CLIENT_SECRET;
   const scope = process.env.ONE_ID_SCOPE;
 
-  const response = await axios.post(
-    "https://sso.egov.uz/sso/oauth/Authorization.do",
-    null,
-    {
-      params: {
-        grant_type: "one_access_token_identify",
-        client_id: clientId,
-        client_secret: clientSecret,
-        access_token: accessToken,
-        scope: scope,
-      },
-    }
-  );
+  const response = await fetch("https://sso.egov.uz/sso/oauth/Authorization.do", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: new URLSearchParams({
+      grant_type: "one_access_token_identify",
+      client_id: clientId as string,
+      client_secret: clientSecret as string,
+      access_token: accessToken,
+      scope: scope as string
+    })
+  });
 
-  if (response.data.error) {
-    throw new ErrorHandler(response.data.error.message, 400);
+  const data = await response.json();
+
+  if (data.error) {
+    throw new ErrorHandler(data.error.message, 400);
   }
 
-  return response.data;
+  return data;
 };
 
 export const findOrCreateUser = async (data: any) => {

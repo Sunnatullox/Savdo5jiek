@@ -46,6 +46,7 @@ const request_ip_1 = __importStar(require("request-ip"));
 const checkVPN_1 = __importDefault(require("./utils/checkVPN"));
 require("./utils/scheduler");
 const express_static_cache_1 = __importDefault(require("express-static-cache"));
+const rate_limiter_flexible_1 = require("rate-limiter-flexible");
 // impoer routes
 const adminstrator_route_1 = __importDefault(require("./routes/adminstrator.route"));
 const categorie_route_1 = __importDefault(require("./routes/categorie.route"));
@@ -89,6 +90,26 @@ const swaggerOptions = {
 const swaggerDocs = (0, swagger_jsdoc_1.default)(swaggerOptions);
 app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocs));
 // middlewars
+const limiter = new rate_limiter_flexible_1.RateLimiterMemory({
+    points: 100, // maximum number of requests
+    duration: 10 // 10 seconds
+});
+// Rate limiter middleware should be applied after static files to exclude them
+app.use((req, res, next) => {
+    if (req.path.startsWith('/public')) {
+        next();
+    }
+    else {
+        limiter
+            .consume(req.ip)
+            .then(() => {
+            next();
+        })
+            .catch(() => {
+            res.status(429).send("Too Many Requests");
+        });
+    }
+});
 app.use((0, cors_1.default)({
     origin: (_a = process.env.CLIENT_URL) === null || _a === void 0 ? void 0 : _a.split(","),
     credentials: true
@@ -103,7 +124,7 @@ app.use((0, cookie_parser_1.default)(process.env.COOKIE_SECRET));
 app.use(express_1.default.json({ limit: "10mb" }));
 app.use(express_1.default.urlencoded({ extended: true, limit: "10mb" }));
 app.use((0, morgan_1.default)(process.env.NODE_ENV === "production" ? "combined" : "dev"));
-// app.disable('x-powered-by');
+app.disable('x-powered-by');
 // static files
 app.use("/public", (req, res, next) => {
     res.header("Cross-Origin-Resource-Policy", "cross-origin");

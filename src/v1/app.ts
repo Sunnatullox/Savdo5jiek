@@ -17,6 +17,7 @@ import requestIp, { getClientIp } from "request-ip";
 import checkVPN from "./utils/checkVPN";
 import "./utils/scheduler";
 import expressStaticCache from 'express-static-cache';
+import {RateLimiterMemory} from 'rate-limiter-flexible';
 
 // impoer routes
 import adminstratorRoutes from "./routes/adminstrator.route";
@@ -40,21 +41,9 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "http://localhost:5500",
-        description: "Local server",
-      },
-      {
-        url: "https://5jiek.uz",
+        url: process.env.SERVER_URL as string,
         description: "Production server",
-      },
-      {
-        url: "http://176.124.210.180",
-        description: "Server",
-      },
-      {
-        url: "https://savdo5jiek.onrender.com/",
-        description: "Server",
-      },
+      }
 
     ],
   },
@@ -65,6 +54,28 @@ const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // middlewars
+const limiter = new RateLimiterMemory({
+  points: 100, // maximum number of requests
+  duration: 10 // 10 seconds
+});
+
+
+// Rate limiter middleware should be applied after static files to exclude them
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if (req.path.startsWith('/public')) {
+    next(); 
+  } else {
+    limiter
+      .consume(req.ip as string)
+      .then(() => {
+        next();
+      })
+      .catch(() => {
+        res.status(429).send("Too Many Requests");
+      });
+  }
+});
+
 app.use(
   cors({
     origin: process.env.CLIENT_URL?.split(","),
@@ -82,7 +93,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET as string));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
-// app.disable('x-powered-by');
+app.disable('x-powered-by');
 
 // static files
 app.use("/public",(req, res, next) => {

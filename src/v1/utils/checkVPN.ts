@@ -1,4 +1,3 @@
-import axios from 'axios';
 import ErrorHandler from '../middleware/ErrorHandler';
 import { NextFunction, Request, Response } from 'express';
 import { getClientIp } from 'request-ip';
@@ -8,8 +7,13 @@ const checkVPN = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     // IP manzilini tekshirish uchun tashqi API dan foydalanish
-    const response = await axios.get(`https://ipinfo.io/${ip}/json`);
-    const { country, org } = response.data;
+    const response = await fetch(`https://ipinfo.io/${ip}/json`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    });
+    const { country, org } = await response.json();
 
     if (!org || !country) {
       console.log(`Organization data not available for IP: ${ip}`);
