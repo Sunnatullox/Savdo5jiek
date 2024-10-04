@@ -41,10 +41,9 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: process.env.SERVER_URL as string,
+        url: "https://5jiek.uz",
         description: "Production server",
       }
-
     ],
   },
   apis: ['./src/v1/docs/*.docs.ts'], // Correct path to the docs folder
@@ -56,7 +55,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 // middlewars
 const limiter = new RateLimiterMemory({
   points: 100, // maximum number of requests
-  duration: 10 // 10 seconds
+  duration: 1 // 1 seconds
 });
 
 

@@ -306,11 +306,11 @@ export const getAdminstratorInfo = asyncHandler(
       if (!findAdmin) {
         return next(new ErrorHandler("Administrator not found", 400));
       }
-
+      const {password, twoFactorSecret, ...rest} = findAdmin
       res.status(200).json({
         success: true,
         message: "Admin info",
-        data: findAdmin,
+        data: rest,
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));

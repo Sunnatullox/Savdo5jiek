@@ -66,8 +66,8 @@ const emailForgotTemplate = (otp: string, name: string, role:string) => {
     
     <body>
         <div class="container">
-            <a href=""><img class="logo"
-                    src="https://i.ibb.co/0mGsMPn/book-posts-logo.png" alt="Book Posts Logo"></a>
+            <a href=""><img class="logo" 
+                    src="https://i.ibb.co/Lgy9zDR/Untitled-1-removebg-preview.png" alt="Book Posts Logo"></a>
                     <div class="message">OTP Tasdiqlash Emaili</div>
                     <div class="body">
                             <p>Hurmatli ${name}</p>

@@ -7,6 +7,7 @@ import {
   createProductService,
   deleteProductService,
   getProductByIdService,
+  getProductsByAdminService,
   getProductsService,
   updateProductService,
 } from "../services/product.service";
@@ -100,12 +101,31 @@ export const getProducts = asyncHandler(
         },
       });
     } catch (error: any) {
+      console.error(`Error getting products: ${error.message}`); // Log the error
+      return next(
+        new ErrorHandler(`Error getting products: ${error.message}`, error.statusCode || 500)
+      );
+    }
+  }
+);
+
+export const getProductsByAdmin = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const products = await getProductsByAdminService();
+      res.status(200).json({
+        success: true,
+        message: "Products fetched successfully",
+        data: products,
+      });
+    } catch (error: any) {
       return next(
         new ErrorHandler(`Error getting products: ${error.message}`, 500)
       );
     }
   }
 );
+
 
 export const getProductById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -154,31 +174,48 @@ export const updateProductByAdmin = asyncHandler(
         unit_ru,
         unit_en,
         delivery_price,
+        oldImages=[]
       } = req.body;
 
+      prisma.$transaction(async (tx) => {
       const images = req.files as Express.Multer.File[];
-      const imagesPath = images?.length > 0
-        ? images.map(file => `${req.protocol}://${req.get("host")}/public/imgs/${file.filename}`)
-        : null;
+      let imagesPath:string[] = []
+
+      if(images?.length > 0){
+        imagesPath =  await Promise.all(images.map(async (file) => `${req.protocol}://${req.get("host")}/public/imgs/${file.filename}`))
+      }
 
       const findProduct = await getProductByIdService(id);
       if (!findProduct) {
         return next(new ErrorHandler("Product not found", 404));
       }
 
-      if (findProduct.image.length > 0) {
-        findProduct.image.forEach(image => {
-          const fileName = image.split("public/imgs/")[1];
-          const filePath = path.join(__dirname, `../public/imgs/${fileName}`);
-          fs.unlink(filePath, err => {
-            if (err) {
-              console.error("Failed to delete image file:", err);
+      if (imagesPath.length > 0 || oldImages.length > 0) {
+        const oldImgFindAndDelete = findProduct.image.filter(
+          (oldImg) => !oldImages.includes(oldImg)
+        );
+        if (oldImgFindAndDelete.length > 0) {
+          for (const oldImgDelete of oldImgFindAndDelete) {
+            if (oldImgDelete === undefined) {
+              continue;
             }
-          });
-        });
+            const fileName = oldImgDelete.split("public/imgs/")[1];
+            const filePath = path.join(__dirname, `../public/imgs/${fileName}`);
+            fs.unlink(filePath, err => {
+              if (err && err.code !== 'ENOENT') {
+                throw err;
+              }
+            });
+          }
+        }
       }
 
-      const updatedProduct = await updateProductService(id, {
+      const product_img =
+          typeof oldImages === "string"
+            ? [oldImages, ...(imagesPath || [])]
+            : [...(oldImages || []), ...(imagesPath || [])];
+
+      const updatedProduct = await updateProductService(tx, id, {
         name_uz: name_uz || findProduct.name_uz,
         name_ru: name_ru || findProduct.name_ru,
         name_en: name_en || findProduct.name_en,
@@ -188,7 +225,7 @@ export const updateProductByAdmin = asyncHandler(
         price: price !== undefined ? Number(price) : findProduct.price,
         discount: discount !== undefined ? Number(discount) : findProduct.discount,
         categoryId: categoryId || findProduct.categoryId,
-        image: imagesPath || findProduct.image,
+        image: product_img,
         stock: stock !== undefined ? Number(stock) : findProduct.stock,
         unit_uz: unit_uz || findProduct.unit_uz,
         unit_ru: unit_ru || findProduct.unit_ru,
@@ -199,8 +236,9 @@ export const updateProductByAdmin = asyncHandler(
       res.status(200).json({
         success: true,
         message: "Product updated successfully",
-        data: updatedProduct,
-      });
+          data: updatedProduct,
+        });
+      }); 
     } catch (error: any) {
       console.log("Error updating product", error);
       return next(new ErrorHandler(`Error updating product: ${error.message}`, 500));
@@ -226,7 +264,9 @@ export const deleteProductByAdmin = asyncHandler(
           const fileName = image.split("public/imgs/")[1];
           const filePath = path.join(__dirname, `../public/imgs/${fileName}`);
           return fs.promises.unlink(filePath).catch(err => {
-            console.error("Failed to delete image file:", err);
+          if(err && err.code !== 'ENOENT'){
+            throw err;
+          }
           });
         });
         await Promise.all(deleteImagePromises);

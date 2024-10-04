@@ -7,8 +7,8 @@ import {
   get12MonthPaymentAnalyticsService,
   get12MonthProductSalesAnalyticsService,
   get12MonthUserRegistrationAnalyticsService,
+  getCategoryAnalyticsService,
   getLowStockProductsService,
-  getUserAnalyticsService,
 } from "../services/analytic.service";
 
 export const get12MonthPaymentAnalytics = asyncHandler(
@@ -67,10 +67,10 @@ export const get12MonthProductSalesAnalytics = asyncHandler(
   }
 );
 
-export const getUserAnalytics = asyncHandler(
+export const getCategoryAnalytics = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const analytics = await getUserAnalyticsService();
+      const analytics = await getCategoryAnalyticsService();
       res.status(200).json({
         success: true,
         analytics,

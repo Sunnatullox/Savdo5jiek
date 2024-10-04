@@ -15,12 +15,30 @@ export async function getPaymentByIdService(id: string, userId?: string) {
   });
 }
 
+export async function getPaymentsByUserService(userId: string) {
+  return await prisma.payment.findMany({
+    where: { userId },
+    include: {
+      contract: true,
+    },
+  });
+}
+
 export async function getPaymentsByUserIdService(
   contractId: string,
   userId: string
 ) {
   return await prisma.payment.findMany({
     where: { contractId, userId },
+  });
+}
+
+export async function getPaymentsByAdminService() {
+  return await prisma.payment.findMany({
+    include: {
+      contract: true,
+      user: true,
+    },
   });
 }
 
@@ -62,8 +80,8 @@ export async function updatePaymentAndContractStatus(
   paymentId: string,
   status: string
 ) {
-  return await prisma.$transaction(async (prisma) => {
-    const payment = await prisma.payment.findUnique({
+  return await prisma.$transaction(async (tx) => {
+    const payment = await tx.payment.findUnique({
       where: { id: paymentId },
       include: { contract: true },
     });
@@ -79,25 +97,38 @@ export async function updatePaymentAndContractStatus(
     let updatedPaidAmount = payment.contract.paidAmount;
     let paidPercent = (updatedPaidAmount / payment.contract.totalPrice) * 100;
 
-    const productsInContract =
-      typeof payment.contract.products === "string"
-        ? JSON.parse(payment.contract.products)
-        : payment.contract.products;
+    let productsInContract;
+    try {
+      productsInContract =
+        typeof payment.contract.products === "string"
+          ? JSON.parse(payment.contract.products)
+          : payment.contract.products;
+    } catch (error) {
+      throw new Error("Invalid product data format in contract");
+    }
 
     if (status === "approved") {
       updatedPaidAmount += payment.amount;
       paidPercent = (updatedPaidAmount / payment.contract.totalPrice) * 100;
-      if (paidPercent > 29.99) {
+
+      // Check if the contract's previous paidPercent was less than 30
+      const wasPreviouslyBelowThreshold = payment.contract.paidPercent < 30;
+
+      if (paidPercent > 29.99 && wasPreviouslyBelowThreshold) {
         for (const product of productsInContract) {
           const existingProduct = await getProductByIdService(product.id);
           if (existingProduct) {
-            await updateProductService(product.id, {
-              stock: existingProduct.stock - product.qty,
-            });
+            try {
+              await updateProductService(tx, product.id, {
+                stock: existingProduct.stock - product.qty,
+              });
+            } catch (error) {
+              throw new Error(`Failed to update stock for product ${product.id}`);
+            }
           }
         }
       }
-      
+
       await updateContractService(payment.contractId, {
         paidAmount: Number(updatedPaidAmount.toFixed(2)),
         paidPercent: Number(paidPercent.toFixed(2)),
@@ -110,24 +141,28 @@ export async function updatePaymentAndContractStatus(
         for (const product of productsInContract) {
           const existingProduct = await getProductByIdService(product.id);
           if (existingProduct) {
-            await updateProductService(product.id, {
-              stock: existingProduct.stock + product.qty,
-            });
+            try {
+              await updateProductService(tx, product.id, {
+                stock: existingProduct.stock + product.qty,
+              });
+            } catch (error) {
+              throw new Error(`Failed to update stock for product ${product.id}`);
+            }
           }
         }
       }
       await updateContractService(payment.contractId, {
         paidAmount: Number(updatedPaidAmount.toFixed(2)),
         paidPercent: Number(paidPercent.toFixed(2)),
-        status:paidPercent < 30 ? "rejected" : payment.contract.status,
+        status: paidPercent < 30 ? "rejected" : payment.contract.status,
       });
-    } 
+    }
 
-    return await prisma.payment.update({
+    return await tx.payment.update({
       where: { id: paymentId },
       data: { status: status as Prisma.EnumstatusFieldUpdateOperationsInput },
     });
-  },{
+  }, {
     timeout: 10000 // 10 seconds
   });
 }

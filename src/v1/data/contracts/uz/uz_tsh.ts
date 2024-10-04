@@ -161,7 +161,11 @@ export default async function UzTshContractHtml(
 			<span style="font-family:Cambria">Bundan buyon matnda «MAHSULOT YETKAZIB BERUVCHI» deb nomlanuvchi, o‘z
 				Nizomi asosida faoliyat ko‘rsatuvchi 5-son Jazoni ijro etish koloniyasi (keying o’rinlarda
 			</span><strong><span style="font-family:Cambria; ">JIEK</span></strong><span style="font-family:Cambria">
-				deb yuritiladi) rahbari </span><strong><span style="font-family:Cambria; ">${admin.AdminInfo.middle_name} ${admin.AdminInfo.first_name} ${admin.AdminInfo.sur_name}</span></strong><span style="font-family:Cambria"> bir tomondan, bundan buyon matnda
+				deb yuritiladi) rahbari </span><strong><span style="font-family:Cambria; ">${
+          admin.AdminInfo.middle_name
+        } ${admin.AdminInfo.first_name} ${
+    admin.AdminInfo.sur_name
+  }</span></strong><span style="font-family:Cambria"> bir tomondan, bundan buyon matnda
 				«BUYURTMACHI» deb nomlanuvchi o‘z nizomi asosida faoliyat ko‘rsatuvchi yuridik shaxs</span><span
 				style="font-family:Cambria">&#xa0; </span><strong><span
 					style="font-family:Cambria;"> ${user.legal_info.name} </span></strong><span
@@ -648,9 +652,16 @@ export default async function UzTshContractHtml(
 		<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
 			<span style="font-family:Cambria">2.2 Maxsulot uchun hisob-kitoblar Oʻzbekiston Respublikasining milliy
 				valyutasida (soʻmda) </span><strong><span style="font-family:Cambria; ">5-son JIEK xisob raqamiga
-					20203000500425568012</span></strong><span style="font-family:Cambria">, ochilgan Agro bank Qiziltepa
-				filiali hisob raqamiga </span><strong><span style="font-family:Cambria; ">(00212, STIR
-					200016360)</span></strong><span style="font-family:Cambria"> quyidagi usullardan birida yoki ularni
+		${
+      admin.AdminInfo.x_r
+    }</span></strong><span style="font-family:Cambria">, ochilgan ${
+    admin.AdminInfo.bank
+  } hisob raqamiga </span><strong><span style="font-family:Cambria; ">(MFO ${
+    admin.AdminInfo.mfo
+  }, STIR
+		${
+      admin.AdminInfo.inn
+    })</span></strong><span style="font-family:Cambria"> quyidagi usullardan birida yoki ularni
 				aralash shaklda qoʻllash yoʻli bilan amalga oshiriladi: </span>
 		</p>
 		<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">

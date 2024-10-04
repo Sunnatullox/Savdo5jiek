@@ -602,8 +602,8 @@ export default async function RuTshContractHtml(
 		</p>
 	<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
 		<span style="font-family:Cambria">2.2 Оплата за продукцию осуществляется в национальной валюте Республики
-			Узбекистан (в сумах) на номер счета КИН №5 20203000500425568012, на номер счета открытого филиала «Агробанк
-			Кызылтепинский» (00212, СТИР 200016360) с использованием одного из следующие методы или их сочетание:</span>
+			Узбекистан (в сумах) на номер счета КИН №5 ${admin.AdminInfo.x_r}, на номер счета открытого филиала «Агробанк
+			Кызылтепинский» (МФО ${admin.AdminInfo.mfo}, СТИР ${admin.AdminInfo.inn}) с использованием одного из следующие методы или их сочетание:</span>
 	</p>
 	<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
 		<span style="font-family:Cambria">а) передачу наличных денег и/или пластиковой карты в кассы коммерческого

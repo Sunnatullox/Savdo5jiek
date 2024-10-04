@@ -65,7 +65,7 @@
 
 /**
  * @swagger
- * /api/v1/analytics/get-user-analytics:
+ * /api/v1/analytics/get-category-analytics:
  *   get:
  *     summary: Get user analytics
  *     tags: [Analytics]

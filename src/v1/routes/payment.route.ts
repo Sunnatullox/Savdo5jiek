@@ -12,6 +12,8 @@ import {
   updatePaymentStatus,
   getPaymentsByContractIdAdmin,
   getNotificationPaymentByAdmin,
+  getPaymentsByAdmin,
+  getPaymentsByUser,
 } from "../controllers/payment.controller";
 import {
   isAdministrator,
@@ -29,6 +31,8 @@ router.post(
   createPaymentUser
 );
 
+router.get("/get-payments-by-user", isAuthenticatedUser, getPaymentsByUser);
+
 router.get("/get-payment-by-user/:id", isAuthenticatedUser, getPaymentById);
 
 router.get(
@@ -42,6 +46,13 @@ router.get(
   isAuthenticatedAdminstrator,
   isAdministrator(Role.ADMIN),
   getPaymentByAdmin
+);
+
+router.get(
+  "/get-payments-by-admin",
+  isAuthenticatedAdminstrator,
+  isAdministrator(Role.ADMIN),
+  getPaymentsByAdmin
 );
 
 router.get(

@@ -48,10 +48,19 @@ export const createContractByUser = asyncHandler(
         include: { category: true },
       });
 
+      // Check if requested quantity exceeds available stock
       const productsWithQty = products
         .map((product) => {
           const foundProduct = findsProducts.find((p) => p.id === product.id);
           if (foundProduct) {
+            if (product.qty > foundProduct.stock) {
+              return next(
+                new ErrorHandler(
+                  `Requested quantity for product ${foundProduct.name_uz} exceeds available stock`,
+                  400
+                )
+              );
+            }
             return { ...foundProduct, qty: product.qty };
           }
         })
@@ -64,8 +73,9 @@ export const createContractByUser = asyncHandler(
       }
 
       const findAdmin = (await prisma.administration.findFirst({
-        where: { role: "ADMIN" },
+        where: { role: "ADMIN", AdminInfo:{isNot:null} },
         include: { AdminInfo: true },
+        orderBy: { createdAt: "asc" },
       })) as unknown as Administrator & { AdminInfo: AdminInfo };
       if (!findAdmin) {
         return next(new ErrorHandler("Admin not found", 404));
@@ -376,7 +386,9 @@ export const deleteContractByAdmin = asyncHandler(
           const url = new URL(fileUrl);
           const filePath = `.${url.pathname}`;
           if (fs.existsSync(filePath)) {
-            await fs.promises.unlink(filePath);
+            await fs.promises.unlink(filePath).catch((err) => {
+              throw err;
+            });
           }
         };
         const contractFile = contract.contractFile as any;

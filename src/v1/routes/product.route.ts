@@ -23,6 +23,13 @@ router.get(
 );
 
 router.get(
+  "/get-products-by-admin",
+  isAuthenticatedAdminstrator,
+  isAdministrator(Role.ADMIN),
+  productController.getProductsByAdmin
+);
+
+router.get(
   "/get-product/:id",
   productController.getProductById
 );

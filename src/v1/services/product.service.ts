@@ -1,13 +1,19 @@
 import prisma from "../config/db";
 import { Product } from "@prisma/client";
 import ErrorHandler from "../middleware/ErrorHandler";
+import { PrismaClient } from "@prisma/client/extension";
 
 export async function createProductService(
   data: Omit<Product, "id" | "createdAt" | "updatedAt">
 ) {
-  return await prisma.product.create({
-    data,
-  });
+  try {
+    return await prisma.product.create({
+      data,
+    });
+  } catch (error:any) {
+    console.error(`Error creating product: ${error.message}`);
+    throw new ErrorHandler("Error creating product", 500);
+  }
 }
 
 export async function getProductsService(
@@ -38,6 +44,7 @@ export async function getProductsService(
 
   const products = await prisma.product.findMany({
     where: {
+      status: true,
       OR: [
         { name_uz: { contains: search } },
         { name_ru: { contains: search } },
@@ -57,21 +64,33 @@ export async function getProductsService(
   return products;
 }
 
-export async function getProductByIdService(id: string) {
-  const product = await prisma.product.findUnique({
-    where: { id },
+export async function getProductsByAdminService() {
+  return await prisma.product.findMany({
     include: {
       category: true,
     },
   });
-  if(!product) {
-    throw new ErrorHandler("Product not found", 404);
-  }
-  return product;
 }
 
+export async function getProductByIdService(id: string) {
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: {
+        category: true,
+      },
+    });
+    if (!product) {
+      throw new ErrorHandler("Product not found", 404);
+    }
+    return product;
+  } catch (error:any) {
+    console.error(`Error fetching product by ID: ${error.message}`);
+    throw new ErrorHandler("Error fetching product", 500);
+  }
+}
 
-export async function updateProductService(id: string, data: Partial<Product>) {
+export async function updateProductService(prisma: PrismaClient, id: string, data: Partial<Product>) {
   return await prisma.product.update({
     where: { id },
     data,

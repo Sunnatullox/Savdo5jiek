@@ -43,6 +43,24 @@
  *         description: Internal server error
  */
 
+/**
+ * @swagger
+ * /api/v1/payments/get-payments-by-user:
+ *  get:
+ *    summary: Get payments by user
+ *    tags: [Payments]
+ *    description: Get payments by user
+ *    responses:
+ *      200:
+ *        description: Payments retrieved successfully
+ *      401:
+ *        description: Unauthorized
+ *      404:
+ *        description: Not found
+ *      500:
+ *        description: Internal server error
+ */
+
 // Get payment by user
 /**
  * @swagger
@@ -50,12 +68,12 @@
  *  get:
 *    summary: Get payment by user
  *    tags: [Payments]
- *    description: Get payments by user
+ *    description: Get payment by user
  *    parameters:
  *      - in: path
  *        name: id
  *        required: true
- *        description: User ID
+ *        description: Payment ID
  *        example: 12345
  *    responses:
  *      200:
@@ -132,6 +150,25 @@
  *        required: true
  *        description: Contract ID
  *        example: 12345
+ *    responses:
+ *      200:
+ *        description: Payments fetched successfully
+ *      401:
+ *        description: Unauthorized
+ *      404:
+ *        description: Not found
+ *      500:
+ *        description: Internal server error
+ */
+
+// Get payments by admin
+/**
+ * @swagger
+ * /api/v1/payments/get-payments-by-admin:
+ *  get:
+ *    summary: Get payments by admin
+ *    tags: [Payments]
+ *    description: Get payments by admin
  *    responses:
  *      200:
  *        description: Payments fetched successfully

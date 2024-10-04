@@ -58,7 +58,7 @@ export const getUser = asyncHandler(
       const user = await getUserById(req.user.id) as IUser;
       res.status(200).json({
         message: "User fetched successfully",
-        data: user,
+        user,
       });
     } catch (error: any) {
       next(new ErrorHandler(error.message, 500));

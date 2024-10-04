@@ -9,8 +9,10 @@ import {
   deletePayment,
   getNotificationPaymentByAdminService,
   getPaymentByIdService,
+  getPaymentsByAdminService,
   getPaymentsByContractIdAdminService,
   getPaymentsByUserIdService,
+  getPaymentsByUserService,
   updatePayment,
   updatePaymentAndContractStatus,
 } from "../services/payment.service";
@@ -64,6 +66,28 @@ export const createPaymentUser = asyncHandler(
     } catch (error: any) {
       console.log("Create Payment Error ", error);
       next(new ErrorHandler(`Create Payment Error: ${error.message}`, 500));
+    }
+  }
+);
+
+export const getPaymentsByUser = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { user } = req as { user: IUser };
+
+      if (!user) {
+        return next(new ErrorHandler("Please login to continue", 404));
+      }
+
+      const payments = await getPaymentsByUserService(user.id);
+
+      res.status(200).json({
+        success: true,
+        message: "Payment fetched successfully",
+        payments,
+      });
+    } catch (error: any) {
+      next(new ErrorHandler(`Get Payment Error: ${error.message}`, 500));
     }
   }
 );
@@ -153,6 +177,21 @@ export const getPaymentByAdmin = asyncHandler(
   }
 );
 
+export const getPaymentsByAdmin = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const payments = await getPaymentsByAdminService();
+      res.status(200).json({
+        success: true,
+        message: "Payments fetched successfully",
+        payments,
+      });
+    } catch (error: any) {
+      next(new ErrorHandler(`Get Payments Error: ${error.message}`, 500));
+    }
+  }
+);
+
 export const getPaymentsByContractIdAdmin = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -220,8 +259,8 @@ export const updatePaymentByUser = asyncHandler(
             filename
           );
           fs.unlink(filePath, (err) => {
-            if (err) {
-              console.error("Failed to delete image file:", err);
+            if (err && err.code !== 'ENOENT') {
+              throw err;
             }
           });
         } else {
@@ -329,8 +368,8 @@ export const deletePaymentByUser = asyncHandler(
           filename
         );
         fs.unlink(filePath, (err) => {
-          if (err) {
-            console.error("Failed to delete image file:", err);
+          if (err && err.code !== 'ENOENT') {
+            throw err;
           }
         });
       }

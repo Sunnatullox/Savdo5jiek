@@ -39,7 +39,7 @@ export const createActivationToken = (user: IUser): IActivationToken => {
 
 interface ITokenOptions {
   expires: Date;
-  maxAge: number;
+  maxAge?: number;
   signed?: boolean;
   httpOnly: boolean;
   sameSite: "lax" | "strict" | "none" | undefined;
@@ -48,30 +48,31 @@ interface ITokenOptions {
 
 
 export const accessTokenExpire = parseInt(
-  process.env.ACCESS_TOKEN_EXPIRE || "72", // 72 hours
-  10 // base 10
+  (process.env.ACCESS_TOKEN_EXPIRE as string) || "1200",
+  10
 );
-
 export const refreshTokenExpire = parseInt(
-  process.env.REFRESH_TOKEN_EXPIRE || "3", // 3 days
+  (process.env.REFRESH_TOKEN_EXPIRE as string) || "1200",
   10
 );
 
+
 export const accessTokenOptions: ITokenOptions = {
-  expires: new Date(Date.now() + accessTokenExpire * 60 * 60 * 1000), // 3 days
-  maxAge: accessTokenExpire * 60 * 60 * 1000, // 3 days
+  expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000), 
+  maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000, 
   httpOnly: true,
   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  secure: process.env.NODE_ENV === "production",
+  secure: process.env.NODE_ENV === "production", 
 };
 
 export const refreshTokenOptions: ITokenOptions = {
-  expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000),
-  maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000,
+  expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000), 
+  maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000, 
   httpOnly: true,
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", 
+  secure: process.env.NODE_ENV === "production", 
 };
+
 
 export const sendTokenAdmin = async (
   user: Administrator,
@@ -82,17 +83,13 @@ export const sendTokenAdmin = async (
   const refreshToken = await signRefreshToken(user.id);
   const { password: _, twoFactorSecret: __, ...userData } = user;
 
-  if (process.env.NODE_ENV === "production") {
-    accessTokenOptions.secure = true;
-    refreshTokenOptions.secure = true;
-  }
 
   res.cookie("access_token", accessToken, accessTokenOptions);
   res.cookie("refresh_token", refreshToken, refreshTokenOptions);
 
   res
     .status(statusCode)
-    .json({ success: true, message: "Login successful", user: userData });
+    .json({ success: true, message: "Login successful", data: userData });
 };
 
 export const sendToken = async (
@@ -106,11 +103,6 @@ export const sendToken = async (
     user_id: _,
     ...userData
       } = user as IUser & { twoFactorSecret: string };
-
-  if (process.env.NODE_ENV === "production") {
-    accessTokenOptions.secure = true;
-    refreshTokenOptions.secure = true;
-  }
 
   res.cookie("access_token", accessToken, accessTokenOptions);
   res.cookie("refresh_token", refreshToken, refreshTokenOptions);
@@ -166,6 +158,9 @@ export const updateAccessTokenUser = asyncHandler(
         new ErrorHandler("Please login to access this resource", 401)
       );
     }
+    finally {
+      await prisma.$disconnect();
+    }
   }
 );
 
@@ -211,6 +206,9 @@ export const updateAccessTokenAdministrator = asyncHandler(
       return next(
         new ErrorHandler("Please login to access this resource", 401)
       );
+    }
+    finally {
+      await prisma.$disconnect();
     }
   }
 );

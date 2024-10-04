@@ -124,6 +124,25 @@
  *        description: Internal server error
  */
 
+// get products by admin
+/**
+ * @swagger
+ *  /api/v1/product/get-products-by-admin:
+ *   get:
+ *    summary: Get all products by admin
+ *    tags: [Product]
+ *    description: Get all products by admin
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ *      '401':
+ *        description: Unauthorized
+ *      '403':
+ *        description: Forbidden
+ *      '500':
+ *        description: Internal server error
+ */
+
 // get product by id
 /**
  * @swagger

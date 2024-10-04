@@ -14,6 +14,7 @@ router.post(
   adminstratorController.adminstratorOTPVerify
 );
 router.post("/adminstrator-login", adminstratorController.adminstratorLogin);
+
 router.post(
   "/adminstrator-add-update-info",
   isAuthenticatedAdminstrator,

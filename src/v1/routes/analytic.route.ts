@@ -36,10 +36,10 @@ router.get(
 );
 
 router.get(
-  "/get-user-analytics",
+  "/get-category-analytics",
   isAuthenticatedAdminstrator,
   isAdministrator(Role.ADMIN),
-  analyticsController.getUserAnalytics
+  analyticsController.getCategoryAnalytics
 );
 
 router.get(
