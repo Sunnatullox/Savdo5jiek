@@ -34,6 +34,48 @@ export const sendMessageAdminService = async (
   return messageData;
 };
 
+export const getMessagesUserService = async (userId: string): Promise<object[]> => {
+  const messages = await prisma.message.findMany({
+    where: {
+      userId,
+    },
+    include: {
+      user: true,
+      contract: {
+        select: {
+          id: true,
+          contract_id: true,
+          paidAmount: true,
+          deliveryDate: true,
+          status: true,
+        },
+      },
+    },
+  });
+  return messages;
+};
+
+export const getMessagesAdminService = async (adminId: string): Promise<object[]> => {
+  const messages = await prisma.message.findMany({
+    where: {
+      isAdmin: false,
+    },
+    include: {
+      contract: {
+        select: {
+          id: true,
+          contract_id: true,
+          paidAmount: true,
+          deliveryDate: true,
+          status: true,
+        },
+      },
+    },
+  });
+  return messages;
+};
+
+
 export const getMessagesAdminByContractIdService = async (
   contractId: string
 ): Promise<object[]> => {

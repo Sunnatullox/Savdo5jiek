@@ -494,19 +494,26 @@ export const uploadContractDeliveryDoc = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
-      const contract_delivery_doc = req.files as Express.Multer.File[];
+      const contract_delivery_doc = req.file as Express.Multer.File;
 
-      if (!contract_delivery_doc.length) {
-        return next(
-          new ErrorHandler("Contract delivery document is required", 400)
-        );
+      const findContract = await getContractByIdService(id);
+      if (!findContract) {
+        return next(new ErrorHandler("Contract not found", 404));
       }
 
-      const contract_delivery_doc_path = contract_delivery_doc.map((file) => {
-        return `${req.protocol}://${req.get(
-          "host"
-        )}/public/contracts/contract_delivery_doc/${file.filename}`;
-      });
+      const contract_delivery_doc_path = `${req.protocol}://${req.get(
+        "host"
+      )}/public/contracts/contract_delivery_doc/${contract_delivery_doc.filename}`;
+
+      if(findContract.deliveryFile) {
+        const url = new URL(findContract.deliveryFile as string);
+        const filePath = `.${url.pathname}`;
+        if (fs.existsSync(filePath)) {
+          await fs.promises.unlink(filePath).catch((err) => {
+            throw err;
+          });
+        }
+      }
 
       const contract = await updateContractService(id, {
         deliveryFile: contract_delivery_doc_path as any,

@@ -53,7 +53,7 @@ router.post(
   "/upload-contract-delivery-doc/:id",
   isAuthenticatedAdminstrator,
   isAdministrator(Role.ADMIN),
-  docUpload.array("contract_delivery_doc", 2),
+  docUpload.single("contract_delivery_doc"),
   contractController.uploadContractDeliveryDoc
 );
 

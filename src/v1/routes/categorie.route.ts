@@ -17,6 +17,12 @@ router.post(
 
 router.get("/get-categories", categoryController.getCategories);
 router.get("/get-categorie/:id", categoryController.getCategory);
+router.get(
+  "/get-categories-by-admin",
+  isAuthenticatedAdminstrator,
+  isAdministrator(Role.ADMIN),
+  categoryController.getCategoriesByAdmin
+);
 router.put(
   "/update-categorie/:id",
   isAuthenticatedAdminstrator,

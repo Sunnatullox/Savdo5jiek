@@ -36,7 +36,16 @@ export async function getPaymentsByUserIdService(
 export async function getPaymentsByAdminService() {
   return await prisma.payment.findMany({
     include: {
-      contract: true,
+      contract: {
+        select: {
+          id: true,
+          contract_id: true,
+          totalPrice: true,
+          paidAmount: true,
+          paidPercent: true,
+          status: true,
+        },
+      },
       user: true,
     },
   });
@@ -45,6 +54,10 @@ export async function getPaymentsByAdminService() {
 export async function getPaymentsByContractIdAdminService(contractId: string) {
   const contract = await prisma.payment.findMany({
     where: { contractId },
+    include: {
+      contract: true,
+      user: true,
+    },
   });
   await prisma.payment.updateMany({
     where: { contractId },

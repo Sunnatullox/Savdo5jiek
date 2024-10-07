@@ -75,6 +75,24 @@
 
 /**
  * @swagger
+ * /api/v1/categorie/get-categories-by-admin:
+ *  get:
+ *    tags: [Categories]
+ *    summary: Get all categories by admin
+ *    description: Get all categories by admin
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ *      '401':
+ *        description: Unauthorized
+ *      '403':
+ *        description: Forbidden
+ *      '500':
+ *        description: Internal server error
+ */
+
+/**
+ * @swagger
  * /api/v1/categorie/update-categorie/{id}:
  *  put:
  *    tags: [Categories]

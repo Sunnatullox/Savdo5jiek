@@ -23,6 +23,16 @@ router.get(
 );
 
 router.get(
+  "/get-top-products",
+  productController.getTopProducts
+);
+
+router.get(
+  "/get-new-products",
+  productController.getNewProducts
+);
+
+router.get(
   "/get-products-by-admin",
   isAuthenticatedAdminstrator,
   isAdministrator(Role.ADMIN),
@@ -40,6 +50,13 @@ router.put(
   isAdministrator(Role.ADMIN),
   imgUpload.array("images", 5),
   productController.updateProductByAdmin
+);
+
+router.put(
+  "/update-product-status-by-admin/:id",
+  isAuthenticatedAdminstrator,
+  isAdministrator(Role.ADMIN),
+  productController.updateProductStatusByAdmin
 );
 
 router.delete(

@@ -62,6 +62,42 @@
 
 /**
  * @swagger
+ * /api/v1/messages/get-messages-user:
+ *  get:
+ *    summary: Get messages for the user
+ *    tags: [Messages]
+ *    responses:
+ *      200:
+ *        description: Messages fetched successfully
+ *      400:
+ *        description: Bad request
+ *      401:
+ *        description: Unauthorized
+ *      500:
+ *        description: Internal server error
+ *
+ */
+
+/**
+ * @swagger
+ * /api/v1/messages/get-messages-admin:
+ *  get:
+ *    summary: Get messages for the admin
+ *    tags: [Messages]
+ *    responses:
+ *      200:
+ *        description: Messages fetched successfully
+ *      400:
+ *        description: Bad request
+ *      401:
+ *        description: Unauthorized
+ *      500:
+ *        description: Internal server error
+ *
+ */
+
+/**
+ * @swagger
  * /api/v1/messages/get-messages-user/{contractId}:
  *  get:
  *    summary: Get messages for the user
@@ -184,5 +220,5 @@
  *      401:
  *        description: Unauthorized
  *      500:
- * 
+ *
  */

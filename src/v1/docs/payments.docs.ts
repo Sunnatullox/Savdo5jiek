@@ -89,7 +89,7 @@
 // Get payments by contract
 /**
  * @swagger
- * /api/v1/payments/get-contractid-by-payments-user/{id}:
+ * /api/v1/payments/get-payments-by-contract-id-admin/{id}:
  *  get:
  *    summary: Get contract id by payment user
  *    tags: [Payments]

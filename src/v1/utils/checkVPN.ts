@@ -24,7 +24,7 @@ const checkVPN = async (req: Request, res: Response, next: NextFunction) => {
       return res.status(403).json({ error: "VPN is not allowed" });
     }
 
-    const countr = ["UZ", "RU", "KZ", "TJ", "KG"];
+    const countr = ["UZ", "RU", "KZ", "TJ", "KG", "TR"];
 
     if (!countr.includes(country.toUpperCase())) {
       return res.status(403).json({ error: "Country is not allowed" });

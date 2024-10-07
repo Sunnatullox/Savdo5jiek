@@ -3,7 +3,9 @@ import {
   deleteMessageAdminService,
   deleteMessageUserService,
   getMessagesAdminByContractIdService,
+  getMessagesAdminService,
   getMessagesUserByContractIdService,
+  getMessagesUserService,
   getNotficationAdminService,
   getNotficationUserService,
   sendMessageAdminService,
@@ -55,6 +57,38 @@ export const sendMessageAdmin = asyncHandler(
     } catch (error: any) {
       console.log("Message Admin Error", error);
       next(new ErrorHandler(`Error sending message: ${error.message}`, error.statusCode || 500));
+    }
+  }
+);
+
+export const getMessagesUser = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.user as IUser;
+      const result = await getMessagesUserService(id);
+      res.status(200).json({
+        success: true,
+        message: "Messages fetched successfully",
+        data: result,
+      });
+    } catch (error: any) {
+      next(new ErrorHandler(`Error fetching messages: ${error.message}`, error.statusCode || 500));
+    }
+  }
+);
+
+export const getMessagesAdmin = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.adminstrator as Administrator;
+      const result = await getMessagesAdminService(id);
+      res.status(200).json({
+        success: true,
+        message: "Messages fetched successfully",
+        data: result,
+      });
+    } catch (error: any) {
+      next(new ErrorHandler(`Error fetching messages: ${error.message}`, error.statusCode || 500));
     }
   }
 );

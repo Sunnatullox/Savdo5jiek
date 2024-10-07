@@ -36,8 +36,9 @@ router.get("/get-payments-by-user", isAuthenticatedUser, getPaymentsByUser);
 router.get("/get-payment-by-user/:id", isAuthenticatedUser, getPaymentById);
 
 router.get(
-  "/get-contractid-by-payments-user/:id",
-  isAuthenticatedUser,
+  "/get-payments-by-contract-id-admin/:id",
+  isAuthenticatedAdminstrator,
+  isAdministrator(Role.ADMIN),
   getPaymentsByContractId
 );
 

@@ -43,7 +43,7 @@ const swaggerOptions = {
       {
         url: "https://5jiek.uz",
         description: "Production server",
-      }
+      },
     ],
   },
   apis: ['./src/v1/docs/*.docs.ts'], // Correct path to the docs folder

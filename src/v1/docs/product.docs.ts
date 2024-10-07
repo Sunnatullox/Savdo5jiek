@@ -143,6 +143,44 @@
  *        description: Internal server error
  */
 
+// get top products
+/**
+ * @swagger
+ *  /api/v1/product/get-top-products:
+ *   get:
+ *    summary: Get top products
+ *    tags: [Product]
+ *    description: Get top products
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ *      '401':
+ *        description: Unauthorized
+ *      '403':
+ *        description: Forbidden
+ *      '500':
+ *        description: Internal server error
+ */
+
+// get new products
+/**
+ * @swagger
+ * /api/v1/product/get-new-products:
+ *  get:
+ *    summary: Get new products
+ *    tags: [Product]
+ *    responses:
+ *      200:
+ *        description: Products fetched successfully
+ *      400:
+ *        description: Bad request
+ *      401:
+ *        description: Unauthorized
+ *      500:
+ *        description: Internal server error
+ */
+
+
 // get product by id
 /**
  * @swagger
@@ -259,6 +297,42 @@
  *      '500':
  *        description: Internal server error
  * 
+ */
+
+// admin update product status
+/**
+ * @swagger
+ *  /api/v1/product/update-product-status-by-admin/{id}:
+ *   put:
+ *    summary: Update a product status by admin
+ *    tags: [Product]
+ *    description: Update a product status by admin
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        description: The id of the product
+ *        example: 1
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              status:
+ *                type: boolean
+ *                description: The status of the product
+ *                example: true
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ *      '401': 
+ *        description: Unauthorized
+ *      '403':
+ *        description: Forbidden
+ *      '500':
+ *        description: Internal server error
  */
 
 // admin delete product

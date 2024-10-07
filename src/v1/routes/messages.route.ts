@@ -19,6 +19,20 @@ router.post(
   isAdministrator(Role.ADMIN),
   messagesController.sendMessageAdmin
 );
+
+router.get(
+  "/get-messages-user",
+  isAuthenticatedUser,
+  messagesController.getMessagesUser
+);
+
+router.get(
+  "/get-messages-admin",
+  isAuthenticatedAdminstrator,
+  isAdministrator(Role.ADMIN),
+  messagesController.getMessagesAdmin
+);
+
 router.get(
   "/get-messages-user/:contractId",
   isAuthenticatedUser,

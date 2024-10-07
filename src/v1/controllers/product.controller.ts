@@ -6,10 +6,13 @@ import ErrorHandler from "../middleware/ErrorHandler";
 import {
   createProductService,
   deleteProductService,
+  getNewProductsService,
   getProductByIdService,
   getProductsByAdminService,
   getProductsService,
+  getTopProductsService,
   updateProductService,
+  updateProductStatusService,
 } from "../services/product.service";
 import prisma from "../config/db";
 
@@ -109,6 +112,40 @@ export const getProducts = asyncHandler(
   }
 );
 
+export const getTopProducts = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const products = await getTopProductsService();
+      res.status(200).json({
+        success: true,
+        message: "Products fetched successfully",
+        data: products,
+      });
+    } catch (error: any) {
+      return next(
+        new ErrorHandler(`Error getting products: ${error.message}`, 500)
+      );
+    }
+  }
+);
+
+export const getNewProducts = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const products = await getNewProductsService();
+      res.status(200).json({
+        success: true,
+        message: "Products fetched successfully",
+        data: products,
+      });
+    } catch (error: any) {
+      return next(
+        new ErrorHandler(`Error getting products: ${error.message}`, 500)
+      );
+    }
+  }
+);
+
 export const getProductsByAdmin = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -150,6 +187,8 @@ export const getProductById = asyncHandler(
     }
   }
 );
+
+
 
 export const updateProductByAdmin = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -245,6 +284,28 @@ export const updateProductByAdmin = asyncHandler(
     }
   }
 );
+
+export const updateProductStatusByAdmin = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        return next(new ErrorHandler("Product id is required", 400));
+      }
+
+      const updatedProduct = await updateProductStatusService(id);  
+      res.status(200).json({
+        success: true,
+        message: "Product status updated successfully",
+        data: updatedProduct,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(`Error updating product status: ${error.message}`, 500));
+    }
+  }
+);
+
+
 
 export const deleteProductByAdmin = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {

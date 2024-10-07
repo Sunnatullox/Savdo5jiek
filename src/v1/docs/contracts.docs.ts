@@ -192,10 +192,8 @@
  *            type: object
  *            properties:
  *              contract_delivery_doc:
- *                type: array
- *                items:
- *                  type: string
- *                  format: binary
+ *                type: file
+ *                format: binary
  *    responses:
  *      200:
  *        description: Contract delivery doc uploaded successfully
