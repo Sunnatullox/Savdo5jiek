@@ -35,9 +35,13 @@ export const sendMessageAdminService = async (
 };
 
 export const getMessagesUserService = async (userId: string): Promise<object[]> => {
+  const userContracts =  await getContractsByIdService(userId)
   const messages = await prisma.message.findMany({
     where: {
-      userId,
+      contractId: {
+        in: userContracts.map((contract) => contract.id),
+      },
+      isAdmin: true,
     },
     include: {
       user: true,
