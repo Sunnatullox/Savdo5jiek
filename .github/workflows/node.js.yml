@@ -20,9 +20,9 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm install  # Faqat bitta o'rnatish buyrug'ini ishlating
+    - run: npm install
     - run: |
         touch .env
         echo "${{ secrets.PROD_ENV_FILE }}" > .env
-    - run: npm run build  # To'g'ri buyruqni ishlatish
+    - run: npm run build
     - run: npx prisma generate
