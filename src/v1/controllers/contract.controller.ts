@@ -46,6 +46,9 @@ export const createContractByUser = asyncHandler(
       const findsProducts = await prisma.product.findMany({
         where: { id: { in: products.map((product) => product.id) } },
         include: { category: true },
+        orderBy: {
+          createdAt: 'asc',
+        },
       });
 
       // Check if requested quantity exceeds available stock
@@ -476,6 +479,9 @@ export const getContractsByTaxAgent = asyncHandler(
     try {
       const contracts = await getContractByTaxAgentService({
         where: { status: "approved" },
+        orderBy: {
+          createdAt: 'asc',
+        },
       });
       res.status(200).json({
         success: true,

@@ -58,6 +58,9 @@ export async function getProductsService(
     include: {
       category: true,
     },
+    orderBy: {
+      createdAt: 'asc',
+    },
     skip: (page - 1) * limit,
     take: limit,
   });
@@ -72,6 +75,9 @@ export async function getTopProductsService() {
     },
     select: {
       products: true,
+    },
+    orderBy: {
+      createdAt: 'asc',
     },
   });
 
@@ -108,6 +114,9 @@ export async function getTopProductsService() {
     include: {
       category: true,
     },
+    orderBy: {
+      createdAt: 'asc',
+    },
   });
 
   return topProducts;
@@ -127,6 +136,9 @@ export async function getNewProductsService() {
     include: {
       category: true,
     },
+    orderBy: {
+      createdAt: 'asc',
+    },
   });
 
   return newProducts;
@@ -136,6 +148,9 @@ export async function getProductsByAdminService() {
   return await prisma.product.findMany({
     include: {
       category: true,
+    },
+    orderBy: {
+      createdAt: 'asc',
     },
   });
 }

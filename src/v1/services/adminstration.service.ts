@@ -72,3 +72,76 @@ export async function findAdminDeviceService(data: {
 export async function deleteAdminDeviceService(device_id: string) {
   return prisma.device.delete({ where: { id: device_id } });
 }
+
+export async function getAllTaxAgentsService() {
+  return prisma.administration.findMany({
+    where:{
+      role: "TAX_AGENT"
+    },
+    select:{
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      isTwoFactorAuth: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+    orderBy: {
+      createdAt: "asc"
+    }
+  });
+}
+
+export async function getTaxAgentByIdService(id: string) {
+  return prisma.administration.findUnique({
+    where: {
+      id,
+      role: "TAX_AGENT"
+    },
+    select:{
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      isTwoFactorAuth: true,
+      createdAt: true,
+      updatedAt: true,
+    }
+  });
+}
+
+export async function updateTaxAgentService(id: string, data: Omit<Administrator, 'id' | 'createdAt' | 'updatedAt'>) {
+  const tax_agentFind = await getTaxAgentByIdService(id) as Administrator;
+  if(!tax_agentFind) throw new Error("Tax agent not found");
+  let hashedPassword
+  if(data.password) hashedPassword = await bcrypt.hash(data.password, 10);
+
+  let twoFactorSecretHash
+  if(data.twoFactorSecret) twoFactorSecretHash = await bcrypt.hash(data.twoFactorSecret as string, 10);
+  return prisma.administration.update({
+    where: {
+      id,
+      role: "TAX_AGENT"
+    },
+    data: {
+      name: data.name || tax_agentFind.name,
+      email: data.email || tax_agentFind.email,
+      password: hashedPassword || tax_agentFind.password,
+      isTwoFactorAuth: twoFactorSecretHash && true || tax_agentFind.isTwoFactorAuth,
+      twoFactorSecret: twoFactorSecretHash || tax_agentFind.twoFactorSecret,
+    }
+  });
+}
+
+export async function deleteTaxAgentService(id: string) {
+  const tax_agentFind = await getTaxAgentByIdService(id);
+  if(!tax_agentFind) throw new Error("Tax agent not found");
+  return prisma.administration.delete({
+    where: {
+      id,
+      role: "TAX_AGENT"
+    }
+  });
+}
+

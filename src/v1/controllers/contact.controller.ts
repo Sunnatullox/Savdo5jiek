@@ -35,6 +35,9 @@ export const getContactUsIsNotReadAdmin = asyncHandler(
     try {
       const contactUs = await getContactUsList({
         where: { isRead: false },
+        orderBy: {
+          createdAt: 'asc',
+        },
       });
       res.status(200).json({
         success: true,
@@ -50,7 +53,11 @@ export const getContactUsIsNotReadAdmin = asyncHandler(
 export const getContactUsListAdmin = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const contactUs = await getContactUsList({});
+      const contactUs = await getContactUsList({
+        orderBy: {
+          createdAt: 'asc',
+        },
+      });
       res.status(200).json({
         success: true,
         message: "Contact Us list fetched successfully",

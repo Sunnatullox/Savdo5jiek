@@ -58,16 +58,16 @@ export const refreshTokenExpire = parseInt(
 
 
 export const accessTokenOptions: ITokenOptions = {
-  expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000), 
-  maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000, 
+  expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000), // 3 kun
+  maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000, // 3 kun
   httpOnly: true,
   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   secure: process.env.NODE_ENV === "production", 
 };
 
 export const refreshTokenOptions: ITokenOptions = {
-  expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000), 
-  maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000, 
+  expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000), // 3 kun
+  maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000, // 3 kun
   httpOnly: true,
   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", 
   secure: process.env.NODE_ENV === "production", 

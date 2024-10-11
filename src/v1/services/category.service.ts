@@ -26,6 +26,9 @@ export async function getCategoriesByAdminService() {
         },
       },
     },
+    orderBy: {
+      createdAt: 'asc',
+    },
   });
 }
 

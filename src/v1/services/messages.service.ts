@@ -55,6 +55,9 @@ export const getMessagesUserService = async (userId: string): Promise<object[]> 
         },
       },
     },
+    orderBy: {
+      createdAt: 'asc',
+    },
   });
   return messages;
 };
@@ -65,6 +68,7 @@ export const getMessagesAdminService = async (adminId: string): Promise<object[]
       isAdmin: false,
     },
     include: {
+      user: true,
       contract: {
         select: {
           id: true,
@@ -74,6 +78,9 @@ export const getMessagesAdminService = async (adminId: string): Promise<object[]
           status: true,
         },
       },
+    },
+    orderBy: {
+      createdAt: 'asc',
     },
   });
   return messages;
@@ -89,6 +96,9 @@ export const getMessagesAdminByContractIdService = async (
     },
     include: {
       user: true,
+    },
+    orderBy: {
+      createdAt: 'asc',
     },
   });
 
@@ -110,17 +120,18 @@ export const getMessagesUserByContractIdService = async (
 ): Promise<object[]> => {
   const messages = await prisma.message.findMany({
     where: {
-      contractId,
-      userId,
+      contractId
     },
     include: {
       user: true,
     },
+    orderBy: {
+      createdAt: 'asc',
+    },
   });
   await prisma.message.updateMany({
     where: {
-      contractId,
-      userId,
+      contractId
     },
     data: {
       isReadUser: true,
@@ -141,6 +152,9 @@ export const getNotficationUserService = async (
       isReadUser: false,
       isAdmin: true,
     },
+    orderBy: {
+      createdAt: 'asc',
+    },
   });
   return messages;
 };
@@ -150,6 +164,12 @@ export const getNotficationAdminService = async (): Promise<object[]> => {
     where: {
       isAdmin: false,
       isReadAdmin: false,
+    },
+    include: {
+      user: true,
+    },
+    orderBy: {
+      createdAt: 'asc',
     },
   });
   return messages;

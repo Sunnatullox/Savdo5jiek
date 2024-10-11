@@ -12,6 +12,9 @@ export const get12MonthPaymentAnalyticsService = async (): Promise<any> => {
       },
       status: "approved",
     },
+    orderBy: {
+      createdAt: 'asc',
+    },
   });
 
   const totalPaymentsEver = await prisma.payment.aggregate({
@@ -100,6 +103,9 @@ export const get12MonthUserRegistrationAnalyticsService =
           gte: lastYear,
         },
       },
+      orderBy: {
+        createdAt: 'asc',
+      },
     });
 
     const totalUsersEver = await prisma.user.count(); // Count all users ever registered
@@ -183,6 +189,9 @@ export const get12MonthContractAnalyticsService = async (): Promise<any> => {
     },
     include: {
       Payment: true,
+    },
+    orderBy: {
+      createdAt: 'asc',
     },
   });
 
@@ -286,6 +295,9 @@ export const get12MonthProductSalesAnalyticsService = async (): Promise<any> => 
         },
       },
     },
+    orderBy: {
+      createdAt: 'asc',
+    },
   });
 
   const totalProductsEver = await prisma.contract.findMany({
@@ -298,6 +310,9 @@ export const get12MonthProductSalesAnalyticsService = async (): Promise<any> => 
           status: "approved",
         },
       },
+    },
+    orderBy: {
+      createdAt: 'asc',
     },
   });
 
@@ -420,7 +435,11 @@ export async function getCategoryAnalyticsService() {
   lastYear.setFullYear(today.getFullYear() - 1);
 
   // 1. Barcha kategoriyalarni olish
-  const categories = await prisma.categorie.findMany();
+  const categories = await prisma.categorie.findMany({
+    orderBy: {
+      createdAt: 'asc',
+    },
+  });
 
   // 2. `approved` statusidagi barcha contractlarni olish
   const approvedContracts = await prisma.contract.findMany({
@@ -429,6 +448,9 @@ export async function getCategoryAnalyticsService() {
       createdAt: {
         gte: lastYear,
       },
+    },
+    orderBy: {
+      createdAt: 'asc',
     },
   });
 

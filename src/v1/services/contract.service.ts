@@ -31,6 +31,9 @@ export async function getContractsByIdService(id: string, is_LLC?: boolean) {
         },
       }
     },
+    orderBy: {
+      createdAt: 'asc',
+    },
   });
 }
 
@@ -83,7 +86,10 @@ export async function newNotifsContractisAdmin() {
     },
     include: {
       User: true
-    }
+    },
+    orderBy: {
+      createdAt: 'asc',
+    },
   })
 }
 

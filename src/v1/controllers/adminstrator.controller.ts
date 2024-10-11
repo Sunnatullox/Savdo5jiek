@@ -12,7 +12,11 @@ import {
   comparePassword,
   createAdministration,
   deleteAdminDeviceService,
+  deleteTaxAgentService,
   findAdminDeviceService,
+  getAllTaxAgentsService,
+  getTaxAgentByIdService,
+  updateTaxAgentService,
 } from "../services/adminstration.service";
 import { sendTokenAdmin } from "../utils/createToken";
 import { compare, hash } from "bcryptjs";
@@ -361,3 +365,69 @@ export const deleteAdminProfile = asyncHandler(
     }
   }
 );
+
+export const getAllTaxAgents = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const taxAgents = await getAllTaxAgentsService();
+      res.status(200).json({
+        success: true,
+        message: "Tax agents list",
+        data: taxAgents,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+)
+
+export const getTaxAgentById = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id;
+      const taxAgent = await getTaxAgentByIdService(id);
+      res.status(200).json({
+        success: true,
+        message: "Tax agent",
+        data: taxAgent,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+)
+
+export const updateTaxAgent = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id;
+      const data = req.body;
+      const taxAgent = await updateTaxAgentService(id, data);
+      res.status(200).json({
+        success: true,
+        message: "Tax agent updated successfully",
+        data: taxAgent,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+)
+
+export const deleteTaxAgent = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id;
+      const taxAgent = await deleteTaxAgentService(id);
+      res.status(200).json({
+        success: true,
+        message: "Tax agent deleted successfully",
+        data: taxAgent,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+)
+
+
