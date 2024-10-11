@@ -191,3 +191,136 @@ Object.defineProperty(exports, "__esModule", { value: true });
  *      '500':
  *        description: Internal server error
  */
+/**
+ * @swagger
+ * /api/v1/adminstrator/delete-admin-device/{device_id}:
+ *  delete:
+ *    summary: Delete admin device
+ *    tags: [Adminstrator]
+ *    description: Delete admin device
+ *    parameters:
+ *      - name: device_id
+ *        in: path
+ *        description: The id of the device
+ *        required: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      '200':
+ *        description: Device deleted
+ *      '401':
+ *        description: Unauthorized
+ *      '500':
+ *        description: Internal server error
+ */
+/**
+ * @swagger
+ * /api/v1/adminstrator/delete-admin-profile:
+ *  delete:
+ *    summary: Delete admin profile
+ *    tags: [Adminstrator]
+ *    description: Delete admin profile
+ *    responses:
+ *      '200':
+ *        description: Profile deleted
+ *      '401':
+ *        description: Unauthorized
+ *      '500':
+ *        description: Internal server error
+ */
+/**
+ * @swagger
+ * /api/v1/adminstrator/get-all-tax-agents:
+ *  get:
+ *    summary: Get all tax agents
+ *    tags: [Adminstrator]
+ *    description: Get all tax agents
+ *    responses:
+ *      '200':
+ *        description: Tax agents
+ *      '401':
+ *        description: Unauthorized
+ *      '500':
+ *        description: Internal server error
+ */
+/**
+ * @swagger
+ * /api/v1/adminstrator/get-tax-agent-by-id/{id}:
+ *  get:
+ *    summary: Get tax agent by id
+ *    tags: [Adminstrator]
+ *    description: Get tax agent by id
+ *    parameters:
+ *      - name: id
+ *        in: path
+ *        description: The id of the tax agent
+ *        required: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      '200':
+ *        description: Tax agent
+ *      '401':
+ *        description: Unauthorized
+ *      '500':
+ *        description: Internal server error
+ */
+/**
+ * @swagger
+ * /api/v1/adminstrator/update-tax-agent/{id}:
+ *  put:
+ *    summary: Update tax agent
+ *    tags: [Adminstrator]
+ *    description: Update tax agent
+ *    parameters:
+ *      - name: id
+ *        in: path
+ *        description: The id of the tax agent
+ *        required: true
+ *        schema:
+ *          type: string
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              name:
+ *                type: string
+ *              email:
+ *                type: string
+ *              password:
+ *                type: string
+ *              twoFactorSecret:
+ *                type: string
+ *    responses:
+ *      '200':
+ *        description: Tax agent updated
+ *      '401':
+ *        description: Unauthorized
+ *      '500':
+ *        description: Internal server error
+ */
+/**
+ * @swagger
+ * /api/v1/adminstrator/delete-tax-agent/{id}:
+ *  delete:
+ *    summary: Delete tax agent
+ *    tags: [Adminstrator]
+ *    description: Delete tax agent
+ *    parameters:
+ *      - name: id
+ *        in: path
+ *        description: The id of the tax agent
+ *        required: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      '200':
+ *        description: Tax agent deleted
+ *      '401':
+ *        description: Unauthorized
+ *      '500':
+ *        description: Internal server error
+ */ 

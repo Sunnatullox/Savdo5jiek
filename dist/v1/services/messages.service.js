@@ -41,9 +41,13 @@ const sendMessageAdminService = (adminId, contractId, message) => __awaiter(void
 });
 exports.sendMessageAdminService = sendMessageAdminService;
 const getMessagesUserService = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const userContracts = yield (0, contract_service_1.getContractsByIdService)(userId);
     const messages = yield db_1.default.message.findMany({
         where: {
-            userId,
+            contractId: {
+                in: userContracts.map((contract) => contract.id),
+            },
+            isAdmin: true,
         },
         include: {
             user: true,
@@ -57,6 +61,9 @@ const getMessagesUserService = (userId) => __awaiter(void 0, void 0, void 0, fun
                 },
             },
         },
+        orderBy: {
+            createdAt: 'asc',
+        },
     });
     return messages;
 });
@@ -67,6 +74,7 @@ const getMessagesAdminService = (adminId) => __awaiter(void 0, void 0, void 0, f
             isAdmin: false,
         },
         include: {
+            user: true,
             contract: {
                 select: {
                     id: true,
@@ -76,6 +84,9 @@ const getMessagesAdminService = (adminId) => __awaiter(void 0, void 0, void 0, f
                     status: true,
                 },
             },
+        },
+        orderBy: {
+            createdAt: 'asc',
         },
     });
     return messages;
@@ -88,6 +99,9 @@ const getMessagesAdminByContractIdService = (contractId) => __awaiter(void 0, vo
         },
         include: {
             user: true,
+        },
+        orderBy: {
+            createdAt: 'asc',
         },
     });
     yield db_1.default.message.updateMany({
@@ -104,17 +118,18 @@ exports.getMessagesAdminByContractIdService = getMessagesAdminByContractIdServic
 const getMessagesUserByContractIdService = (contractId, userId) => __awaiter(void 0, void 0, void 0, function* () {
     const messages = yield db_1.default.message.findMany({
         where: {
-            contractId,
-            userId,
+            contractId
         },
         include: {
             user: true,
         },
+        orderBy: {
+            createdAt: 'asc',
+        },
     });
     yield db_1.default.message.updateMany({
         where: {
-            contractId,
-            userId,
+            contractId
         },
         data: {
             isReadUser: true,
@@ -133,6 +148,9 @@ const getNotficationUserService = (userId) => __awaiter(void 0, void 0, void 0, 
             isReadUser: false,
             isAdmin: true,
         },
+        orderBy: {
+            createdAt: 'asc',
+        },
     });
     return messages;
 });
@@ -142,6 +160,12 @@ const getNotficationAdminService = () => __awaiter(void 0, void 0, void 0, funct
         where: {
             isAdmin: false,
             isReadAdmin: false,
+        },
+        include: {
+            user: true,
+        },
+        orderBy: {
+            createdAt: 'asc',
         },
     });
     return messages;

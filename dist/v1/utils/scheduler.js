@@ -38,6 +38,9 @@ const deleteExpiredContracts = () => __awaiter(void 0, void 0, void 0, function*
                     not: "approved",
                 },
             },
+            orderBy: {
+                createdAt: 'asc',
+            },
             include: {
                 Payment: true,
                 Message: true,

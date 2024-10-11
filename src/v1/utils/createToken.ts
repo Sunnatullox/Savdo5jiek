@@ -47,27 +47,20 @@ interface ITokenOptions {
 }
 
 
-export const accessTokenExpire = parseInt(
-  (process.env.ACCESS_TOKEN_EXPIRE as string) || "1200",
-  10
-);
-export const refreshTokenExpire = parseInt(
-  (process.env.REFRESH_TOKEN_EXPIRE as string) || "1200",
-  10
-);
-
+export const accessTokenExpire = 3 * 24 * 60 * 60; // 3 kun soniyalarda
+export const refreshTokenExpire = 3 * 24 * 60 * 60; // 3 kun soniyalarda
 
 export const accessTokenOptions: ITokenOptions = {
-  expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000), // 3 kun
-  maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000, // 3 kun
+  expires: new Date(Date.now() + accessTokenExpire * 1000), // 3 kun
+  maxAge: accessTokenExpire * 1000, // 3 kun
   httpOnly: true,
   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   secure: process.env.NODE_ENV === "production", 
 };
 
 export const refreshTokenOptions: ITokenOptions = {
-  expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000), // 3 kun
-  maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000, // 3 kun
+  expires: new Date(Date.now() + refreshTokenExpire * 1000), // 3 kun
+  maxAge: refreshTokenExpire * 1000, // 3 kun
   httpOnly: true,
   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", 
   secure: process.env.NODE_ENV === "production", 

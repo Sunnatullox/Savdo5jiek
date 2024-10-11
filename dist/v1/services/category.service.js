@@ -45,6 +45,9 @@ function getCategoriesByAdminService() {
                     },
                 },
             },
+            orderBy: {
+                createdAt: 'asc',
+            },
         });
     });
 }

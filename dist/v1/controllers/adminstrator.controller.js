@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteAdminProfile = exports.deleteAdminDevice = exports.getAdminstratorInfo = exports.adminstratorTwoFactorAuthUpdateAndCreate = exports.adminstratorAddAndUpdateInfo = exports.adminstratorLogin = exports.adminstratorOTPVerify = exports.adminstratorOTP = void 0;
+exports.deleteTaxAgent = exports.updateTaxAgent = exports.getTaxAgentById = exports.getAllTaxAgents = exports.deleteAdminProfile = exports.deleteAdminDevice = exports.getAdminstratorInfo = exports.adminstratorTwoFactorAuthUpdateAndCreate = exports.adminstratorAddAndUpdateInfo = exports.adminstratorLogin = exports.adminstratorOTPVerify = exports.adminstratorOTP = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const ErrorHandler_1 = __importDefault(require("../middleware/ErrorHandler"));
 const db_1 = __importDefault(require("../config/db"));
@@ -294,5 +294,61 @@ exports.deleteAdminProfile = (0, express_async_handler_1.default)((req, res, nex
     }
     catch (error) {
         return next(new ErrorHandler_1.default("Please login to delete profile", 500));
+    }
+}));
+exports.getAllTaxAgents = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const taxAgents = yield (0, adminstration_service_1.getAllTaxAgentsService)();
+        res.status(200).json({
+            success: true,
+            message: "Tax agents list",
+            data: taxAgents,
+        });
+    }
+    catch (error) {
+        return next(new ErrorHandler_1.default(error.message, 500));
+    }
+}));
+exports.getTaxAgentById = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = req.params.id;
+        const taxAgent = yield (0, adminstration_service_1.getTaxAgentByIdService)(id);
+        res.status(200).json({
+            success: true,
+            message: "Tax agent",
+            data: taxAgent,
+        });
+    }
+    catch (error) {
+        return next(new ErrorHandler_1.default(error.message, 500));
+    }
+}));
+exports.updateTaxAgent = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = req.params.id;
+        const data = req.body;
+        const taxAgent = yield (0, adminstration_service_1.updateTaxAgentService)(id, data);
+        res.status(200).json({
+            success: true,
+            message: "Tax agent updated successfully",
+            data: taxAgent,
+        });
+    }
+    catch (error) {
+        return next(new ErrorHandler_1.default(error.message, 500));
+    }
+}));
+exports.deleteTaxAgent = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = req.params.id;
+        const taxAgent = yield (0, adminstration_service_1.deleteTaxAgentService)(id);
+        res.status(200).json({
+            success: true,
+            message: "Tax agent deleted successfully",
+            data: taxAgent,
+        });
+    }
+    catch (error) {
+        return next(new ErrorHandler_1.default(error.message, 500));
     }
 }));

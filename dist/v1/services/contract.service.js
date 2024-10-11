@@ -53,6 +53,9 @@ function getContractsByIdService(id, is_LLC) {
                     },
                 }
             },
+            orderBy: {
+                createdAt: 'asc',
+            },
         });
     });
 }
@@ -106,7 +109,10 @@ function newNotifsContractisAdmin() {
             },
             include: {
                 User: true
-            }
+            },
+            orderBy: {
+                createdAt: 'asc',
+            },
         });
     });
 }

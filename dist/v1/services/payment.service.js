@@ -53,6 +53,9 @@ function getPaymentsByUserIdService(contractId, userId) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield db_1.default.payment.findMany({
             where: { contractId, userId },
+            orderBy: {
+                createdAt: 'asc',
+            },
         });
     });
 }
@@ -72,6 +75,9 @@ function getPaymentsByAdminService() {
                 },
                 user: true,
             },
+            orderBy: {
+                createdAt: 'asc',
+            },
         });
     });
 }
@@ -82,6 +88,9 @@ function getPaymentsByContractIdAdminService(contractId) {
             include: {
                 contract: true,
                 user: true,
+            },
+            orderBy: {
+                createdAt: 'asc',
             },
         });
         yield db_1.default.payment.updateMany({
@@ -95,6 +104,9 @@ function getNotificationPaymentByAdminService() {
     return __awaiter(this, void 0, void 0, function* () {
         return yield db_1.default.payment.findMany({
             where: { isRead: false },
+            orderBy: {
+                createdAt: 'asc',
+            },
         });
     });
 }

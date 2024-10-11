@@ -63,11 +63,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @swagger
  * /api/v1/analytics/get-category-analytics:
  *   get:
- *     summary: Get category analytics
+ *     summary: Get user analytics
  *     tags: [Analytics]
  *     responses:
  *       200:
- *         description: Category analytics
+ *         description: User analytics
  *       400:
  *         description: Bad Request
  *       401:
@@ -90,4 +90,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
  *         description: Unauthorized
  *       500:
  *         description: Internal Server Error
- */
+ */ 

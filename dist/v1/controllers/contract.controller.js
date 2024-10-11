@@ -41,6 +41,9 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
         const findsProducts = yield db_1.default.product.findMany({
             where: { id: { in: products.map((product) => product.id) } },
             include: { category: true },
+            orderBy: {
+                createdAt: 'asc',
+            },
         });
         // Check if requested quantity exceeds available stock
         const productsWithQty = products
@@ -352,6 +355,9 @@ exports.getContractsByTaxAgent = (0, express_async_handler_1.default)((req, res,
     try {
         const contracts = yield (0, contract_service_1.getContractByTaxAgentService)({
             where: { status: "approved" },
+            orderBy: {
+                createdAt: 'asc',
+            },
         });
         res.status(200).json({
             success: true,

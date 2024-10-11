@@ -25,6 +25,9 @@ const get12MonthPaymentAnalyticsService = () => __awaiter(void 0, void 0, void 0
             },
             status: "approved",
         },
+        orderBy: {
+            createdAt: 'asc',
+        },
     });
     const totalPaymentsEver = yield db_1.default.payment.aggregate({
         _sum: {
@@ -102,6 +105,9 @@ const get12MonthUserRegistrationAnalyticsService = () => __awaiter(void 0, void 
                 gte: lastYear,
             },
         },
+        orderBy: {
+            createdAt: 'asc',
+        },
     });
     const totalUsersEver = yield db_1.default.user.count(); // Count all users ever registered
     const monthNames = [
@@ -173,6 +179,9 @@ const get12MonthContractAnalyticsService = () => __awaiter(void 0, void 0, void 
         },
         include: {
             Payment: true,
+        },
+        orderBy: {
+            createdAt: 'asc',
         },
     });
     const totalContractsEver = yield db_1.default.contract.count(); // Count all contracts ever created
@@ -263,6 +272,9 @@ const get12MonthProductSalesAnalyticsService = () => __awaiter(void 0, void 0, v
                 },
             },
         },
+        orderBy: {
+            createdAt: 'asc',
+        },
     });
     const totalProductsEver = yield db_1.default.contract.findMany({
         where: {
@@ -274,6 +286,9 @@ const get12MonthProductSalesAnalyticsService = () => __awaiter(void 0, void 0, v
                     status: "approved",
                 },
             },
+        },
+        orderBy: {
+            createdAt: 'asc',
         },
     });
     const monthNames = [
@@ -371,7 +386,11 @@ function getCategoryAnalyticsService() {
         const lastYear = new Date(today);
         lastYear.setFullYear(today.getFullYear() - 1);
         // 1. Barcha kategoriyalarni olish
-        const categories = yield db_1.default.categorie.findMany();
+        const categories = yield db_1.default.categorie.findMany({
+            orderBy: {
+                createdAt: 'asc',
+            },
+        });
         // 2. `approved` statusidagi barcha contractlarni olish
         const approvedContracts = yield db_1.default.contract.findMany({
             where: {
@@ -379,6 +398,9 @@ function getCategoryAnalyticsService() {
                 createdAt: {
                     gte: lastYear,
                 },
+            },
+            orderBy: {
+                createdAt: 'asc',
             },
         });
         // Initialize category data

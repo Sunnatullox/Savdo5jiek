@@ -69,6 +69,9 @@ function getProductsService(page, limit, search, categorie) {
             include: {
                 category: true,
             },
+            orderBy: {
+                createdAt: 'asc',
+            },
             skip: (page - 1) * limit,
             take: limit,
         });
@@ -84,6 +87,9 @@ function getTopProductsService() {
             },
             select: {
                 products: true,
+            },
+            orderBy: {
+                createdAt: 'asc',
             },
         });
         // Mahsulotlar bo'yicha sotilgan sonini hisoblash
@@ -115,6 +121,9 @@ function getTopProductsService() {
             include: {
                 category: true,
             },
+            orderBy: {
+                createdAt: 'asc',
+            },
         });
         return topProducts;
     });
@@ -133,6 +142,9 @@ function getNewProductsService() {
             include: {
                 category: true,
             },
+            orderBy: {
+                createdAt: 'asc',
+            },
         });
         return newProducts;
     });
@@ -142,6 +154,9 @@ function getProductsByAdminService() {
         return yield db_1.default.product.findMany({
             include: {
                 category: true,
+            },
+            orderBy: {
+                createdAt: 'asc',
             },
         });
     });

@@ -37,18 +37,18 @@ const createActivationToken = (user) => {
     return { token, activationCode };
 };
 exports.createActivationToken = createActivationToken;
-exports.accessTokenExpire = parseInt(process.env.ACCESS_TOKEN_EXPIRE || "1200", 10);
-exports.refreshTokenExpire = parseInt(process.env.REFRESH_TOKEN_EXPIRE || "1200", 10);
+exports.accessTokenExpire = 3 * 24 * 60 * 60; // 3 kun soniyalarda
+exports.refreshTokenExpire = 3 * 24 * 60 * 60; // 3 kun soniyalarda
 exports.accessTokenOptions = {
-    expires: new Date(Date.now() + exports.refreshTokenExpire * 24 * 60 * 60 * 1000),
-    maxAge: exports.refreshTokenExpire * 24 * 60 * 60 * 1000,
+    expires: new Date(Date.now() + exports.accessTokenExpire * 1000), // 3 kun
+    maxAge: exports.accessTokenExpire * 1000, // 3 kun
     httpOnly: true,
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     secure: process.env.NODE_ENV === "production",
 };
 exports.refreshTokenOptions = {
-    expires: new Date(Date.now() + exports.refreshTokenExpire * 24 * 60 * 60 * 1000),
-    maxAge: exports.refreshTokenExpire * 24 * 60 * 60 * 1000,
+    expires: new Date(Date.now() + exports.refreshTokenExpire * 1000), // 3 kun
+    maxAge: exports.refreshTokenExpire * 1000, // 3 kun
     httpOnly: true,
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     secure: process.env.NODE_ENV === "production",

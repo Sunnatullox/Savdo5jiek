@@ -37,6 +37,9 @@ exports.getContactUsIsNotReadAdmin = (0, express_async_handler_1.default)((req, 
     try {
         const contactUs = yield (0, contact_servoce_1.getContactUsList)({
             where: { isRead: false },
+            orderBy: {
+                createdAt: 'asc',
+            },
         });
         res.status(200).json({
             success: true,
@@ -50,7 +53,11 @@ exports.getContactUsIsNotReadAdmin = (0, express_async_handler_1.default)((req, 
 }));
 exports.getContactUsListAdmin = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const contactUs = yield (0, contact_servoce_1.getContactUsList)({});
+        const contactUs = yield (0, contact_servoce_1.getContactUsList)({
+            orderBy: {
+                createdAt: 'asc',
+            },
+        });
         res.status(200).json({
             success: true,
             message: "Contact Us list fetched successfully",
