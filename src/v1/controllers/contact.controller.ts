@@ -8,7 +8,6 @@ import {
   getContactUsList,
   updateContactUs,
 } from "../services/contact.servoce";
-import { IUser } from "../types/user.type";
 
 export const createContact = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {

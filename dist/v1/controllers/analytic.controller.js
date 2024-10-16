@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLowStockProducts = exports.getCategoryAnalytics = exports.get12MonthProductSalesAnalytics = exports.get12MonthContractAnalytics = exports.get12MonthUserRegistrationAnalytics = exports.get12MonthPaymentAnalytics = void 0;
+exports.getContractsByApproved = exports.getLowStockProducts = exports.getCategoryAnalytics = exports.get12MonthProductSalesAnalytics = exports.get12MonthContractAnalytics = exports.get12MonthUserRegistrationAnalytics = exports.get12MonthPaymentAnalytics = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const ErrorHandler_1 = __importDefault(require("../middleware/ErrorHandler"));
 const analytic_service_1 = require("../services/analytic.service");
@@ -82,6 +82,18 @@ exports.getLowStockProducts = (0, express_async_handler_1.default)((req, res, ne
         res.status(200).json({
             success: true,
             products,
+        });
+    }
+    catch (error) {
+        next(new ErrorHandler_1.default(`Please try again later: ${error.message}`, 500));
+    }
+}));
+exports.getContractsByApproved = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const contracts = yield (0, analytic_service_1.getContractsByApprovedService)();
+        res.status(200).json({
+            success: true,
+            contracts,
         });
     }
     catch (error) {

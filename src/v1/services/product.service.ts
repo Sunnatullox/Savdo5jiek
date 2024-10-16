@@ -144,6 +144,22 @@ export async function getNewProductsService() {
   return newProducts;
 }
 
+export async function getProductsDiscountService() {
+  const products = await prisma.product.findMany({
+    where: {
+      discount: { gt: 0 },
+    },
+    include: {
+      category: true,
+    },
+    orderBy: {
+      createdAt: 'asc',
+    },
+  });
+
+  return products;
+}
+
 export async function getProductsByAdminService() {
   return await prisma.product.findMany({
     include: {

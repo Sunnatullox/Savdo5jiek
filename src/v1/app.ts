@@ -41,10 +41,6 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "http://localhost:5500",
-        description: "Local server",
-      },
-      {
         url: "https://5jiek.uz",
         description: "Production server",
       },

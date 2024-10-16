@@ -96,3 +96,20 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /api/v1/analytics/get-contracts-by-approved-analytics:
+ *  get:
+ *    summary: Get contracts by approved analytics
+ *    tags: [Analytics]
+ *    description: Get contracts by approved analytics
+ *    responses:
+ *      '200':
+ *        description: Contracts by approved analytics
+ *      '401':
+ *        description: Unauthorized
+ *      '500':
+ *        description: Internal server error
+ */
+

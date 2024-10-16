@@ -222,7 +222,7 @@ export const get12MonthContractAnalyticsService = async (): Promise<any> => {
     month: orderedMonthNames[index],
     totalContracts: 0,
     totalAmount: 0,
-    approvedPayments: 0,
+    rejectedContracts: 0, // Change from approvedPayments to rejectedContracts
   }));
 
   contractsLastYear.forEach((contract) => {
@@ -241,12 +241,11 @@ export const get12MonthContractAnalyticsService = async (): Promise<any> => {
 
     monthlyData[monthIndex].totalContracts++;
     monthlyData[monthIndex].totalAmount += contract.totalPrice;
-    contract.Payment.forEach((payment: any) => {
-      const typedPayment = payment as IPayment;
-      if (typedPayment.status === "approved") {
-        monthlyData[monthIndex].approvedPayments += typedPayment.amount;
-      }
-    });
+    
+    // Check if the contract is rejected and increment the count
+    if (contract.status === "rejected") {
+      monthlyData[monthIndex].rejectedContracts++;
+    }
   });
 
   // Calculate percentage change and level for the last month
@@ -492,3 +491,31 @@ export const getLowStockProductsService = async (): Promise<any> => {
     color: product.stock < 50 ? "red" : "yellow",
   }));
 };
+
+export async function getContractsByApprovedService() {
+  const today = new Date();
+  const lastYear = new Date(today);
+  lastYear.setFullYear(today.getFullYear() - 1);
+
+  // 12 oy davomida "approved" bo'lgan kontraktlar sonini olish
+  const approvedContractsLastYearCount = await prisma.contract.count({
+    where: {
+      status: "approved",
+      createdAt: {
+        gte: lastYear,
+      },
+    },
+  });
+
+  // Umumiy "approved" bo'lgan kontraktlar sonini olish
+  const totalApprovedContractsCount = await prisma.contract.count({
+    where: {
+      status: "approved",
+    },
+  });
+
+  return {
+    approvedContractsLastYearCount,
+    totalApprovedContractsCount,
+  };
+}

@@ -6,13 +6,21 @@ const checkVPN = async (req: Request, res: Response, next: NextFunction) => {
   const ip = getClientIp(req) || "";
 
   try {
-    // IP manzilini tekshirish uchun tashqi API dan foydalanish
+    const controller = new AbortController();
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, 5000); // 5 seconds timeout
+
     const response = await fetch(`https://ipinfo.io/${ip}/json`, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
-      }
+      },
+      signal: controller.signal
     });
+
+    clearTimeout(timeout);
+
     const { country, org } = await response.json();
 
     if (!org || !country) {

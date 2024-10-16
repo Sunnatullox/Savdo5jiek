@@ -27,6 +27,8 @@
  *                type: string
  *              password:
  *                type: string
+ *              twoFactorSecret:
+ *                type: string
  *    responses:
  *      '200':
  *        description: OTP sent successfully
@@ -101,6 +103,38 @@ Object.defineProperty(exports, "__esModule", { value: true });
  *        description: Invalid email or password
  *      '401':
  *        description: Unauthorized
+ *      '500':
+ *        description: Internal server error
+ */
+/**
+ * @swagger
+ * /api/v1/adminstrator/adminstrator-update:
+ *  put:
+ *    summary: Update adminstrator
+ *    tags: [Adminstrator]
+ *    description: Update adminstrator
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              name:
+ *                type: string
+ *              email:
+ *                type: string
+ *              password:
+ *                type: string
+ *              oldPassword:
+ *                type: string
+ *    responses:
+ *      '200':
+ *        description: Admin updated successfully
+ *      '401':
+ *        description: Unauthorized
+ *      '400':
+ *        description: Old password is required
  *      '500':
  *        description: Internal server error
  */
@@ -319,6 +353,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
  *    responses:
  *      '200':
  *        description: Tax agent deleted
+ *      '401':
+ *        description: Unauthorized
+ *      '500':
+ *        description: Internal server error
+ */
+/**
+ * @swagger
+ * /api/v1/adminstrator/get-contracts-by-approved:
+ *  get:
+ *    summary: Get contracts by approved
+ *    tags: [Adminstrator]
+ *    description: Get contracts by approved
+ *    responses:
+ *      '200':
+ *        description: Contracts by approved
  *      '401':
  *        description: Unauthorized
  *      '500':

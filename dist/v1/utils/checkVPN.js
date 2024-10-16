@@ -17,13 +17,18 @@ const request_ip_1 = require("request-ip");
 const checkVPN = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const ip = (0, request_ip_1.getClientIp)(req) || "";
     try {
-        // IP manzilini tekshirish uchun tashqi API dan foydalanish
+        const controller = new AbortController();
+        const timeout = setTimeout(() => {
+            controller.abort();
+        }, 5000); // 5 seconds timeout
         const response = yield fetch(`https://ipinfo.io/${ip}/json`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
-            }
+            },
+            signal: controller.signal
         });
+        clearTimeout(timeout);
         const { country, org } = yield response.json();
         if (!org || !country) {
             console.log(`Organization data not available for IP: ${ip}`);

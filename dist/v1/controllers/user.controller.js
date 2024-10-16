@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUserDevice = exports.updateUserData = exports.getUser = exports.logout = exports.login = void 0;
+exports.getUserByIdByAdmin = exports.deleteUserByAdmin = exports.getAllUsersByAdmin = exports.deleteUserDevice = exports.updateUserData = exports.getUser = exports.logout = exports.login = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const ErrorHandler_1 = __importDefault(require("../middleware/ErrorHandler"));
 const createToken_1 = require("../utils/createToken");
@@ -27,7 +27,7 @@ exports.login = (0, express_async_handler_1.default)((req, res, next) => __await
     try {
         const accessTokenData = yield (0, user_service_1.getAccessToken)(code, redirect_uri);
         const userData = yield (0, user_service_1.getUserData)(accessTokenData.access_token);
-        const user = yield (0, user_service_1.findOrCreateUser)(userData);
+        const user = (yield (0, user_service_1.findOrCreateUser)(userData));
         yield (0, user_service_1.findOrCreateDevice)(user, ip || "", ua);
         yield (0, createToken_1.sendToken)(user, 200, res);
     }
@@ -49,7 +49,7 @@ exports.getUser = (0, express_async_handler_1.default)((req, res, next) => __awa
         if (!req.user) {
             return next(new ErrorHandler_1.default("Please login to access this route", 401));
         }
-        const user = yield (0, user_service_1.getUserById)(req.user.id);
+        const user = (yield (0, user_service_1.getUserById)(req.user.id));
         res.status(200).json({
             message: "User fetched successfully",
             user,
@@ -67,12 +67,7 @@ exports.updateUserData = (0, express_async_handler_1.default)((req, res, next) =
         }
         const userWithLegal = req.user;
         if (userWithLegal.legal_info) {
-            if (!address ||
-                !phone_number ||
-                !oked ||
-                !x_r ||
-                !bank ||
-                !mfo) {
+            if (!address || !phone_number || !oked || !x_r || !bank || !mfo) {
                 return next(new ErrorHandler_1.default("Please fill all the fields", 400));
             }
             const updatedLegalInfo = yield (0, user_service_1.updateUserLegalInfo)(userWithLegal.id, {
@@ -115,7 +110,6 @@ exports.updateUserData = (0, express_async_handler_1.default)((req, res, next) =
         }
     }
     catch (error) {
-        console.log("Update user error", error);
         next(new ErrorHandler_1.default(error.message, 500));
     }
 }));
@@ -134,7 +128,53 @@ exports.deleteUserDevice = (0, express_async_handler_1.default)((req, res, next)
         });
     }
     catch (error) {
-        console.log("Delete device error", error);
+        next(new ErrorHandler_1.default(error.message, 500));
+    }
+}));
+exports.getAllUsersByAdmin = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const users = yield (0, user_service_1.getAllUsersByAdminService)();
+        res.status(200).json({
+            success: true,
+            message: "Users fetched successfully",
+            data: users,
+        });
+    }
+    catch (error) {
+        next(new ErrorHandler_1.default(error.message, 500));
+    }
+}));
+exports.deleteUserByAdmin = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const findUser = yield (0, user_service_1.getUserById)(id);
+        if (!findUser) {
+            return next(new ErrorHandler_1.default("User not found", 404));
+        }
+        yield (0, user_service_1.deleteUserService)(id);
+        res.status(200).json({
+            success: true,
+            message: "User deleted successfully",
+        });
+    }
+    catch (error) {
+        next(new ErrorHandler_1.default(error.message, 500));
+    }
+}));
+exports.getUserByIdByAdmin = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const user = yield (0, user_service_1.getUserById)(id);
+        if (!user) {
+            return next(new ErrorHandler_1.default("User not found", 404));
+        }
+        res.status(200).json({
+            success: true,
+            message: "User fetched successfully",
+            data: user,
+        });
+    }
+    catch (error) {
         next(new ErrorHandler_1.default(error.message, 500));
     }
 }));

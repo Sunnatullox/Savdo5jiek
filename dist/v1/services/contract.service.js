@@ -75,7 +75,11 @@ function getContractByIdService(id, userId) {
         if (!userId) {
             yield db_1.default.contract.update({
                 where: { id },
-                data: { isRead: true }
+                data: { isRead: true },
+            });
+            yield db_1.default.payment.updateMany({
+                where: { contractId: id, isRead: false },
+                data: { isRead: true },
             });
         }
         return contract;

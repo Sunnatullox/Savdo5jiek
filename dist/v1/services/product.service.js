@@ -16,6 +16,7 @@ exports.createProductService = createProductService;
 exports.getProductsService = getProductsService;
 exports.getTopProductsService = getTopProductsService;
 exports.getNewProductsService = getNewProductsService;
+exports.getProductsDiscountService = getProductsDiscountService;
 exports.getProductsByAdminService = getProductsByAdminService;
 exports.getProductByIdService = getProductByIdService;
 exports.updateProductService = updateProductService;
@@ -147,6 +148,22 @@ function getNewProductsService() {
             },
         });
         return newProducts;
+    });
+}
+function getProductsDiscountService() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const products = yield db_1.default.product.findMany({
+            where: {
+                discount: { gt: 0 },
+            },
+            include: {
+                category: true,
+            },
+            orderBy: {
+                createdAt: 'asc',
+            },
+        });
+        return products;
     });
 }
 function getProductsByAdminService() {

@@ -7,6 +7,7 @@ import { mailSender } from "../utils/emailSender";
 import emailForgotTemplate from "../gmail/emailAdminstratorTemp";
 import {
   administrationFind,
+  administrationUpdate,
   adminstratorAddInfoService,
   adminstratorUpdateInfoService,
   comparePassword,
@@ -15,6 +16,7 @@ import {
   deleteTaxAgentService,
   findAdminDeviceService,
   getAllTaxAgentsService,
+  getContractsByApprovedService,
   getTaxAgentByIdService,
   updateTaxAgentService,
 } from "../services/adminstration.service";
@@ -28,7 +30,7 @@ import { IDevice } from "../types/user.type";
 export const adminstratorOTP = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { name, email, password } = req.body;
+      const { name, email, password, twoFactorSecret } = req.body;
 
       // Delete old and unverified OTP records
       await prisma.oTP.deleteMany({
@@ -65,7 +67,7 @@ export const adminstratorOTP = asyncHandler(
       await prisma.oTP.create({
         data: {
           email,
-          user: { name, email, password, role },
+          user: { name, email, password, twoFactorSecret, role },
           code: otp,
           type: role,
           expiresAt: new Date(Date.now() + 1000 * 60 * 5),
@@ -75,6 +77,7 @@ export const adminstratorOTP = asyncHandler(
       res.status(200).json({
         success: true,
         message: "OTP sent to email",
+        data: email
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
@@ -111,9 +114,7 @@ export const adminstratorOTPVerify = asyncHandler(
       }
 
       const adminData: Omit<Administrator, "id" | "createdAt" | "updatedAt"> = {
-        ...(checkOTP.user as unknown as Administrator),
-        isTwoFactorAuth: false,
-        twoFactorSecret: "",
+        ...(checkOTP.user as unknown as Administrator)
       };
 
       await createAdministration(adminData);
@@ -153,7 +154,6 @@ export const adminstratorLogin = asyncHandler(
       const findDevice = (checkUser.Device as IDevice[])
         ? await findAdminDeviceService({
             ip,
-            browser: ua.browser || "",
             os: ua.os || "",
             device: ua.platform || "",
             administrationId: checkUser.id,
@@ -169,7 +169,7 @@ export const adminstratorLogin = asyncHandler(
         }
       }
 
-      if (!findDevice) {
+      if (!findDevice && ip !== "::1") {
         await prisma.device.create({
           data: {
             ip: ip || "",
@@ -186,6 +186,22 @@ export const adminstratorLogin = asyncHandler(
     }
   }
 );
+
+export const adminstratorUpdate = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const {name, email, password, oldPassword} = req.body
+        await administrationUpdate(req.adminstrator?.id as string, {name, email, password, oldPassword})
+
+        res.status(200).json({
+          success: true,
+          message: "Admin updated successfully",
+        })
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+)
 
 export const adminstratorAddAndUpdateInfo = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -328,7 +344,7 @@ export const deleteAdminDevice = asyncHandler(
       const device_id = req.params.device_id;
       const findDevice = await findAdminDeviceService({
         administrationId: req.adminstrator?.id as string,
-        device_id,
+        id: device_id,
       });
 
       if (!findDevice) {
@@ -401,7 +417,7 @@ export const updateTaxAgent = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = req.params.id;
-      const data = req.body;
+      const data = req.body.taxAgent;
       const taxAgent = await updateTaxAgentService(id, data);
       res.status(200).json({
         success: true,
@@ -423,6 +439,21 @@ export const deleteTaxAgent = asyncHandler(
         success: true,
         message: "Tax agent deleted successfully",
         data: taxAgent,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+)
+
+export const getContractsByApproved = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const contracts = await getContractsByApprovedService();
+      res.status(200).json({
+        success: true,
+        message: "Contracts by approved",
+        data: contracts,
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));

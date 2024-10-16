@@ -161,11 +161,7 @@ export default async function UzTshContractHtml(
 			<span style="font-family:Cambria">Bundan buyon matnda «MAHSULOT YETKAZIB BERUVCHI» deb nomlanuvchi, o‘z
 				Nizomi asosida faoliyat ko‘rsatuvchi 5-son Jazoni ijro etish koloniyasi (keying o’rinlarda
 			</span><strong><span style="font-family:Cambria; ">JIEK</span></strong><span style="font-family:Cambria">
-				deb yuritiladi) rahbari </span><strong><span style="font-family:Cambria; ">${
-          admin.AdminInfo.middle_name
-        } ${admin.AdminInfo.first_name} ${
-    admin.AdminInfo.sur_name
-  }</span></strong><span style="font-family:Cambria"> bir tomondan, bundan buyon matnda
+				deb yuritiladi) rahbari </span><strong><span style="font-family:Cambria; "> ${admin.AdminInfo.sur_name.toUpperCase()} ${admin.AdminInfo.first_name.toUpperCase()} ${admin.AdminInfo.middle_name.toUpperCase()} </span></strong><span style="font-family:Cambria"> bir tomondan, bundan buyon matnda
 				«BUYURTMACHI» deb nomlanuvchi o‘z nizomi asosida faoliyat ko‘rsatuvchi yuridik shaxs</span><span
 				style="font-family:Cambria">&#xa0; </span><strong><span
 					style="font-family:Cambria;"> ${user.legal_info.name} </span></strong><span
@@ -1056,9 +1052,10 @@ export default async function UzTshContractHtml(
           user.legal_info.mfo || "_?_"
         }</p>
 				<p class="noSpacing"><strong style="font-family:Cambria;">Rahbar:</strong> ${user.first_name
-          .charAt(0)
-          .toUpperCase()}.${user.middle_name.charAt(0).toUpperCase()}.${
-    user.sur_name.charAt(0).toUpperCase() + user.sur_name.slice(1).toLowerCase()
+        .charAt(0)
+        .toUpperCase()}.${user.sur_name.charAt(0).toUpperCase()}.${
+    user.middle_name.charAt(0).toUpperCase() +
+    user.middle_name.slice(1).toLowerCase()
   }</p>
 			</div>
 		</div>

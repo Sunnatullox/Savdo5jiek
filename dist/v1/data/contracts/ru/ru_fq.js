@@ -159,7 +159,7 @@ function RuFqContractHtml(admin, user, products, isDelivery, data) {
 	</p>
 	<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
 		<span style="font-family:Cambria">именуемый в тексте «ПОСТАВЩИК ПРОДУКЦИИ», начальник исправительной колонии № 5
-			(далее – КИН), действующей на основании ее Положения, </span><strong><span style="font-family:Cambria; ">${admin.AdminInfo.first_name.toUpperCase()} ${admin.AdminInfo.middle_name.toUpperCase()} ${admin.AdminInfo.sur_name.toUpperCase()}</span></strong><span style="font-family:Cambria">, с одной стороны,
+			(далее – КИН), действующей на основании ее Положения, </span><strong><span style="font-family:Cambria; "> ${admin.AdminInfo.sur_name.toUpperCase()} ${admin.AdminInfo.first_name.toUpperCase()} ${admin.AdminInfo.middle_name.toUpperCase()} </span></strong><span style="font-family:Cambria">, с одной стороны,
 			именуемый в дальнейшем «ЗАКАЗЧИК». "в тексте известно</span><u><span
 				style="font-family:Cambria; ">физический</span></u><span style="font-family:Cambria">лицо (далее -
 			ГРАЖДАНИН)</span><strong><span style="font-family:Cambria;"> ${user.full_name}</span></strong><u><span style="font-family:Cambria;"> </span></u><span
@@ -304,7 +304,8 @@ function RuFqContractHtml(admin, user, products, isDelivery, data) {
 					<span style="font-family: Cambria; font-weight: normal; color: #000000">(кто ты)</span>
 				</h1>
 			</td>
-			${isDelivery ? (`
+			${isDelivery
+            ? `
 			<td style="
             width: 45.35pt;
             border-right: 0.75pt solid #000000;
@@ -323,7 +324,8 @@ function RuFqContractHtml(admin, user, products, isDelivery, data) {
 					<span style="font-family: Cambria; font-weight: normal; color: #000000">Со службой доставки</span>
 				</h1>
 			</td>
-			`) : ""}
+			`
+            : ""}
 			<td style="
             width: 51.65pt;
             border-right: 0.75pt solid #000000;
@@ -365,7 +367,8 @@ function RuFqContractHtml(admin, user, products, isDelivery, data) {
 				</h1>
 			</td>
 		</tr>
-		${products.map((product, index) => {
+		${products
+            .map((product, index) => {
             return `
 			<tr style="height: 15.2pt">
 				<td style="
@@ -422,12 +425,11 @@ function RuFqContractHtml(admin, user, products, isDelivery, data) {
 				vertical-align: top;
 			  ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
-						<span style="font-family: Cambria;">${(0, numberToWords_1.formatNumber)(product.discount !== 0
-                ? product.discount
-                : product.price) || "_?_"}</span>
+						<span style="font-family: Cambria;">${(0, numberToWords_1.formatNumber)(product.discount !== 0 ? product.discount : product.price) || "_?_"}</span>
 					</p>
 				</td>
-				${isDelivery ? (`<td style="
+				${isDelivery
+                ? `<td style="
 			width: 45.35pt;
 			border: 0.75pt solid #000000;
 			padding-right: 5.03pt;
@@ -438,7 +440,8 @@ function RuFqContractHtml(admin, user, products, isDelivery, data) {
 					<span style="font-family: Cambria;">За доставку вышлют дополнительный счет</span>
 				</p>
 			</td>
-			`) : ""}
+			`
+                : ""}
 				<td style="
 				width: 51.65pt;
 				border: 0.75pt solid #000000;
@@ -448,9 +451,7 @@ function RuFqContractHtml(admin, user, products, isDelivery, data) {
 			  ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
 						<span style="font-family: Cambria;">${product.qty *
-                (product.discount !== 0
-                    ? product.discount
-                    : product.price) || 0}</span>
+                (product.discount !== 0 ? product.discount : product.price) || 0}</span>
 					</p>
 				</td>
 				<td style="
@@ -468,7 +469,8 @@ function RuFqContractHtml(admin, user, products, isDelivery, data) {
 				</td>
 			</tr>			
 			`;
-        }).join("")}
+        })
+            .join("")}
 		<tr style="height: 22.45pt">
 			<td style="
             width: 15.85pt;
@@ -534,7 +536,8 @@ function RuFqContractHtml(admin, user, products, isDelivery, data) {
 					<span style="font-family: Cambria">&#xa0;</span>
 				</p>
 			</td>
-			${isDelivery ? (`
+			${isDelivery
+            ? `
 			<td style="
             width: 45.35pt;
             border-top: 0.75pt solid #000000;
@@ -548,7 +551,8 @@ function RuFqContractHtml(admin, user, products, isDelivery, data) {
 					<span style="font-family: Cambria">&#xa0;</span>
 				</p>
 			</td>
-			`) : ""}
+			`
+            : ""}
 			<td style="
             width: 51.65pt;
             border-top: 0.75pt solid #000000;
@@ -902,8 +906,8 @@ function RuFqContractHtml(admin, user, products, isDelivery, data) {
 			<p><strong style="font-family:Cambria;">Адрес:</strong> ${user.address || "_?_"}</p>
 			<p class="noSpacing_indent"><strong style="font-family:Cambria;">Гражданин:</strong> ${user.first_name
             .charAt(0)
-            .toUpperCase()}.${user.middle_name.charAt(0).toUpperCase()}.${user.sur_name.charAt(0).toUpperCase() +
-            user.sur_name.slice(1).toLowerCase()}</p>
+            .toUpperCase()}.${user.sur_name.charAt(0).toUpperCase()}.${user.middle_name.charAt(0).toUpperCase() +
+            user.middle_name.slice(1).toLowerCase()}</p>
 		</div>
 	</div>
 	<p>

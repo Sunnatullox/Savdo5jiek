@@ -83,7 +83,11 @@ function getPaymentsByAdminService() {
 }
 function getPaymentsByContractIdAdminService(contractId) {
     return __awaiter(this, void 0, void 0, function* () {
-        const contract = yield db_1.default.payment.findMany({
+        yield db_1.default.payment.updateMany({
+            where: { contractId, isRead: false },
+            data: { isRead: true },
+        });
+        return yield db_1.default.payment.findMany({
             where: { contractId },
             include: {
                 contract: true,
@@ -93,17 +97,15 @@ function getPaymentsByContractIdAdminService(contractId) {
                 createdAt: 'asc',
             },
         });
-        yield db_1.default.payment.updateMany({
-            where: { contractId },
-            data: { isRead: true },
-        });
-        return contract;
     });
 }
 function getNotificationPaymentByAdminService() {
     return __awaiter(this, void 0, void 0, function* () {
         return yield db_1.default.payment.findMany({
             where: { isRead: false },
+            include: {
+                user: true,
+            },
             orderBy: {
                 createdAt: 'asc',
             },

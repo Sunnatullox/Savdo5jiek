@@ -9,6 +9,7 @@ import {
   getNewProductsService,
   getProductByIdService,
   getProductsByAdminService,
+  getProductsDiscountService,
   getProductsService,
   getTopProductsService,
   updateProductService,
@@ -133,6 +134,23 @@ export const getNewProducts = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const products = await getNewProductsService();
+      res.status(200).json({
+        success: true,
+        message: "Products fetched successfully",
+        data: products,
+      });
+    } catch (error: any) {
+      return next(
+        new ErrorHandler(`Error getting products: ${error.message}`, 500)
+      );
+    }
+  }
+);
+
+export const getProductsDiscount = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const products = await getProductsDiscountService();
       res.status(200).json({
         success: true,
         message: "Products fetched successfully",

@@ -159,7 +159,7 @@ function RuTshContractHtml(admin, user, products, isDelivery, data) {
 	</p>
 	<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
 		<span style="font-family:Cambria">именуемый в тексте «ПОСТАВЩИК ПРОДУКЦИИ», начальник исправительной колонии № 5
-			(далее – КИН), действующей на основании ее Положения, </span><strong><span style="font-family:Cambria; ">${admin.AdminInfo.middle_name} ${admin.AdminInfo.first_name} ${admin.AdminInfo.sur_name}</span></strong><span style="font-family:Cambria">, с одной стороны,
+			(далее – КИН), действующей на основании ее Положения, </span><strong><span style="font-family:Cambria; "> $${admin.AdminInfo.sur_name.toUpperCase()} ${admin.AdminInfo.first_name.toUpperCase()} </span></strong><span style="font-family:Cambria">, с одной стороны,
 			именуемый в дальнейшем «ЗАКАЗЧИК». "в тексте известно юридическое лицо, действующее на основании своего
 			устава </span><strong><span style="font-family:Cambria;"> ${user.legal_info.name} </span></strong><span style="font-family:Cambria">с другой стороны, заключили настоящее соглашение
 			о следующем:</span>
@@ -361,7 +361,8 @@ function RuTshContractHtml(admin, user, products, isDelivery, data) {
 				</h1>
 			</td>
 		</tr>
-		${products.map((product, index) => {
+		${products
+            .map((product, index) => {
             return `
 			<tr style="height: 15.2pt">
 				<td style="
@@ -462,7 +463,8 @@ function RuTshContractHtml(admin, user, products, isDelivery, data) {
 				</td>
 			</tr>			
 			`;
-        }).join("")}
+        })
+            .join("")}
 		<tr style="height: 22.45pt">
 			<td style="
             width: 15.85pt;
@@ -899,7 +901,8 @@ function RuTshContractHtml(admin, user, products, isDelivery, data) {
 			<p><strong style="font-family:Cambria;">МФО:</strong> ${user.legal_info.mfo || "_?_"}</p>
 			<p class="noSpacing"><strong style="font-family:Cambria;">Руководитель:</strong> ${user.first_name
             .charAt(0)
-            .toUpperCase()}.${user.middle_name.charAt(0).toUpperCase()}.${user.sur_name.charAt(0).toUpperCase() + user.sur_name.slice(1).toLowerCase()}</p>
+            .toUpperCase()}.${user.sur_name.charAt(0).toUpperCase()}.${user.middle_name.charAt(0).toUpperCase() +
+            user.middle_name.slice(1).toLowerCase()}</p>
 		</div>
 	</div>
 	</div>

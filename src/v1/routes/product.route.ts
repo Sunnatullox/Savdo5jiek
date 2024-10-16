@@ -28,6 +28,11 @@ router.get(
 );
 
 router.get(
+  "/get-products-discount",
+  productController.getProductsDiscount
+);
+
+router.get(
   "/get-new-products",
   productController.getNewProducts
 );

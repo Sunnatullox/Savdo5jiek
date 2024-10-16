@@ -28,10 +28,12 @@ exports.signAccessToken = signAccessToken;
 exports.signRefreshToken = signRefreshToken;
 exports.comparePassword = comparePassword;
 exports.administrationFind = administrationFind;
+exports.administrationUpdate = administrationUpdate;
 exports.adminstratorInfo = adminstratorInfo;
 exports.adminstratorAddInfoService = adminstratorAddInfoService;
 exports.adminstratorUpdateInfoService = adminstratorUpdateInfoService;
 exports.findAdminDeviceService = findAdminDeviceService;
+exports.getContractsByApprovedService = getContractsByApprovedService;
 exports.deleteAdminDeviceService = deleteAdminDeviceService;
 exports.getAllTaxAgentsService = getAllTaxAgentsService;
 exports.getTaxAgentByIdService = getTaxAgentByIdService;
@@ -43,19 +45,26 @@ const db_1 = __importDefault(require("../config/db"));
 function createAdministration(data) {
     return __awaiter(this, void 0, void 0, function* () {
         const hashedPassword = yield bcryptjs_1.default.hash(data.password, 10);
+        const hashedTwoFactorSecret = data.twoFactorSecret
+            ? yield bcryptjs_1.default.hash(data.twoFactorSecret, 10)
+            : "";
         return db_1.default.administration.create({
-            data: Object.assign(Object.assign({}, data), { password: hashedPassword, AdminInfo: data.AdminInfo ? { create: data.AdminInfo } : undefined, Device: data.Device ? { create: data.Device } : undefined }),
+            data: Object.assign(Object.assign({}, data), { password: hashedPassword, twoFactorSecret: hashedTwoFactorSecret, isTwoFactorAuth: hashedTwoFactorSecret ? true : false, AdminInfo: data.AdminInfo ? { create: data.AdminInfo } : undefined, Device: data.Device ? { create: data.Device } : undefined }),
         });
     });
 }
 function signAccessToken(adminId) {
     return __awaiter(this, void 0, void 0, function* () {
-        return jsonwebtoken_1.default.sign({ id: adminId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
+        return jsonwebtoken_1.default.sign({ id: adminId }, process.env.ACCESS_TOKEN_SECRET, {
+            expiresIn: "5m",
+        });
     });
 }
 function signRefreshToken(adminId) {
     return __awaiter(this, void 0, void 0, function* () {
-        return jsonwebtoken_1.default.sign({ id: adminId }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '3d' });
+        return jsonwebtoken_1.default.sign({ id: adminId }, process.env.REFRESH_TOKEN_SECRET, {
+            expiresIn: "3d",
+        });
     });
 }
 function comparePassword(plainPassword, hashedPassword) {
@@ -68,6 +77,31 @@ function administrationFind(adminId) {
         return db_1.default.administration.findUnique({
             where: { id: adminId },
             include: { AdminInfo: true, Device: true },
+        });
+    });
+}
+function administrationUpdate(adminId, data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const findAdmin = yield administrationFind(adminId);
+        if (!findAdmin)
+            throw new Error("Admin not found");
+        if (data.password && !data.oldPassword)
+            throw new Error("Old password is required");
+        if (data.password &&
+            data.oldPassword &&
+            !(yield comparePassword(data.oldPassword, findAdmin.password))) {
+            throw new Error("Old password is incorrect");
+        }
+        let hashedPassword;
+        if (data.password)
+            hashedPassword = yield bcryptjs_1.default.hash(data.password, 10);
+        return db_1.default.administration.update({
+            where: { id: adminId },
+            data: {
+                name: data.name || findAdmin.name,
+                email: data.email || findAdmin.email,
+                password: hashedPassword || findAdmin.password,
+            },
         });
     });
 }
@@ -105,6 +139,15 @@ function findAdminDeviceService(data) {
         return db_1.default.device.findFirst({ where: Object.assign({}, data) });
     });
 }
+function getContractsByApprovedService() {
+    return __awaiter(this, void 0, void 0, function* () {
+        return db_1.default.contract.findMany({
+            where: {
+                status: "approved",
+            },
+        });
+    });
+}
 function deleteAdminDeviceService(device_id) {
     return __awaiter(this, void 0, void 0, function* () {
         return db_1.default.device.delete({ where: { id: device_id } });
@@ -114,7 +157,7 @@ function getAllTaxAgentsService() {
     return __awaiter(this, void 0, void 0, function* () {
         return db_1.default.administration.findMany({
             where: {
-                role: "TAX_AGENT"
+                role: "TAX_AGENT",
             },
             select: {
                 id: true,
@@ -126,8 +169,8 @@ function getAllTaxAgentsService() {
                 updatedAt: true,
             },
             orderBy: {
-                createdAt: "asc"
-            }
+                createdAt: "asc",
+            },
         });
     });
 }
@@ -136,7 +179,7 @@ function getTaxAgentByIdService(id) {
         return db_1.default.administration.findUnique({
             where: {
                 id,
-                role: "TAX_AGENT"
+                role: "TAX_AGENT",
             },
             select: {
                 id: true,
@@ -146,13 +189,13 @@ function getTaxAgentByIdService(id) {
                 isTwoFactorAuth: true,
                 createdAt: true,
                 updatedAt: true,
-            }
+            },
         });
     });
 }
 function updateTaxAgentService(id, data) {
     return __awaiter(this, void 0, void 0, function* () {
-        const tax_agentFind = yield getTaxAgentByIdService(id);
+        const tax_agentFind = (yield getTaxAgentByIdService(id));
         if (!tax_agentFind)
             throw new Error("Tax agent not found");
         let hashedPassword;
@@ -164,15 +207,15 @@ function updateTaxAgentService(id, data) {
         return db_1.default.administration.update({
             where: {
                 id,
-                role: "TAX_AGENT"
+                role: "TAX_AGENT",
             },
             data: {
                 name: data.name || tax_agentFind.name,
                 email: data.email || tax_agentFind.email,
                 password: hashedPassword || tax_agentFind.password,
-                isTwoFactorAuth: twoFactorSecretHash && true || tax_agentFind.isTwoFactorAuth,
+                isTwoFactorAuth: (twoFactorSecretHash && true) || tax_agentFind.isTwoFactorAuth,
                 twoFactorSecret: twoFactorSecretHash || tax_agentFind.twoFactorSecret,
-            }
+            },
         });
     });
 }
@@ -184,8 +227,8 @@ function deleteTaxAgentService(id) {
         return db_1.default.administration.delete({
             where: {
                 id,
-                role: "TAX_AGENT"
-            }
+                role: "TAX_AGENT",
+            },
         });
     });
 }

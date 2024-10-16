@@ -32,6 +32,7 @@ const router = (0, express_1.Router)();
 router.post("/create-product-by-admin", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), fileUpload_1.imgUpload.array("images", 5), productController.createProductByAdmin);
 router.get("/get-products", productController.getProducts);
 router.get("/get-top-products", productController.getTopProducts);
+router.get("/get-products-discount", productController.getProductsDiscount);
 router.get("/get-new-products", productController.getNewProducts);
 router.get("/get-products-by-admin", auth_1.isAuthenticatedAdminstrator, (0, auth_1.isAdministrator)(adminstrator_type_1.Role.ADMIN), productController.getProductsByAdmin);
 router.get("/get-product/:id", productController.getProductById);

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProductByAdmin = exports.updateProductStatusByAdmin = exports.updateProductByAdmin = exports.getProductById = exports.getProductsByAdmin = exports.getNewProducts = exports.getTopProducts = exports.getProducts = exports.createProductByAdmin = void 0;
+exports.deleteProductByAdmin = exports.updateProductStatusByAdmin = exports.updateProductByAdmin = exports.getProductById = exports.getProductsByAdmin = exports.getProductsDiscount = exports.getNewProducts = exports.getTopProducts = exports.getProducts = exports.createProductByAdmin = void 0;
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
@@ -103,6 +103,19 @@ exports.getTopProducts = (0, express_async_handler_1.default)((req, res, next) =
 exports.getNewProducts = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const products = yield (0, product_service_1.getNewProductsService)();
+        res.status(200).json({
+            success: true,
+            message: "Products fetched successfully",
+            data: products,
+        });
+    }
+    catch (error) {
+        return next(new ErrorHandler_1.default(`Error getting products: ${error.message}`, 500));
+    }
+}));
+exports.getProductsDiscount = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const products = yield (0, product_service_1.getProductsDiscountService)();
         res.status(200).json({
             success: true,
             message: "Products fetched successfully",

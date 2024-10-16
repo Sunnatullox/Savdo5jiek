@@ -15,6 +15,13 @@ router.post(
 );
 router.post("/adminstrator-login", adminstratorController.adminstratorLogin);
 
+router.put(
+  "/adminstrator-update",
+  isAuthenticatedAdminstrator,
+  isAdministrator(Role.ADMIN),
+  adminstratorController.adminstratorUpdate
+);
+
 router.post(
   "/adminstrator-add-update-info",
   isAuthenticatedAdminstrator,
@@ -32,7 +39,7 @@ router.post(
 router.get(
   "/get-me-adminstrator",
   isAuthenticatedAdminstrator,
-  isAdministrator(Role.ADMIN),
+  isAdministrator(Role.ADMIN, Role.TAX_AGENT),
   adminstratorController.getAdminstratorInfo
 );
 
@@ -78,5 +85,11 @@ router.delete(
   adminstratorController.deleteTaxAgent
 );
 
+router.get(
+  "/get-contracts-by-approved",
+  isAuthenticatedAdminstrator,
+  isAdministrator(Role.ADMIN, Role.TAX_AGENT),
+  adminstratorController.getContractsByApproved
+);
 
 export default router;

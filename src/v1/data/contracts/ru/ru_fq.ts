@@ -141,9 +141,7 @@ export default async function RuFqContractHtml(
 	</p>
 	<p class="NoSpacing" style="text-align:center; font-size:8pt">
 		<strong><span style="font-family:Cambria; ">№</span></strong><strong><span
-			style="font-family:Cambria;"> ${
-        data.contractId || "_?_"
-      }</span></strong>
+			style="font-family:Cambria;"> ${data.contractId || "_?_"}</span></strong>
 	</p>
 	<p class="NoSpacing" style="text-align:center; font-size:8pt">
 		<strong><span style="font-family:Cambria; ">&#xa0;</span></strong>
@@ -159,13 +157,7 @@ export default async function RuFqContractHtml(
 	</p>
 	<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
 		<span style="font-family:Cambria">именуемый в тексте «ПОСТАВЩИК ПРОДУКЦИИ», начальник исправительной колонии № 5
-			(далее – КИН), действующей на основании ее Положения, </span><strong><span style="font-family:Cambria; ">${
-    admin.AdminInfo.first_name.toUpperCase()
-  } ${
-    admin.AdminInfo.middle_name.toUpperCase()	
-  } ${
-    admin.AdminInfo.sur_name.toUpperCase()
-  }</span></strong><span style="font-family:Cambria">, с одной стороны,
+			(далее – КИН), действующей на основании ее Положения, </span><strong><span style="font-family:Cambria; "> ${admin.AdminInfo.sur_name.toUpperCase()} ${admin.AdminInfo.first_name.toUpperCase()} ${admin.AdminInfo.middle_name.toUpperCase()} </span></strong><span style="font-family:Cambria">, с одной стороны,
 			именуемый в дальнейшем «ЗАКАЗЧИК». "в тексте известно</span><u><span
 				style="font-family:Cambria; ">физический</span></u><span style="font-family:Cambria">лицо (далее -
 			ГРАЖДАНИН)</span><strong><span style="font-family:Cambria;"> ${
@@ -315,8 +307,8 @@ export default async function RuFqContractHtml(
 				</h1>
 			</td>
 			${
-			isDelivery ? (
-			`
+        isDelivery
+          ? `
 			<td style="
             width: 45.35pt;
             border-right: 0.75pt solid #000000;
@@ -336,7 +328,8 @@ export default async function RuFqContractHtml(
 				</h1>
 			</td>
 			`
-			) : ""}
+          : ""
+      }
 			<td style="
             width: 51.65pt;
             border-right: 0.75pt solid #000000;
@@ -378,8 +371,9 @@ export default async function RuFqContractHtml(
 				</h1>
 			</td>
 		</tr>
-		${products.map((product: any, index: number) => {
-      return `
+		${products
+      .map((product: any, index: number) => {
+        return `
 			<tr style="height: 15.2pt">
 				<td style="
 				width: 15.85pt;
@@ -402,9 +396,7 @@ export default async function RuFqContractHtml(
 				vertical-align: top;
 			  ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
-						<span style="font-family: Cambria;">${
-              product.name_ru
-            }</span>
+						<span style="font-family: Cambria;">${product.name_ru}</span>
 					</p>
 				</td>
 				<td style="
@@ -415,9 +407,7 @@ export default async function RuFqContractHtml(
 				vertical-align: top;
 			  ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
-						<span style="font-family: Cambria;">${
-              product.unit_ru || "_?_"
-            }</span>
+						<span style="font-family: Cambria;">${product.unit_ru || "_?_"}</span>
 					</p>
 				</td>
 				<td style="
@@ -428,9 +418,7 @@ export default async function RuFqContractHtml(
 				vertical-align: top;
 			  ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
-						<span style="font-family: Cambria;">${
-              product.qty || 0
-            }</span>
+						<span style="font-family: Cambria;">${product.qty || 0}</span>
 					</p>
 				</td>
 				<td style="
@@ -443,16 +431,14 @@ export default async function RuFqContractHtml(
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
 						<span style="font-family: Cambria;">${
               formatNumber(
-                product.discount !== 0
-                  ? product.discount
-							: product.price
-						) || "_?_"
+                product.discount !== 0 ? product.discount : product.price
+              ) || "_?_"
             }</span>
 					</p>
 				</td>
 				${
-          isDelivery ? (
-          `<td style="
+          isDelivery
+            ? `<td style="
 			width: 45.35pt;
 			border: 0.75pt solid #000000;
 			padding-right: 5.03pt;
@@ -464,7 +450,7 @@ export default async function RuFqContractHtml(
 				</p>
 			</td>
 			`
-          ) : ""
+            : ""
         }
 				<td style="
 				width: 51.65pt;
@@ -475,11 +461,9 @@ export default async function RuFqContractHtml(
 			  ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
 						<span style="font-family: Cambria;">${
-					product.qty *
-					(product.discount !== 0
-						? product.discount
-						: product.price) || 0
-            	}</span>
+              product.qty *
+                (product.discount !== 0 ? product.discount : product.price) || 0
+            }</span>
 					</p>
 				</td>
 				<td style="
@@ -492,14 +476,13 @@ export default async function RuFqContractHtml(
 				vertical-align: top;
 			  ">
 					<p style="text-align: center; line-height: 108%; font-size: 8pt">
-						<span style="font-family: Cambria;">До ${
-              data.deliveryDate || "_?_"
-            }</span>
+						<span style="font-family: Cambria;">До ${data.deliveryDate || "_?_"}</span>
 					</p>
 				</td>
 			</tr>			
 			`;
-    }).join("")}
+      })
+      .join("")}
 		<tr style="height: 22.45pt">
 			<td style="
             width: 15.85pt;
@@ -566,8 +549,8 @@ export default async function RuFqContractHtml(
 				</p>
 			</td>
 			${
-			isDelivery ? (
-			`
+        isDelivery
+          ? `
 			<td style="
             width: 45.35pt;
             border-top: 0.75pt solid #000000;
@@ -582,7 +565,8 @@ export default async function RuFqContractHtml(
 				</p>
 			</td>
 			`
-			) : ""}
+          : ""
+      }
 			<td style="
             width: 51.65pt;
             border-top: 0.75pt solid #000000;
@@ -615,15 +599,17 @@ export default async function RuFqContractHtml(
 	<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
 		<span style="font-family:Cambria">Общая стоимость товара (без НДС):</span>
 		<strong>
-			<span style="font-family:Cambria;">${
-        data.writtenTotalPriceRu || "_?_"
-      }</span>
+			<span style="font-family:Cambria;">${data.writtenTotalPriceRu || "_?_"}</span>
 			</strong>
 	</p>
 	<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
 		<span style="font-family:Cambria">2.2 Оплата за продукцию осуществляется в национальной валюте Республики
-			Узбекистан (в сумах) на номер счета КИН №5 ${admin.AdminInfo.x_r}, на номер счета открытого филиала «Агробанк
-			Кызылтепинский» (МФО ${admin.AdminInfo.mfo}, СТИР ${admin.AdminInfo.inn}) с использованием одного из следующие методы или их сочетание:</span>
+			Узбекистан (в сумах) на номер счета КИН №5 ${
+        admin.AdminInfo.x_r
+      }, на номер счета открытого филиала «Агробанк
+			Кызылтепинский» (МФО ${admin.AdminInfo.mfo}, СТИР ${
+    admin.AdminInfo.inn
+  }) с использованием одного из следующие методы или их сочетание:</span>
 	</p>
 	<p class="NoSpacing" style="text-indent:35.4pt; text-align:justify; font-size:8pt">
 		<span style="font-family:Cambria">а) передачу наличных денег и/или пластиковой карты в кассы коммерческого
@@ -953,18 +939,28 @@ export default async function RuFqContractHtml(
 		</div>
 		<div class="column">
 			<h2>ЗАКАЗЧИК</h2>
-			<p><strong style="font-family:Cambria;">Гражданин:</strong> “${user.full_name}”</p>
+			<p><strong style="font-family:Cambria;">Гражданин:</strong> “${
+        user.full_name
+      }”</p>
 
-			<p><strong style="font-family:Cambria;">Тел:</strong> ${user.phone_number || "_?_"}</p>
-			<p><strong style="font-family:Cambria;">Серия паспорта:</strong> ${user.passport_no || "_?_"}</p>
-			<p><strong style="font-family:Cambria;">ИНН:</strong> ${user.pin_jshshir || "_?_"}</p>
+			<p><strong style="font-family:Cambria;">Тел:</strong> ${
+        user.phone_number || "_?_"
+      }</p>
+			<p><strong style="font-family:Cambria;">Серия паспорта:</strong> ${
+        user.passport_no || "_?_"
+      }</p>
+			<p><strong style="font-family:Cambria;">ИНН:</strong> ${
+        user.pin_jshshir || "_?_"
+      }</p>
 
-			<p><strong style="font-family:Cambria;">Адрес:</strong> ${user.address || "_?_"}</p>
+			<p><strong style="font-family:Cambria;">Адрес:</strong> ${
+        user.address || "_?_"
+      }</p>
 			<p class="noSpacing_indent"><strong style="font-family:Cambria;">Гражданин:</strong> ${user.first_name
-          .charAt(0)
-          .toUpperCase()}.${user.middle_name.charAt(0).toUpperCase()}.${
-    user.sur_name.charAt(0).toUpperCase() +
-    user.sur_name.slice(1).toLowerCase()
+        .charAt(0)
+        .toUpperCase()}.${user.sur_name.charAt(0).toUpperCase()}.${
+    user.middle_name.charAt(0).toUpperCase() +
+    user.middle_name.slice(1).toLowerCase()
   }</p>
 		</div>
 	</div>

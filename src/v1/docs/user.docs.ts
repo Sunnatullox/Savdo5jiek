@@ -58,6 +58,28 @@
 
 /**
  * @swagger
+ * /api/v1/user/get-user-id-by-admin/{id}:
+ *  get:
+ *    summary: Get user by id
+ *    tags: [User]
+ *    description: Get user by id
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *    responses:
+ *      '200':
+ *        description: A successful response    
+ *      '400':
+ *        description: Bad request
+ *      '401':
+ *        description: Unauthorized
+ *      '500':
+ *        description: Internal server error
+ */
+
+/**
+ * @swagger
  * /api/v1/user/update-user-data:
  *  patch:
  *    summary: Update user
@@ -90,3 +112,45 @@
  *      '500':
  *        description: Internal server error
  */
+
+/**
+ * @swagger
+ * /api/v1/user/get-all-users-by-admin:
+ *  get:
+ *    summary: Get all users
+ *    tags: [User]
+ *    description: Get all users
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ *      '400':
+ *        description: Bad request
+ *      '401':
+ *        description: Unauthorized
+ *      '500':
+ *        description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /api/v1/user/delete-user-by-admin/{id}:
+ *  delete:
+ *    summary: Delete user
+ *    tags: [User]
+ *    description: Delete user
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ *      '400':
+ *        description: Bad request
+ *      '401':
+ *        description: Unauthorized
+ *      '500':
+ *        description: Internal server error
+ */ 
+
+

@@ -180,6 +180,21 @@
  *        description: Internal server error
  */
 
+// get products discount
+/**
+ * @swagger
+ * /api/v1/product/get-products-discount:
+ *  get:
+ *    summary: Get products discount
+ *    tags: [Product]
+ *    responses:
+ *      200:
+ *        description: Products fetched successfully
+ *      401:
+ *        description: Unauthorized
+ *      500:
+ *        description: Internal server error
+ */
 
 // get product by id
 /**

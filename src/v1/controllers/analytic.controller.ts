@@ -8,6 +8,7 @@ import {
   get12MonthProductSalesAnalyticsService,
   get12MonthUserRegistrationAnalyticsService,
   getCategoryAnalyticsService,
+  getContractsByApprovedService,
   getLowStockProductsService,
 } from "../services/analytic.service";
 
@@ -88,6 +89,20 @@ export const getLowStockProducts = asyncHandler(
       res.status(200).json({
         success: true,
         products,
+      });
+    } catch (error: any) {
+      next(new ErrorHandler(`Please try again later: ${error.message}`, 500));
+    }
+  }
+);
+
+export const getContractsByApproved = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const contracts = await getContractsByApprovedService();
+      res.status(200).json({
+        success: true,
+        contracts,
       });
     } catch (error: any) {
       next(new ErrorHandler(`Please try again later: ${error.message}`, 500));

@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUser = exports.updateUserLegalInfo = exports.getUserById = exports.findOrCreateDevice = exports.findOrCreateUser = exports.getUserData = exports.getAccessToken = void 0;
+exports.deleteUserService = exports.getAllUsersByAdminService = exports.updateUser = exports.updateUserLegalInfo = exports.getUserById = exports.findOrCreateDevice = exports.findOrCreateUser = exports.getUserData = exports.getAccessToken = void 0;
 exports.findUserDeviceService = findUserDeviceService;
 exports.deleteUserDeviceService = deleteUserDeviceService;
+const fs_1 = __importDefault(require("fs"));
 const db_1 = __importDefault(require("../config/db"));
 const ErrorHandler_1 = __importDefault(require("../middleware/ErrorHandler"));
 function findUserDeviceService(device_id, user_id) {
@@ -42,17 +43,17 @@ const getAccessToken = (code, redirect_uri) => __awaiter(void 0, void 0, void 0,
     const clientId = process.env.ONE_ID_CLIENT_ID;
     const clientSecret = process.env.ONE_ID_CLIENT_SECRET;
     const response = yield fetch("https://sso.egov.uz/sso/oauth/Authorization.do", {
-        method: 'POST',
+        method: "POST",
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            "Content-Type": "application/x-www-form-urlencoded",
         },
         body: new URLSearchParams({
             grant_type: "one_authorization_code",
             client_id: clientId,
             client_secret: clientSecret,
             code: code,
-            redirect_uri: redirect_uri
-        })
+            redirect_uri: redirect_uri,
+        }),
     });
     const data = yield response.json();
     if (data.error) {
@@ -66,17 +67,17 @@ const getUserData = (accessToken) => __awaiter(void 0, void 0, void 0, function*
     const clientSecret = process.env.ONE_ID_CLIENT_SECRET;
     const scope = process.env.ONE_ID_SCOPE;
     const response = yield fetch("https://sso.egov.uz/sso/oauth/Authorization.do", {
-        method: 'POST',
+        method: "POST",
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            "Content-Type": "application/x-www-form-urlencoded",
         },
         body: new URLSearchParams({
             grant_type: "one_access_token_identify",
             client_id: clientId,
             client_secret: clientSecret,
             access_token: accessToken,
-            scope: scope
-        })
+            scope: scope,
+        }),
     });
     const data = yield response.json();
     if (data.error) {
@@ -171,13 +172,12 @@ const findOrCreateDevice = (user, ip, ua) => __awaiter(void 0, void 0, void 0, f
     const findDevice = yield db_1.default.device.findFirst({
         where: {
             ip: ip || "",
-            browser: ua.browser || "",
             os: ua.os || "",
             device: ua.platform || "",
             userId: user.id,
         },
     });
-    if (!findDevice) {
+    if (!findDevice && ip !== "::1") {
         yield db_1.default.device.create({
             data: {
                 ip: ip || "",
@@ -229,3 +229,113 @@ const updateUser = (userId, userData) => __awaiter(void 0, void 0, void 0, funct
     return updatedUser;
 });
 exports.updateUser = updateUser;
+const getAllUsersByAdminService = () => __awaiter(void 0, void 0, void 0, function* () {
+    return yield db_1.default.user.findMany({
+        include: {
+            legal_info: true,
+        },
+        orderBy: {
+            createdAt: "asc",
+        },
+    });
+});
+exports.getAllUsersByAdminService = getAllUsersByAdminService;
+const deleteUserService = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const transaction = yield db_1.default.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
+        const findUser = yield (0, exports.getUserById)(userId);
+        if (!findUser) {
+            throw new ErrorHandler_1.default("User not found", 404);
+        }
+        const userContract = yield tx.contract.findMany({
+            where: {
+                userId: userId,
+                status: "approved",
+            },
+        });
+        if (userContract.length > 0) {
+            throw new ErrorHandler_1.default("User has an active contract", 400);
+        }
+        const userPayment = yield tx.payment.findMany({
+            where: {
+                userId: userId,
+                status: "approved",
+            },
+        });
+        if (userPayment.length > 0) {
+            throw new ErrorHandler_1.default("User has an active payment", 400);
+        }
+        const userContracts = yield tx.contract.findMany({
+            where: {
+                userId: userId,
+            },
+        });
+        for (const contract of userContracts) {
+            const contractFile = contract === null || contract === void 0 ? void 0 : contract.contractFile;
+            if (contractFile) {
+                if (contractFile.contractFileUz) {
+                    yield deleteFile(contractFile.contractFileUz);
+                }
+                if (contractFile.contractFileRu) {
+                    yield deleteFile(contractFile.contractFileRu);
+                }
+            }
+        }
+        const userPayments = yield tx.payment.findMany({
+            where: {
+                userId,
+            },
+        });
+        for (const payment of userPayments) {
+            const paymentFile = payment === null || payment === void 0 ? void 0 : payment.receiptImage;
+            if (paymentFile) {
+                yield deleteFile(paymentFile);
+            }
+        }
+        yield tx.contract.deleteMany({
+            where: {
+                userId: userId,
+            },
+        });
+        yield tx.payment.deleteMany({
+            where: {
+                userId,
+            },
+        });
+        yield tx.message.deleteMany({
+            where: {
+                userId,
+            },
+        });
+        yield tx.device.deleteMany({
+            where: {
+                userId,
+            },
+        });
+        yield tx.legalInfo.delete({
+            where: {
+                userId,
+            },
+        });
+        yield tx.user.delete({
+            where: {
+                id: userId,
+            },
+        });
+    }));
+    return transaction;
+});
+exports.deleteUserService = deleteUserService;
+function deleteFile(fileUrl) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const url = new URL(fileUrl);
+        const filePath = `.${url.pathname}`;
+        if (fs_1.default.existsSync(filePath)) {
+            yield fs_1.default.promises.unlink(filePath).catch((err) => {
+                if (err === "ENOENT") {
+                    return;
+                }
+                throw err;
+            });
+        }
+    });
+}

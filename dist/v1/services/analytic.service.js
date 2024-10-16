@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getLowStockProductsService = exports.get12MonthProductSalesAnalyticsService = exports.get12MonthContractAnalyticsService = exports.get12MonthUserRegistrationAnalyticsService = exports.get12MonthPaymentAnalyticsService = void 0;
 exports.getCategoryAnalyticsService = getCategoryAnalyticsService;
+exports.getContractsByApprovedService = getContractsByApprovedService;
 const db_1 = __importDefault(require("../config/db"));
 const get12MonthPaymentAnalyticsService = () => __awaiter(void 0, void 0, void 0, function* () {
     const today = new Date();
@@ -208,7 +209,7 @@ const get12MonthContractAnalyticsService = () => __awaiter(void 0, void 0, void 
         month: orderedMonthNames[index],
         totalContracts: 0,
         totalAmount: 0,
-        approvedPayments: 0,
+        rejectedContracts: 0, // Change from approvedPayments to rejectedContracts
     }));
     contractsLastYear.forEach((contract) => {
         const contractDate = new Date(contract.createdAt);
@@ -222,12 +223,10 @@ const get12MonthContractAnalyticsService = () => __awaiter(void 0, void 0, void 
         }
         monthlyData[monthIndex].totalContracts++;
         monthlyData[monthIndex].totalAmount += contract.totalPrice;
-        contract.Payment.forEach((payment) => {
-            const typedPayment = payment;
-            if (typedPayment.status === "approved") {
-                monthlyData[monthIndex].approvedPayments += typedPayment.amount;
-            }
-        });
+        // Check if the contract is rejected and increment the count
+        if (contract.status === "rejected") {
+            monthlyData[monthIndex].rejectedContracts++;
+        }
     });
     // Calculate percentage change and level for the last month
     const lastMonthData = monthlyData[0];
@@ -436,3 +435,29 @@ const getLowStockProductsService = () => __awaiter(void 0, void 0, void 0, funct
     return products.map((product) => (Object.assign(Object.assign({}, product), { color: product.stock < 50 ? "red" : "yellow" })));
 });
 exports.getLowStockProductsService = getLowStockProductsService;
+function getContractsByApprovedService() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const today = new Date();
+        const lastYear = new Date(today);
+        lastYear.setFullYear(today.getFullYear() - 1);
+        // 12 oy davomida "approved" bo'lgan kontraktlar sonini olish
+        const approvedContractsLastYearCount = yield db_1.default.contract.count({
+            where: {
+                status: "approved",
+                createdAt: {
+                    gte: lastYear,
+                },
+            },
+        });
+        // Umumiy "approved" bo'lgan kontraktlar sonini olish
+        const totalApprovedContractsCount = yield db_1.default.contract.count({
+            where: {
+                status: "approved",
+            },
+        });
+        return {
+            approvedContractsLastYearCount,
+            totalApprovedContractsCount,
+        };
+    });
+}

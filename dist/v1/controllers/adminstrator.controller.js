@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTaxAgent = exports.updateTaxAgent = exports.getTaxAgentById = exports.getAllTaxAgents = exports.deleteAdminProfile = exports.deleteAdminDevice = exports.getAdminstratorInfo = exports.adminstratorTwoFactorAuthUpdateAndCreate = exports.adminstratorAddAndUpdateInfo = exports.adminstratorLogin = exports.adminstratorOTPVerify = exports.adminstratorOTP = void 0;
+exports.getContractsByApproved = exports.deleteTaxAgent = exports.updateTaxAgent = exports.getTaxAgentById = exports.getAllTaxAgents = exports.deleteAdminProfile = exports.deleteAdminDevice = exports.getAdminstratorInfo = exports.adminstratorTwoFactorAuthUpdateAndCreate = exports.adminstratorAddAndUpdateInfo = exports.adminstratorUpdate = exports.adminstratorLogin = exports.adminstratorOTPVerify = exports.adminstratorOTP = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const ErrorHandler_1 = __importDefault(require("../middleware/ErrorHandler"));
 const db_1 = __importDefault(require("../config/db"));
@@ -37,7 +37,7 @@ const request_ip_1 = __importDefault(require("request-ip"));
 const express_useragent_1 = __importDefault(require("express-useragent"));
 exports.adminstratorOTP = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, twoFactorSecret } = req.body;
         // Delete old and unverified OTP records
         yield db_1.default.oTP.deleteMany({
             where: {
@@ -64,7 +64,7 @@ exports.adminstratorOTP = (0, express_async_handler_1.default)((req, res, next) 
         yield db_1.default.oTP.create({
             data: {
                 email,
-                user: { name, email, password, role },
+                user: { name, email, password, twoFactorSecret, role },
                 code: otp,
                 type: role,
                 expiresAt: new Date(Date.now() + 1000 * 60 * 5),
@@ -73,6 +73,7 @@ exports.adminstratorOTP = (0, express_async_handler_1.default)((req, res, next) 
         res.status(200).json({
             success: true,
             message: "OTP sent to email",
+            data: email
         });
     }
     catch (error) {
@@ -101,7 +102,7 @@ exports.adminstratorOTPVerify = (0, express_async_handler_1.default)((req, res, 
             yield db_1.default.oTP.delete({ where: { id: checkOTP.id } });
             return next(new ErrorHandler_1.default("OTP expired", 400));
         }
-        const adminData = Object.assign(Object.assign({}, checkOTP.user), { isTwoFactorAuth: false, twoFactorSecret: "" });
+        const adminData = Object.assign({}, checkOTP.user);
         yield (0, adminstration_service_1.createAdministration)(adminData);
         yield db_1.default.oTP.delete({ where: { id: checkOTP.id } });
         res.status(200).json({
@@ -131,7 +132,6 @@ exports.adminstratorLogin = (0, express_async_handler_1.default)((req, res, next
         const findDevice = checkUser.Device
             ? yield (0, adminstration_service_1.findAdminDeviceService)({
                 ip,
-                browser: ua.browser || "",
                 os: ua.os || "",
                 device: ua.platform || "",
                 administrationId: checkUser.id,
@@ -145,7 +145,7 @@ exports.adminstratorLogin = (0, express_async_handler_1.default)((req, res, next
                 return next(new ErrorHandler_1.default("Invalid two factor secret", 400));
             }
         }
-        if (!findDevice) {
+        if (!findDevice && ip !== "::1") {
             yield db_1.default.device.create({
                 data: {
                     ip: ip || "",
@@ -157,6 +157,20 @@ exports.adminstratorLogin = (0, express_async_handler_1.default)((req, res, next
             });
         }
         (0, createToken_1.sendTokenAdmin)(checkUser, 200, res);
+    }
+    catch (error) {
+        return next(new ErrorHandler_1.default(error.message, 500));
+    }
+}));
+exports.adminstratorUpdate = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const { name, email, password, oldPassword } = req.body;
+        yield (0, adminstration_service_1.administrationUpdate)((_a = req.adminstrator) === null || _a === void 0 ? void 0 : _a.id, { name, email, password, oldPassword });
+        res.status(200).json({
+            success: true,
+            message: "Admin updated successfully",
+        });
     }
     catch (error) {
         return next(new ErrorHandler_1.default(error.message, 500));
@@ -264,7 +278,7 @@ exports.deleteAdminDevice = (0, express_async_handler_1.default)((req, res, next
         const device_id = req.params.device_id;
         const findDevice = yield (0, adminstration_service_1.findAdminDeviceService)({
             administrationId: (_a = req.adminstrator) === null || _a === void 0 ? void 0 : _a.id,
-            device_id,
+            id: device_id,
         });
         if (!findDevice) {
             return next(new ErrorHandler_1.default("Device not found", 400));
@@ -326,7 +340,7 @@ exports.getTaxAgentById = (0, express_async_handler_1.default)((req, res, next) 
 exports.updateTaxAgent = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = req.params.id;
-        const data = req.body;
+        const data = req.body.taxAgent;
         const taxAgent = yield (0, adminstration_service_1.updateTaxAgentService)(id, data);
         res.status(200).json({
             success: true,
@@ -346,6 +360,19 @@ exports.deleteTaxAgent = (0, express_async_handler_1.default)((req, res, next) =
             success: true,
             message: "Tax agent deleted successfully",
             data: taxAgent,
+        });
+    }
+    catch (error) {
+        return next(new ErrorHandler_1.default(error.message, 500));
+    }
+}));
+exports.getContractsByApproved = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const contracts = yield (0, adminstration_service_1.getContractsByApprovedService)();
+        res.status(200).json({
+            success: true,
+            message: "Contracts by approved",
+            data: contracts,
         });
     }
     catch (error) {

@@ -10,7 +10,7 @@ const router = Router();
 router.get(
   "/get-12-month-payment-analytics",
   isAuthenticatedAdminstrator,
-  isAdministrator(Role.ADMIN),
+  isAdministrator(Role.ADMIN, Role.TAX_AGENT),
   analyticsController.get12MonthPaymentAnalytics
 );
 
@@ -24,7 +24,7 @@ router.get(
 router.get(
   "/get-12-month-contract-analytics",
   isAuthenticatedAdminstrator,
-  isAdministrator(Role.ADMIN),
+  isAdministrator(Role.ADMIN, Role.TAX_AGENT),
   analyticsController.get12MonthContractAnalytics
 );
 
@@ -47,6 +47,13 @@ router.get(
   isAuthenticatedAdminstrator,
   isAdministrator(Role.ADMIN),
   analyticsController.getLowStockProducts
+);
+
+router.get(
+  "/get-contracts-by-approved-analytics",
+  isAuthenticatedAdminstrator,
+  isAdministrator(Role.ADMIN,Role.TAX_AGENT),
+  analyticsController.getContractsByApproved
 );
 
 export default router;
