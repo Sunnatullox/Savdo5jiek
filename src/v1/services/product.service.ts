@@ -59,7 +59,7 @@ export async function getProductsService(
       category: true,
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
     skip: (page - 1) * limit,
     take: limit,
@@ -77,7 +77,7 @@ export async function getTopProductsService() {
       products: true,
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
 
@@ -115,7 +115,7 @@ export async function getTopProductsService() {
       category: true,
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
 
@@ -137,7 +137,7 @@ export async function getNewProductsService() {
       category: true,
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
 
@@ -153,7 +153,7 @@ export async function getProductsDiscountService() {
       category: true,
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
 
@@ -166,7 +166,7 @@ export async function getProductsByAdminService() {
       category: true,
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
 }

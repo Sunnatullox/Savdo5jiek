@@ -35,7 +35,7 @@ export const getContactUsIsNotReadAdmin = asyncHandler(
       const contactUs = await getContactUsList({
         where: { isRead: false },
         orderBy: {
-          createdAt: 'asc',
+          createdAt: 'desc',
         },
       });
       res.status(200).json({
@@ -54,7 +54,7 @@ export const getContactUsListAdmin = asyncHandler(
     try {
       const contactUs = await getContactUsList({
         orderBy: {
-          createdAt: 'asc',
+          createdAt: 'desc',
         },
       });
       res.status(200).json({

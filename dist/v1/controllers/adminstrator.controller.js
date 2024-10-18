@@ -181,8 +181,12 @@ exports.adminstratorAddAndUpdateInfo = (0, express_async_handler_1.default)((req
     try {
         const { company_name, first_name, middle_name, sur_name, address, tel, inn, oked, x_r, bank, mfo, } = req.body;
         const findAdmin = yield (0, adminstration_service_1.administrationFind)((_a = req.adminstrator) === null || _a === void 0 ? void 0 : _a.id);
+        const adminInfo = yield db_1.default.adminInfo.findMany();
         if (!findAdmin || findAdmin.role !== "ADMIN") {
             return next(new ErrorHandler_1.default("Admin not found", 400));
+        }
+        if (adminInfo.length >= 1) {
+            return next(new ErrorHandler_1.default("Admin info already exists", 400));
         }
         const adminInfoData = {
             company_name: company_name || ((_b = findAdmin.AdminInfo) === null || _b === void 0 ? void 0 : _b.company_name),

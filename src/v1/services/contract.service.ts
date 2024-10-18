@@ -18,6 +18,9 @@ export async function getContractsByAdminService() {
         },
       }
     },
+    orderBy: {
+      createdAt: 'desc',
+    },
   });
 }
 
@@ -32,7 +35,7 @@ export async function getContractsByIdService(id: string, is_LLC?: boolean) {
       }
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
 }
@@ -92,7 +95,7 @@ export async function newNotifsContractisAdmin() {
       User: true
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   })
 }

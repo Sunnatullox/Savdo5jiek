@@ -38,7 +38,7 @@ exports.getContactUsIsNotReadAdmin = (0, express_async_handler_1.default)((req, 
         const contactUs = yield (0, contact_servoce_1.getContactUsList)({
             where: { isRead: false },
             orderBy: {
-                createdAt: 'asc',
+                createdAt: 'desc',
             },
         });
         res.status(200).json({
@@ -55,7 +55,7 @@ exports.getContactUsListAdmin = (0, express_async_handler_1.default)((req, res, 
     try {
         const contactUs = yield (0, contact_servoce_1.getContactUsList)({
             orderBy: {
-                createdAt: 'asc',
+                createdAt: 'desc',
             },
         });
         res.status(200).json({

@@ -56,7 +56,7 @@ export const getMessagesUserService = async (userId: string): Promise<object[]> 
       },
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
   return messages;
@@ -80,7 +80,7 @@ export const getMessagesAdminService = async (adminId: string): Promise<object[]
       },
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
   return messages;
@@ -98,7 +98,7 @@ export const getMessagesAdminByContractIdService = async (
       user: true,
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
 
@@ -126,7 +126,7 @@ export const getMessagesUserByContractIdService = async (
       user: true,
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
   await prisma.message.updateMany({
@@ -153,7 +153,7 @@ export const getNotficationUserService = async (
       isAdmin: true,
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
   return messages;
@@ -169,7 +169,7 @@ export const getNotficationAdminService = async (): Promise<object[]> => {
       user: true,
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
   return messages;

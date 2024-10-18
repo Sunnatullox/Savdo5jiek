@@ -27,7 +27,7 @@ const deleteExpiredContracts = async () => {
         },
       },
       orderBy: {
-        createdAt: 'asc',
+        createdAt: 'desc',
       },
       include: {
         Payment: true,

@@ -42,7 +42,7 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
             where: { id: { in: products.map((product) => product.id) } },
             include: { category: true },
             orderBy: {
-                createdAt: 'asc',
+                createdAt: 'desc',
             },
         });
         // Check if requested quantity exceeds available stock
@@ -62,8 +62,7 @@ exports.createContractByUser = (0, express_async_handler_1.default)((req, res, n
         }
         const findAdmin = (yield db_1.default.administration.findFirst({
             where: { role: "ADMIN", AdminInfo: { isNot: null } },
-            include: { AdminInfo: true },
-            orderBy: { createdAt: "asc" },
+            include: { AdminInfo: true }
         }));
         if (!findAdmin) {
             return next(new ErrorHandler_1.default("Admin not found", 404));
@@ -355,8 +354,11 @@ exports.getContractsByTaxAgent = (0, express_async_handler_1.default)((req, res,
     try {
         const contracts = yield (0, contract_service_1.getContractByTaxAgentService)({
             where: { status: "approved" },
+            include: {
+                User: true
+            },
             orderBy: {
-                createdAt: 'asc',
+                createdAt: 'desc',
             },
         });
         res.status(200).json({

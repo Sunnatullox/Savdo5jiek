@@ -71,7 +71,7 @@ function getProductsService(page, limit, search, categorie) {
                 category: true,
             },
             orderBy: {
-                createdAt: 'asc',
+                createdAt: 'desc',
             },
             skip: (page - 1) * limit,
             take: limit,
@@ -90,7 +90,7 @@ function getTopProductsService() {
                 products: true,
             },
             orderBy: {
-                createdAt: 'asc',
+                createdAt: 'desc',
             },
         });
         // Mahsulotlar bo'yicha sotilgan sonini hisoblash
@@ -123,7 +123,7 @@ function getTopProductsService() {
                 category: true,
             },
             orderBy: {
-                createdAt: 'asc',
+                createdAt: 'desc',
             },
         });
         return topProducts;
@@ -144,7 +144,7 @@ function getNewProductsService() {
                 category: true,
             },
             orderBy: {
-                createdAt: 'asc',
+                createdAt: 'desc',
             },
         });
         return newProducts;
@@ -160,7 +160,7 @@ function getProductsDiscountService() {
                 category: true,
             },
             orderBy: {
-                createdAt: 'asc',
+                createdAt: 'desc',
             },
         });
         return products;
@@ -173,7 +173,7 @@ function getProductsByAdminService() {
                 category: true,
             },
             orderBy: {
-                createdAt: 'asc',
+                createdAt: 'desc',
             },
         });
     });

@@ -224,8 +224,14 @@ export const adminstratorAddAndUpdateInfo = asyncHandler(
         req.adminstrator?.id as string
       );
 
+      const adminInfo = await prisma.adminInfo.findMany();
+
       if (!findAdmin || findAdmin.role !== "ADMIN") {
         return next(new ErrorHandler("Admin not found", 400));
+      }
+
+      if(adminInfo.length >= 1) {
+        return next(new ErrorHandler("Admin info already exists", 400));
       }
 
       const adminInfoData = {

@@ -10,7 +10,7 @@ const router = Router();
 router.get(
   "/get-12-month-payment-analytics",
   isAuthenticatedAdminstrator,
-  isAdministrator(Role.ADMIN, Role.TAX_AGENT),
+  isAdministrator(Role.ADMIN),
   analyticsController.get12MonthPaymentAnalytics
 );
 
@@ -24,7 +24,7 @@ router.get(
 router.get(
   "/get-12-month-contract-analytics",
   isAuthenticatedAdminstrator,
-  isAdministrator(Role.ADMIN, Role.TAX_AGENT),
+  isAdministrator(Role.ADMIN),
   analyticsController.get12MonthContractAnalytics
 );
 

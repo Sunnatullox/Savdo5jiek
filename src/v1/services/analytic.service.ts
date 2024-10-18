@@ -13,7 +13,7 @@ export const get12MonthPaymentAnalyticsService = async (): Promise<any> => {
       status: "approved",
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
 
@@ -104,7 +104,7 @@ export const get12MonthUserRegistrationAnalyticsService =
         },
       },
       orderBy: {
-        createdAt: 'asc',
+        createdAt: 'desc',
       },
     });
 
@@ -191,7 +191,7 @@ export const get12MonthContractAnalyticsService = async (): Promise<any> => {
       Payment: true,
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
 
@@ -295,7 +295,7 @@ export const get12MonthProductSalesAnalyticsService = async (): Promise<any> => 
       },
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
 
@@ -311,7 +311,7 @@ export const get12MonthProductSalesAnalyticsService = async (): Promise<any> => 
       },
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
 
@@ -436,7 +436,7 @@ export async function getCategoryAnalyticsService() {
   // 1. Barcha kategoriyalarni olish
   const categories = await prisma.categorie.findMany({
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
 
@@ -449,7 +449,7 @@ export async function getCategoryAnalyticsService() {
       },
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
 
@@ -493,29 +493,54 @@ export const getLowStockProductsService = async (): Promise<any> => {
 };
 
 export async function getContractsByApprovedService() {
-  const today = new Date();
-  const lastYear = new Date(today);
-  lastYear.setFullYear(today.getFullYear() - 1);
+    const today = new Date();
+    const lastYear = new Date(today);
+    lastYear.setFullYear(today.getFullYear() - 1);
 
-  // 12 oy davomida "approved" bo'lgan kontraktlar sonini olish
-  const approvedContractsLastYearCount = await prisma.contract.count({
-    where: {
-      status: "approved",
-      createdAt: {
-        gte: lastYear,
-      },
-    },
-  });
+    // 12 oy davomida "approved" bo'lgan kontraktlar sonini olish
+    const approvedContractsLastYearCount = await prisma.contract.count({
+        where: {
+            status: "approved",
+            createdAt: {
+                gte: lastYear,
+            },
+        },
+    });
 
-  // Umumiy "approved" bo'lgan kontraktlar sonini olish
-  const totalApprovedContractsCount = await prisma.contract.count({
-    where: {
-      status: "approved",
-    },
-  });
+    // Umumiy "approved" bo'lgan kontraktlar sonini olish
+    const totalApprovedContractsCount = await prisma.contract.count({
+        where: {
+            status: "approved",
+        },
+    });
 
-  return {
-    approvedContractsLastYearCount,
-    totalApprovedContractsCount,
-  };
+    // 12 oy davomida "approved" bo'lgan kontraktlar jami summasini olish
+    const approvedContractsLastYearTotalAmount = await prisma.contract.aggregate({
+        _sum: {
+            totalPrice: true,
+        },
+        where: {
+            status: "approved",
+            createdAt: {
+                gte: lastYear,
+            },
+        },
+    });
+
+    // Umumiy "approved" bo'lgan kontraktlar jami summasini olish
+    const totalApprovedContractsTotalAmount = await prisma.contract.aggregate({
+        _sum: {
+            totalPrice: true,
+        },
+        where: {
+            status: "approved",
+        },
+    });
+
+    return {
+        approvedContractsLastYearCount,
+        totalApprovedContractsCount,
+        approvedContractsLastYearTotalAmount: approvedContractsLastYearTotalAmount._sum.totalPrice || 0,
+        totalApprovedContractsTotalAmount: totalApprovedContractsTotalAmount._sum.totalPrice || 0,
+    };
 }

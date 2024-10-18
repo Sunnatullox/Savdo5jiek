@@ -62,7 +62,7 @@ const getMessagesUserService = (userId) => __awaiter(void 0, void 0, void 0, fun
             },
         },
         orderBy: {
-            createdAt: 'asc',
+            createdAt: 'desc',
         },
     });
     return messages;
@@ -86,7 +86,7 @@ const getMessagesAdminService = (adminId) => __awaiter(void 0, void 0, void 0, f
             },
         },
         orderBy: {
-            createdAt: 'asc',
+            createdAt: 'desc',
         },
     });
     return messages;
@@ -101,7 +101,7 @@ const getMessagesAdminByContractIdService = (contractId) => __awaiter(void 0, vo
             user: true,
         },
         orderBy: {
-            createdAt: 'asc',
+            createdAt: 'desc',
         },
     });
     yield db_1.default.message.updateMany({
@@ -124,7 +124,7 @@ const getMessagesUserByContractIdService = (contractId, userId) => __awaiter(voi
             user: true,
         },
         orderBy: {
-            createdAt: 'asc',
+            createdAt: 'desc',
         },
     });
     yield db_1.default.message.updateMany({
@@ -149,7 +149,7 @@ const getNotficationUserService = (userId) => __awaiter(void 0, void 0, void 0, 
             isAdmin: true,
         },
         orderBy: {
-            createdAt: 'asc',
+            createdAt: 'desc',
         },
     });
     return messages;
@@ -165,7 +165,7 @@ const getNotficationAdminService = () => __awaiter(void 0, void 0, void 0, funct
             user: true,
         },
         orderBy: {
-            createdAt: 'asc',
+            createdAt: 'desc',
         },
     });
     return messages;

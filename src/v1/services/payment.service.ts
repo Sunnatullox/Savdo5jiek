@@ -31,7 +31,7 @@ export async function getPaymentsByUserIdService(
   return await prisma.payment.findMany({
     where: { contractId, userId },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
 }
@@ -52,7 +52,7 @@ export async function getPaymentsByAdminService() {
       user: true,
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
 }
@@ -69,7 +69,7 @@ export async function getPaymentsByContractIdAdminService(contractId: string) {
       user: true,
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
   
@@ -82,7 +82,7 @@ export async function getNotificationPaymentByAdminService() {
       user:true,
     },
     orderBy: {
-      createdAt: 'asc',
+      createdAt: 'desc',
     },
   });
 }

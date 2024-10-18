@@ -9,7 +9,6 @@ import {
   getContractsByAdminService,
   updateContractService,
   getContractByIdService,
-  deleteContractService,
   newNotifsContractisAdmin,
   getContractByTaxAgentService,
 } from "../services/contract.service";
@@ -27,7 +26,7 @@ import { ILegalInfo, IUser } from "../types/user.type";
 import { IPayment } from "../types/payment.type";
 import { IContract } from "../types/contract.type";
 import { deletePayment } from "../services/payment.service";
-import { deleteMessageAdminService, deleteMessageUserService } from "../services/messages.service";
+import { deleteMessageAdminService } from "../services/messages.service";
 
 export const createContractByUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -47,7 +46,7 @@ export const createContractByUser = asyncHandler(
         where: { id: { in: products.map((product) => product.id) } },
         include: { category: true },
         orderBy: {
-          createdAt: 'asc',
+          createdAt: 'desc',
         },
       });
 
@@ -77,8 +76,7 @@ export const createContractByUser = asyncHandler(
 
       const findAdmin = (await prisma.administration.findFirst({
         where: { role: "ADMIN", AdminInfo:{isNot:null} },
-        include: { AdminInfo: true },
-        orderBy: { createdAt: "asc" },
+        include: { AdminInfo: true }
       })) as unknown as Administrator & { AdminInfo: AdminInfo };
       if (!findAdmin) {
         return next(new ErrorHandler("Admin not found", 404));
@@ -479,8 +477,11 @@ export const getContractsByTaxAgent = asyncHandler(
     try {
       const contracts = await getContractByTaxAgentService({
         where: { status: "approved" },
+        include:{
+          User:true
+        },
         orderBy: {
-          createdAt: 'asc',
+          createdAt: 'desc',
         },
       });
       res.status(200).json({
