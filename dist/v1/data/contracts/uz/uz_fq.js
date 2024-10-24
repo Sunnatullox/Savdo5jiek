@@ -403,7 +403,10 @@ function UzFqContractHtml(admin, user, products, isDelivery, data) {
                   font-family: Cambria;
                   font-weight: normal;
                   color: #000000;
-                ">Mahsulot yetkazib berish muddati, oy, chorak, yil</span>
+                ">
+					${isDelivery ? "Mahsulotni yetkazib berish " : "Mahsulotni olib ketish "}
+					muddati, oy, chorak, yil
+					</span>
 					</h1>
 				</td>
 			</tr>

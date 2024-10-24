@@ -405,7 +405,10 @@ export default async function UzFqContractHtml(
                   font-family: Cambria;
                   font-weight: normal;
                   color: #000000;
-                ">Mahsulot yetkazib berish muddati, oy, chorak, yil</span>
+                ">
+					${isDelivery ? "Mahsulotni yetkazib berish " : "Mahsulotni olib ketish "}
+					muddati, oy, chorak, yil
+					</span>
 					</h1>
 				</td>
 			</tr>
@@ -1043,8 +1046,8 @@ export default async function UzFqContractHtml(
           user.phone_number || "_?_"
         }</p>
 				<p class="noSpacing_indent"><strong style="font-family:Cambria;">Fuqaro:</strong> ${user.first_name
-        .charAt(0)
-        .toUpperCase()}.${user.sur_name.charAt(0).toUpperCase()}.${
+          .charAt(0)
+          .toUpperCase()}.${user.sur_name.charAt(0).toUpperCase()}.${
     user.middle_name.charAt(0).toUpperCase() +
     user.middle_name.slice(1).toLowerCase()
   }</p>

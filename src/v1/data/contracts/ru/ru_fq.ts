@@ -365,7 +365,8 @@ export default async function RuFqContractHtml(
               line-height: 115%;
               font-size: 8pt;
             ">
-					<span style="font-family: Cambria; font-weight: normal; color: #000000">Срок поставки продукции,
+					<span style="font-family: Cambria; font-weight: normal; color: #000000">
+					${isDelivery ? "Срок поставки продукции " : "Срок забрать товар "}
 						месяц,
 						квартал, год</span>
 				</h1>
